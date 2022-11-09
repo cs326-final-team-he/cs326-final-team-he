@@ -1,5 +1,5 @@
 ## Create
-
+The Create endpoint enables the client
 ## Read
 The Read endpoint provides the ability for the client to read information from a specific database, field, or localStorage. 
 Some retreivable information include reading users' playlists, favorite songs, genre, artist, album, friends, and recent updates to their feed.
