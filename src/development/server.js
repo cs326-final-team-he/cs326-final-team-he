@@ -199,12 +199,15 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+<<<<<<< HEAD
 /**
  * dummy databases
  */
 const profiledb = [];
 const chirpdb = [];
 
+=======
+>>>>>>> 979aa083978faa41cb4927e89afa5503b691e547
 app.use(express.json()); // Middleware allows us to use JSON
 
 // request is incoming data, response is outgoing data
@@ -227,6 +230,7 @@ app.post('/', (req, res) => { // For CREATE
     res.send("Got a POST request");
 });
 
+<<<<<<< HEAD
 app.put('/user', (req, res) => { // For UPDATE
     res.send("Got a PUT request at /user");
 });
@@ -271,8 +275,20 @@ app.delete('/chirp', (req, res) => { // For DELETE
     const { id } = req.params;
     const status = deleteChirp(chirpdb, id);
     res.status(status).send("Got a DELETE request at /chirp");
+=======
+app.put('/', (req, res) => { // For UPDATE
+    res.send("Got a PUT request at /user");
+});
+
+app.delete('/', (req, res) => { // For DELETE
+    res.send("Got a DELETE request at /user");
+>>>>>>> 979aa083978faa41cb4927e89afa5503b691e547
 });
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 979aa083978faa41cb4927e89afa5503b691e547
