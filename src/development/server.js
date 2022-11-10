@@ -7,6 +7,50 @@ const faker = require ('@faker-js/faker');
 /**
  * CREATE ENDPOINT
  */
+/**
+ * Will create and store profile data regarding the user and add it to the database
+ * @param {JSON[]} profileDB: database of profiles
+ * @param {number} id: id of profile that is being created
+ * @param {string} user_name: username for profile that is being created
+ * @param {string} favorite_song: favorite song for new profile being created 
+ * @param {string} favorite_genre: favorite genre for new profile being created 
+ * @param {string} favorite_artist: favorite genre for new profile being created
+ * @param {string} spotify_account: link for associated spotify account
+ * @param {string} playlist: link to the users's playlist
+ * @param {JSON[]} friends: list of friends to be added
+ */
+function createProfile(profileDB, id, user_name, favorite_song, favorite_genre, favorite_artist, spotify_account, playlist, friends){
+    const newProfileInfo = {
+        'user_name': user_name,
+        'favorite_song': favorite_song,
+        'favorite_genre': favorite_genre,
+        'favorite_artist': favorite_artist,
+        'spotify_account': spotify_account,
+        'playlist': playlist,
+        'friends': friends 
+    };
+  
+    profileDB.push({'id': id, 'json': newProfileInfo});
+}
+/** 
+ * Will create and store a chirp post and add it to the database. Since nobody has seen the post yet, likes and shares will be set to 0. 
+ * @param {JSON[]} chirpDB: database of chirps
+ * @param {number} id: id of chirp that is being created
+ * @param {string} user_name: name of person who posted the chirp
+ * @param {string} shared_song_name: name of song to be shared
+ * @param {string} shared_song: link of song to be shared
+ */
+function createChirp(chirpDB, id, user_name, shared_song_name, shared_song){
+    const newChirpInfo = {
+        'user_name': user_name,
+        'shared_song_name': shared_song_name,
+        'shared_song': shared_song,
+        'like_count': 0,
+        'share_count': 0
+    };
+    
+    chirpDB.push({'id': id, 'json': newChirpInfo});
+}
 
 
 /**
@@ -21,22 +65,22 @@ const faker = require ('@faker-js/faker');
  */
 function getProfile() {
     return {
-        spotify_account: faker.internet.domainName(),
-        playlist: faker.internet.domainName(),
-        favorite_song: faker.music.songName(),
-        favorite_genre: faker.music.genre(),
-        favorite_artist: faker.name.fullName(),
+        spotify_account: faker.faker.internet.domainName(),
+        playlist: faker.faker.internet.domainName(),
+        favorite_song: faker.faker.music.songName(),
+        favorite_genre: faker.faker.music.genre(),
+        favorite_artist: faker.faker.name.fullName(),
         friends: [
             {
-                user_name: faker.name.fullName(),
+                user_name: faker.faker.name.fullName(),
                 details: {
-                    favorite_song: faker.music.songName(),
+                    favorite_song: faker.faker.music.songName(),
                     recent_shared: {
-                        shared_song: faker.music.songName()
+                        shared_song: faker.faker.music.songName()
                     }
                 }
             }
-        ]
+        ],
     };
 }
 
@@ -46,12 +90,12 @@ function getProfile() {
  */
 function getChirp() {
     return {
-        user_name: faker.name.fullName(),
-        chirp_text: faker.lorem.paragraph(2),
-        shared_song_name: faker.music.songName(),
-        shared_song: faker.internet.domainName(),
-        like_count: faker.datatype.number(1000),
-        share_count: faker.datatype.number(1000)
+        user_name: faker.faker.name.fullName(),
+        chirp_text: faker.faker.lorem.paragraph(2),
+        shared_song_name: faker.faker.music.songName(),
+        shared_song: faker.faker.internet.domainName(),
+        like_count: faker.faker.datatype.number(1000),
+        share_count: faker.faker.datatype.number(1000)
     };
 }
 
@@ -118,7 +162,7 @@ function putChirp(chirpDB, id, chirp) {
 function deleteJSON(database, id) {
     let code = database.findIndex(elem => elem['id'] === id);
     if (code === -1) {
-        return code;
+        return 404;
     } else {
         database.splice(code, 1);
         code = 200;
@@ -147,7 +191,6 @@ function deleteChirp(chirpDB, id) {
 }
 
 
-
 /**
  * Server calls
  */
@@ -156,10 +199,80 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-app.get('/', (req, res) => {
-    res.send("Hello World!");
+/**
+ * dummy databases
+ */
+const profiledb = [];
+const chirpdb = [];
+
+app.use(express.json()); // Middleware allows us to use JSON
+
+// request is incoming data, response is outgoing data
+
+app.get('/', (req, res) => { // For READ
+    res.send("Got a GET request at /user");
+});
+
+app.get('/profile', (req, res) => { // Request to get profile
+    const result = getProfile();
+    res.send(result);
+});
+
+app.get('/chirp', (req, res) => {
+    const result = getProfile();
+    res.send(result);
+});
+
+app.post('/', (req, res) => { // For CREATE
+    res.send("Got a POST request");
+});
+
+app.put('/user', (req, res) => { // For UPDATE
+    res.send("Got a PUT request at /user");
+});
+
+//PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER
+app.put('/user', (req, res) => {
+    const { id, profile } = req.params;
+    const status = putProfile(profiledb, id, profile);
+    res.status(status);
+    if (status === 200) {
+        res.send('Successfully updated profile with id: ' + id);
+    } else if (status === 202) {
+        res.send('Created a new profile with id: ' + id);
+    } else {
+        res.status(404).send('ERROR with request');
+    }
+});
+
+//PUT request for chirp (editing a post)
+app.put('/chirp', (req, res) => {
+    const { id, chirp } = req.params;
+    const status = putChirp(chirpdb, id, chirp);
+    res.status(status);
+    if (status === 200) {
+        res.send('Successfully updated chirp with id: ' + id);
+    } else if (status === 202) {
+        res.send('Created a new chirp with id: ' + id);
+    } else {
+        res.status(404).send('ERROR with request');
+    }
+});
+
+//DELETE request for user (delete profile)
+app.delete('/user', (req, res) => { // For DELETE
+    const { id } = req.params;
+    const status = deleteProfile(profiledb, id);
+    res.status(status).send("Got a DELETE request at /user");
+});
+
+//DELETE request for chirp (delete post)
+app.delete('/chirp', (req, res) => { // For DELETE
+    const { id } = req.params;
+    const status = deleteChirp(chirpdb, id);
+    res.status(status).send("Got a DELETE request at /chirp");
 });
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
-})
+    console.log(`Server listening on port ${port}`);
+});
