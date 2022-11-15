@@ -11,9 +11,8 @@
     "ejs": "^3.1.8",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
-    "morgan": "~1.9.1",
-    "@faker-js/faker": "^7.6.0"
+    "jade": "^1.9.2",
+    "morgan": "~1.9.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0"
@@ -35,7 +34,8 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/cs326-final-team-he/cs326-final-team-he/issues"
-  }, "engines": {
+  },
+  "engines": {
     "node": "16.x"
   },
   "homepage": "https://github.com/cs326-final-team-he/cs326-final-team-he#readme"
