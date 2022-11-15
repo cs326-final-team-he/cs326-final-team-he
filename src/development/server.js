@@ -166,7 +166,7 @@ if (port == null || port == "") {
 const profiledb = [];
 const chirpdb = [];
 
-int id = 0; 
+let id = 0; 
 
 app.use(express.json()); // Middleware allows us to use JSON
 app.use(express.static(path.join(__dirname, "/public")));
@@ -211,7 +211,7 @@ app.put('/', (req, res) => { // For UPDATE
 });
 
 //PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER
-app.put('/profile', (req, res) => {
+app.put('/putProfile', (req, res) => {
     const { id, profile } = req.params;
     const status = putProfile(profiledb, id, profile);
     res.status(status);
@@ -225,7 +225,7 @@ app.put('/profile', (req, res) => {
 });
 
 //PUT request for chirp (editing a post)
-app.put('/chirp', (req, res) => {
+app.put('/putChirp', (req, res) => {
     const { id, chirp } = req.params;
     const status = putChirp(chirpdb, id, chirp);
     res.status(status);
@@ -239,14 +239,14 @@ app.put('/chirp', (req, res) => {
 });
 
 //DELETE request for user (delete profile)
-app.delete('/profile', (req, res) => { // For DELETE
+app.delete('/deleteProfile', (req, res) => { // For DELETE
     const { id } = req.params;
     const status = deleteProfile(profiledb, id);
     res.status(status).send("Got a DELETE request at /user");
 });
 
 //DELETE request for chirp (delete post)
-app.delete('/chirp', (req, res) => { // For DELETE
+app.delete('/deleteChirp', (req, res) => { // For DELETE
     const { id } = req.params;
     const status = deleteChirp(chirpdb, id);
     res.status(status).send("Got a DELETE request at /chirp");

@@ -3,7 +3,7 @@
  * @return {JSON} Returns Profile JSON
  */
  async function get_profile() {
-    const response = await fetch("http://localhost:3000/profile");
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/profile`);
 
     if (response.ok) {
         const profileJson = await response.json();
@@ -16,7 +16,7 @@
  * @return {JSON} Returns Chirp JSON
  */
 async function get_feed() {
-    const response = await fetch("http://localhost:3000/chirp");
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/chirp`);
 
     if (response.ok) {
         const chirpJson = await response.json();
