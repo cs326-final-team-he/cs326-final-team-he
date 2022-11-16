@@ -122,23 +122,6 @@ async function putChirp(updatedChirp) {
  */
 
 /**
- * Deletes a given json object from the database. If the object does not exist, throws an error
- * @param {JSON[]} database: the database of JSON objects to delete from 
- * @param {number} id: the id of the object you want to delete
- * @returns: the corresponding code (whether the delete was successful or not)
- */
-function deleteJSON(database, id) {
-    let code = database.findIndex(elem => elem['id'] === id);
-    if (code === -1) {
-        return 404;
-    } else {
-        database.splice(code, 1);
-        code = 200;
-    }
-    return code;
-}
-
-/**
  * Deletes a profile with id using
  * @param {number} id: the id of the profile you want to delete
  * @returns: the corresponding code (whether the delete was successful or not)
@@ -175,20 +158,12 @@ async function deleteProfile(id) {
  * Server calls
  */
 
-const express = require('express');
-const app = express();
-let port = process.env.PORT;
-if (port == null || port == "") {
-  port = 8000;
-}
-/**
- * dummy databases
- */
-const profiledb = [];
-const chirpdb = [];
-
-let id = 0; 
-
+ const express = require('express');
+ const app = express();
+ let port = process.env.PORT;
+ if (port == null || port == "") {
+   port = 8000;
+ }
 app.use(express.json()); // Middleware allows us to use JSON
 app.use(express.static(path.join(__dirname, "/public")));
 
@@ -225,7 +200,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     }
 });
 
-app.post('/createChirp', (req, res) => { // For CREATE CHIRP
+app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     try {
         let body = '';
         req.on('data', data => body += data);
@@ -250,9 +225,9 @@ app.put('/', (req, res) => { // For UPDATE
 });
 
 //PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER
-app.put('/putProfile', (req, res) => {
+app.put('/putProfile', async (req, res) => {
     const { updatedProfile } = req.params;
-    const status = putProfile(updatedProfile);
+    const status = await putProfile(updatedProfile);
     res.status(status);
     if (status === 200) {
         res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
@@ -262,9 +237,9 @@ app.put('/putProfile', (req, res) => {
 });
 
 //PUT request for chirp (editing a post)
-app.put('/putChirp', (req, res) => {
+app.put('/putChirp', async (req, res) => {
     const { updatedChirp } = req.params;
-    const status = putChirp(updatedChirp);
+    const status = await putChirp(updatedChirp);
     res.status(status);
     if (status === 200) {
         res.send('Successfully updated chirp from user: ' + updatedChirp.user_name);
@@ -274,9 +249,9 @@ app.put('/putChirp', (req, res) => {
 });
 
 //DELETE request for user (delete profile)
-app.delete('/deleteProfile', (req, res) => { // For DELETE
+app.delete('/deleteProfile', async (req, res) => { // For DELETE
     const { id } = req.params;
-    const status = deleteProfile(id);
+    const status = await deleteProfile(id);
     res.status(status).send("Got a DELETE request at /user");
 });
 
