@@ -2,6 +2,15 @@ const faker = require ('@faker-js/faker');
 // const fetch = (...args) =>
 // 	import('node-fetch').then(({default: fetch}) => fetch(...args));
 const path = require('path');
+
+//Postgres DB stuff
+const {Pool} = require('pg');
+const pool = new Pool( {
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
 /**
  * We will be adding APIs on server side here
  */
@@ -62,51 +71,51 @@ function getChirp() {
 /**
  * UPDATE ENDPOINT
  */
-
-/**
- * Function representing the put functionality of REST api. Idempotent, creates new object if id does not exist, 
- * updates existing one if it does.
- * 
- * @param {JSON[]} database the database we're putting obj with id into
- * @param {number} id the id (key) of the object we're updating
- * @param {JSON} obj the data with updated content
- * @returns a response code based on what the result was. 200 for update, 202 for creation
- */
-function putJSON(database, id, obj) {
-    //if object does not exist in database yet, create it
-    const index = database.findIndex(elem => elem['id'] === id);
-    let code = 200;
-    if (index === -1) {
-        console.log('created new object with id: ' + id);
-        database.push({'id': id, 'json': json});
-        code = 202;
-    } else {
-        database[i]['id']['json'] = obj;
-    }
-
-    return code;
-}
 /**
  * Updates a specific profile using putJSON
- * @param {JSON[]} profileDB: database of profiles
- * @param {number} id: id of specific profile
- * @param {JSON} profile: the updated profile content
+ * @param {JSON} updatedProfile: the updated profile content. MUST HAVE THE SAME USER_ID AS ORIGINAL
  * @returns: response code based on result
  */
-function putProfile(profileDB, id, profile) {
-    return putJSON(profileDB, id, profile);
+async function putProfile(updatedProfile) {
+    try {
+        const client = await pool.client();
+        const result = await client.query(`UPDATE profiles SET 
+                        user_name = '${updatedProfile.user_name}',
+                        user_id = '${updatedProfile.user_id}',
+                        spotify_account = '${updatedProfile.spotify_account}',
+                        playlist = '${updatedProfile.playlist}',
+                        favorite_song = '${updatedProfile.favorite_song}', 
+                        favorite_genre = '${updatedProfile.favorite_genre}',
+                        favorite_artist = '${updatedProfile.favorite_artist}', 
+                        friends = '${updatedProfile.friends}'
+                        WHERE user_id = '${updatedProfile.user_id}';`);
+        client.release();
+        return 200;
+    } catch (err) {
+        return 404;
+    }
 }
 
 /**
  * Updates a specific chirp using putJSON
- * @param {JSON[]} profileDB: database of chirps
- * @param {number} id: id of specific chirp
- * @param {JSON} profile: the updated chirp content
+ * @param {JSON} updatedChirp: the updated chirp content. MUST CONTAIN ALL ELEMENTS OF CHIRP
  * @returns: response code based on result
  */
-function putChirp(chirpDB, id, chirp) {
-    return putJSON(chirpDB, id, chirp);
-}
+async function putChirp(updatedChirp) {
+    try {
+        const client = await pool.client();
+        const result = await client.query(`UPDATE profiles SET 
+                        user_name = '${updatedChirp.user_name}',
+                        chirp_text = '${updatedChirp.chirp_text}',
+                        shared_song_name = '${updatedChirp.shared_song_name}',
+                        shared_song = '${updatedChirp.shared_song}',
+                        like_count = '${updatedChirp.like_count}', 
+                        share_count = '${updatedChirp.share_count}';`);
+        client.release();
+        return 200;
+    } catch (err) {
+        return 404;
+    }}
 
 /**
  * DELETE ENDPOINT
@@ -131,22 +140,34 @@ function deleteJSON(database, id) {
 
 /**
  * Deletes a profile with id using
- * @param {JSON[]} profileDB: the database of profiles to delete from 
  * @param {number} id: the id of the profile you want to delete
  * @returns: the corresponding code (whether the delete was successful or not)
  */
-function deleteProfile(profileDB, id) {
-    return deleteJSON(profileDB, id);
+async function deleteProfile(id) {
+    try {
+        const client = await pool.client();
+        const result = await pool.query(`DELETE FROM profiles WHERE user_id = ${id};`)
+        client.release();
+        return 200;
+    } catch (err) {
+        return 404;
+    }
 }
 
 /**
  * 
- * @param {JSON[]} chirpDB: the database of chirps to delete from 
  * @param {number} id: the id of the chirp 
  * @returns: corresponding response code
  */
-function deleteChirp(chirpDB, id) {
-    return deleteJSON(chirpDB, id);
+ async function deleteChirp(user_name, chirp_text) {
+    try {
+        const client = await pool.client();
+        const result = await pool.query(`DELETE FROM chirps WHERE user_name = '${user_name}' AND chirp_text = '${chirp_text}';`);
+        client.release();
+        return 200;
+    } catch (err) {
+        return 404;
+    }
 }
 
 
@@ -183,26 +204,44 @@ app.get('/Chirp', (req, res) => {
     res.send(result);
 });
 
-app.post('/createProfile', (req, res) => { // For CREATE PROFILE
-    let body = '';
-    req.on('data', data => body += data);
-    req.on('end', () =>{
-        const post = JSON.parse(body);
-        profiledb.push({id: id, json: post});
-        id = id + 1; 
-    });
-    res.sendSatus(200);
+app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
+    try {
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () =>{
+            const post = JSON.parse(body);
+            const client = await pool.client();
+            const result = await client.query(`INSERT INTO profiles 
+                            VALUES ('${post.user_name}', '${post.user_id}',
+                                '${post.spotify_account}', '${post.playlist}',
+                                '${post.favorite_song}', '${post.favorite_genre}',
+                                '${post.favorite_artist}', '${post.friends}')`);
+            client.release();
+        });
+
+        res.status(200).send();
+    } catch(err) {
+        res.status(404).send(`Error + ${err}`);
+    }
 });
 
 app.post('/createChirp', (req, res) => { // For CREATE CHIRP
-    let body = '';
-    req.on('data', data => body += data);
-    req.on('end', () =>{
-        const post = JSON.parse(body);
-        chirpdb.push({id: id, json: post});
-        id = id + 1;
-    });
-    res.sendSatus(200);
+    try {
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () =>{
+            const post = JSON.parse(body);
+            const client = await pool.client();
+            const result = await client.query(`INSERT INTO chirps 
+                VALUES ('${post.user_name}', '${post.chirp_text}',
+                    '${post.shared_song_name}', '${post.shared_song}',
+                    '${post.like_count}', '${post.share_count}')`);
+        });
+        res.status(200).send();
+    } catch (err) {
+        res.status(404).send(`Error + ${err}`);
+    }
+
 });
 
 
@@ -212,43 +251,39 @@ app.put('/', (req, res) => { // For UPDATE
 
 //PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER
 app.put('/putProfile', (req, res) => {
-    const { id, profile } = req.params;
-    const status = putProfile(profiledb, id, profile);
+    const { updatedProfile } = req.params;
+    const status = putProfile(updatedProfile);
     res.status(status);
     if (status === 200) {
-        res.send('Successfully updated profile with id: ' + id);
-    } else if (status === 202) {
-        res.send('Created a new profile with id: ' + id);
+        res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
     } else {
-        res.status(404).send('ERROR with request');
+        res.send('ERROR with request');
     }
 });
 
 //PUT request for chirp (editing a post)
 app.put('/putChirp', (req, res) => {
-    const { id, chirp } = req.params;
-    const status = putChirp(chirpdb, id, chirp);
+    const { updatedChirp } = req.params;
+    const status = putChirp(updatedChirp);
     res.status(status);
     if (status === 200) {
-        res.send('Successfully updated chirp with id: ' + id);
-    } else if (status === 202) {
-        res.send('Created a new chirp with id: ' + id);
+        res.send('Successfully updated chirp from user: ' + updatedChirp.user_name);
     } else {
-        res.status(404).send('ERROR with request');
+        res.send('ERROR with request');
     }
 });
 
 //DELETE request for user (delete profile)
 app.delete('/deleteProfile', (req, res) => { // For DELETE
     const { id } = req.params;
-    const status = deleteProfile(profiledb, id);
+    const status = deleteProfile(id);
     res.status(status).send("Got a DELETE request at /user");
 });
 
 //DELETE request for chirp (delete post)
 app.delete('/deleteChirp', (req, res) => { // For DELETE
-    const { id } = req.params;
-    const status = deleteChirp(chirpdb, id);
+    const { user_name, chirp_text } = req.params;
+    const status = deleteChirp(user_name, chirp_text);
     res.status(status).send("Got a DELETE request at /chirp");
 });
 
