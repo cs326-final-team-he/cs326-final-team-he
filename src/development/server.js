@@ -169,14 +169,24 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 // request is incoming data, response is outgoing data
 
-app.get('/Profile', (req, res) => { // Request to get profile
-    const result = getProfile();
-    res.send(result);
+app.get('/Profiles', (req, res) => { // Request to get profiles
+    const client = await pool.client();
+    const result = await client.query('SELECT * from profiles', (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        }
+     });
+     client.release();
 });
 
-app.get('/Chirp', (req, res) => {
-    const result = getChirp();
-    res.send(result);
+app.get('/Chirps', (req, res) => { // Request to get profiles
+    const client = await pool.client();
+    const result = await client.query('SELECT * from cherps', (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        }
+    });
+    client.release();
 });
 
 app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
