@@ -169,7 +169,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 // request is incoming data, response is outgoing data
 
-app.get('/Profiles', (req, res) => { // Request to get profiles
+app.get('/Profiles', (req, res) => { //Will get all profiles in DB
     const client = await pool.client();
     const result = await client.query('SELECT * from profiles', (err, result) => {
         if(!err){
@@ -179,9 +179,9 @@ app.get('/Profiles', (req, res) => { // Request to get profiles
      client.release();
 });
 
-app.get('/Chirps', (req, res) => { // Request to get profiles
+app.get('/Chirps', (req, res) => { //Will get all chirps in DB
     const client = await pool.client();
-    const result = await client.query('SELECT * from cherps', (err, result) => {
+    const result = await client.query('SELECT * from chirps', (err, result) => {
         if(!err){
             res.send(result.rows);
         }
