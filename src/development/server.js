@@ -216,11 +216,11 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
         req.on('end', async () =>{
             const post = JSON.parse(body);
             const client = await pool.client();
-            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist, friends)
+            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
                             VALUES ('${post.user_name}', '${post.user_id}',
                                 '${post.spotify_account}', '${post.playlist}',
                                 '${post.favorite_song}', '${post.favorite_genre}',
-                                '${post.favorite_artist}', '${post.friends}')`);
+                                '${post.favorite_artist}')`);
             client.release();
         });
 
