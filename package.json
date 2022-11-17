@@ -6,7 +6,6 @@
     "start": "node ./src/development/server.js"
   },
   "dependencies": {
-    "@faker-js/faker": "^7.6.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "ejs": "^3.1.8",
@@ -15,9 +14,6 @@
     "jade": "^1.9.2",
     "morgan": "~1.9.1",
     "pg": "^8.8.0"
-  },
-  "devDependencies": {
-    "@faker-js/faker": "^7.6.0"
   },
   "description": "<!-- ![Alt text](main_view.png?raw=true \"Main Web View\")] -->",
   "main": "./src/development/server.js",
