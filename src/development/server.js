@@ -169,28 +169,61 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 // request is incoming data, response is outgoing data
 
-app.get('/Profile', (req, res) => { // Request to get profile
-    const result = getProfile();
-    res.send(result);
+app.get('/Profiles', (req, res) => { //Will get all profiles in DB
+    const client = await pool.client();
+    const result = await client.query('SELECT * from profiles', (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        }
+     });
+     client.release();
 });
 
-app.get('/Chirp', (req, res) => {
-    const result = getChirp();
-    res.send(result);
+app.get('/Profiles/:user_id', (req, res) => { //Will get a profile based on provided user_id
+    const client = await pool.client();
+    const result = await client.query('SELECT * from profiles where user_id=${req.params.user_id}', (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        }
+    });
+    client.release();
+});
+
+app.get('/Chips/:user_name', (req, res) => { //Will get all chirps posted by user
+    const client = await pool.client();
+    const result = await client.query('SELECT * from profiles where user_name=${req.params.user_name}', (err, result) => {
+        if (!err){
+            res.send(result.rows);
+        }
+    });
+    client.release();
+});
+
+app.get('/Chirps', (req, res) => { //Will get all chirps in DB
+    const client = await pool.client();
+    const result = await client.query('SELECT * from chirps', (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        }
+    });
+    client.release();
 });
 
 app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     try {
+        const client = await pool.client();
+        await client.query('CREATE TABLE IF NOT EXISTS profiles (user_name VARCHAR(50), user_id SERIAL, spotify_account VARCHAR(50), playlist VARCHAR(100), favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50))');
+        client.release();
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const post = JSON.parse(body);
-            const client = await pool.connect();
-            const result = await client.query(`INSERT INTO profiles 
+            const client = await pool.client();
+            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
                             VALUES ('${post.user_name}', '${post.user_id}',
                                 '${post.spotify_account}', '${post.playlist}',
                                 '${post.favorite_song}', '${post.favorite_genre}',
-                                '${post.favorite_artist}', '${post.friends}')`);
+                                '${post.favorite_artist}')`);
             client.release();
         });
 
@@ -202,13 +235,15 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 
 app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     try {
+        const client = await pool.client();
+        await client.query('CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), link_count INT, share_count INT)');
+        client.release();
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const post = JSON.parse(body);
-            
-            const client = await pool.connect();
-            const result = await client.query(`INSERT INTO chirps 
+            const client = await pool.client();
+            const result = await client.query(`INSERT INTO chirps (user_name, chirp_text, shared_song_name, shared_song, like_count, share_count)
                 VALUES ('${post.user_name}', '${post.chirp_text}',
                     '${post.shared_song_name}', '${post.shared_song}',
                     '${post.like_count}', '${post.share_count}')`);
