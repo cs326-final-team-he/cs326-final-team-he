@@ -179,6 +179,26 @@ app.get('/Profiles', (req, res) => { //Will get all profiles in DB
      client.release();
 });
 
+app.get('/Profiles/:user_id', (req, res) => { //Will get a profile based on provided user_id
+    const client = await pool.client();
+    const result = await client.query('SELECT * from profiles where user_id=${req.params.user_id}', (err, result) => {
+        if(!err){
+            res.send(result.rows);
+        }
+    });
+    client.release();
+});
+
+app.get('/Chips/:user_name', (req, res) => { //Will get all chirps posted by user
+    const client = await pool.client();
+    const result = await client.query('SELECT * from profiles where user_name=${req.params.user_name', (err, result) => {
+        if (!err){
+            res.send result.rows);
+        }
+    });
+    client.release();
+});
+
 app.get('/Chirps', (req, res) => { //Will get all chirps in DB
     const client = await pool.client();
     const result = await client.query('SELECT * from chirps', (err, result) => {
@@ -196,7 +216,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
         req.on('end', async () =>{
             const post = JSON.parse(body);
             const client = await pool.client();
-            const result = await client.query(`INSERT INTO profiles 
+            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist, friends)
                             VALUES ('${post.user_name}', '${post.user_id}',
                                 '${post.spotify_account}', '${post.playlist}',
                                 '${post.favorite_song}', '${post.favorite_genre}',
@@ -217,7 +237,7 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
         req.on('end', async () =>{
             const post = JSON.parse(body);
             const client = await pool.client();
-            const result = await client.query(`INSERT INTO chirps 
+            const result = await client.query(`INSERT INTO chirps (user_name, chirp_text, shared_song_name, shared_song, like_count, share_count)
                 VALUES ('${post.user_name}', '${post.chirp_text}',
                     '${post.shared_song_name}', '${post.shared_song}',
                     '${post.like_count}', '${post.share_count}')`);
