@@ -2,6 +2,7 @@ const faker = require ('@faker-js/faker');
 // const fetch = (...args) =>
 // 	import('node-fetch').then(({default: fetch}) => fetch(...args));
 const path = require('path');
+const express = require('express');
 
 //Postgres DB stuff
 const {Pool} = require('pg');
@@ -78,7 +79,7 @@ function getChirp() {
  */
 async function putProfile(updatedProfile) {
     try {
-        const client = await pool.client();
+        const client = await pool.connect();
         const result = await client.query(`UPDATE profiles SET 
                         user_name = '${updatedProfile.user_name}',
                         user_id = '${updatedProfile.user_id}',
@@ -103,7 +104,7 @@ async function putProfile(updatedProfile) {
  */
 async function putChirp(updatedChirp) {
     try {
-        const client = await pool.client();
+        const client = await pool.connect();
         const result = await client.query(`UPDATE profiles SET 
                         user_name = '${updatedChirp.user_name}',
                         chirp_text = '${updatedChirp.chirp_text}',
@@ -128,8 +129,8 @@ async function putChirp(updatedChirp) {
  */
 async function deleteProfile(id) {
     try {
-        const client = await pool.client();
-        const result = await pool.query(`DELETE FROM profiles WHERE user_id = ${id};`)
+        const client = await pool.connect();
+        const result = await cient.query(`DELETE FROM profiles WHERE user_id = ${id};`)
         client.release();
         return 200;
     } catch (err) {
@@ -144,8 +145,8 @@ async function deleteProfile(id) {
  */
  async function deleteChirp(user_name, chirp_text) {
     try {
-        const client = await pool.client();
-        const result = await pool.query(`DELETE FROM chirps WHERE user_name = '${user_name}' AND chirp_text = '${chirp_text}';`);
+        const client = await pool.connect();
+        const result = await client.query(`DELETE FROM chirps WHERE user_name = '${user_name}' AND chirp_text = '${chirp_text}';`);
         client.release();
         return 200;
     } catch (err) {
@@ -158,7 +159,6 @@ async function deleteProfile(id) {
  * Server calls
  */
 
- const express = require('express');
  const app = express();
  let port = process.env.PORT;
  if (port == null || port == "") {
@@ -185,7 +185,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const post = JSON.parse(body);
-            const client = await pool.client();
+            const client = await pool.connect();
             const result = await client.query(`INSERT INTO profiles 
                             VALUES ('${post.user_name}', '${post.user_id}',
                                 '${post.spotify_account}', '${post.playlist}',
@@ -206,15 +206,17 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const post = JSON.parse(body);
-            const client = await pool.client();
+            
+            const client = await pool.connect();
             const result = await client.query(`INSERT INTO chirps 
                 VALUES ('${post.user_name}', '${post.chirp_text}',
                     '${post.shared_song_name}', '${post.shared_song}',
                     '${post.like_count}', '${post.share_count}')`);
         });
+        client.release();
         res.status(200).send();
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`Error: ${err}`);
     }
 
 });
@@ -226,25 +228,39 @@ app.put('/', (req, res) => { // For UPDATE
 
 //PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER
 app.put('/putProfile', async (req, res) => {
-    const { updatedProfile } = req.params;
-    const status = await putProfile(updatedProfile);
-    res.status(status);
-    if (status === 200) {
-        res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
-    } else {
-        res.send('ERROR with request');
+    try {
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () =>{
+            const status = await putProfile(JSON.parse(body));
+            res.status(status);
+            if (status === 200) {
+                res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
+            } else {
+                res.send('ERROR with request');
+            }
+        });
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`);
     }
 });
 
 //PUT request for chirp (editing a post)
 app.put('/putChirp', async (req, res) => {
-    const { updatedChirp } = req.params;
-    const status = await putChirp(updatedChirp);
-    res.status(status);
-    if (status === 200) {
-        res.send('Successfully updated chirp from user: ' + updatedChirp.user_name);
-    } else {
-        res.send('ERROR with request');
+    try {
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () =>{
+            const status = await putChirp(JSON.parse(body));
+            res.status(status);
+            if (status === 200) {
+                res.send('Successfully updated chirp');
+            } else {
+                res.send('ERROR with request');
+            }
+        });
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`);
     }
 });
 

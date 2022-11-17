@@ -1,14 +1,12 @@
-const { post } = require("../routes");
-
 /**
  * Gets profile asyncorhonously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
  */
  async function get_profile() {
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/profile`);
-
+    const response = await fetch(`http://localhost:8000/profile`);
     if (response.ok) {
         const profileJson = await response.json();
+        console.log(profileJson);
         return profileJson;
     }
 }
@@ -18,10 +16,11 @@ const { post } = require("../routes");
  * @return {JSON} Returns Chirp JSON
  */
 async function get_feed() {
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/chirp`);
+    const response = await fetch(`http://localhost:8000/chirp`);
 
     if (response.ok) {
         const chirpJson = await response.json();
+        console.log(chirpJson);
         return chirpJson;
     }
 }
@@ -32,7 +31,7 @@ async function get_feed() {
  */
 async function set_profile(profile_json) {
     // Update User in DB
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, profile_json);
+    const response = await fetch(`http://localhost:8000/putProfile`, {method: 'PUT', body: JSON.stringify(profile_json)});
     if (response.ok) {
         //if went thru, update in front end
         document.getElementById('username').innerHTML = profile_json.user_name;
@@ -69,7 +68,7 @@ async function post_chirp(chirp_json) {
     // Need to set up the feed
     // Right now we update using the ids of specific fields but that really isn't scalable for chirps and friends list. 
     // Need to figure out a way to efficiently update the fields
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/postChirp`, chirp_json);
+    const response = await fetch(`http://localhost:8000/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
     if (response.ok) {
         const feed = document.getElementById('feed');
         //post_avatar portion
@@ -77,7 +76,8 @@ async function post_chirp(chirp_json) {
         newPost.classList.add('post');
         const avatar = document.createElement('div');
         avatar.classList.add('post_avatar');
-        const icon = document.createElement('span').id = 'userProfileShare';
+        const icon = document.createElement('span');
+        icon.id =  'userProfileShare';
         icon.classList.add('material-icons');
         //unsure about this
         icon.innerHTML = 'account_circle';
@@ -135,6 +135,8 @@ async function post_chirp(chirp_json) {
 
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
+
+        feed.appendChild(newPost);
     }
 }
 
@@ -151,13 +153,12 @@ async function add_friend(profile_json, friend_json) {
     await set_profile(profile_json);
 }
 // On load call
-
 const profileJson = await get_profile();
 const friendJson = await get_profile();
 set_profile(profileJson);
 
 const feedJson = await get_feed();
-set_feed(feedJson);
+post_chirp(feedJson);
 const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
     add_friend(profileJson, friendJson);
