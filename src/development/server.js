@@ -211,6 +211,9 @@ app.get('/Chirps', (req, res) => { //Will get all chirps in DB
 
 app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     try {
+        const client = await pool.client();
+        await client.query('CREATE TABLE IF NOT EXISTS profiles (user_name VARCHAR(50), user_id SERIAL, spotify_account VARCHAR(50), playlist VARCHAR(100), favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50))');
+        client.release();
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
@@ -232,6 +235,9 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 
 app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     try {
+        const client = await pool.client();
+        await client.query('CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), link_count INT, share_count INT)');
+        client.release();
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
