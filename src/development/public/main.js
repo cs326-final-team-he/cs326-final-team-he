@@ -3,7 +3,7 @@
  * @return {JSON} Returns Profile JSON
  */
  async function get_profile() {
-    const response = await fetch(`http://localhost:8000/profile`);
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/profiles`);
     if (response.ok) {
         const profileJson = await response.json();
         console.log(profileJson);
@@ -16,7 +16,7 @@
  * @return {JSON} Returns Chirp JSON
  */
 async function get_feed() {
-    const response = await fetch(`http://localhost:8000/chirp`);
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/chirps`);
 
     if (response.ok) {
         const chirpJson = await response.json();
@@ -31,7 +31,7 @@ async function get_feed() {
  */
 async function set_profile(profile_json) {
     // Update User in DB
-    const response = await fetch(`http://localhost:8000/putProfile`, {method: 'PUT', body: JSON.stringify(profile_json)});
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, {method: 'PUT', body: JSON.stringify(profile_json)});
     if (response.ok) {
         //if went thru, update in front end
         document.getElementById('username').innerHTML = profile_json.user_name;
@@ -68,7 +68,7 @@ async function post_chirp(chirp_json) {
     // Need to set up the feed
     // Right now we update using the ids of specific fields but that really isn't scalable for chirps and friends list. 
     // Need to figure out a way to efficiently update the fields
-    const response = await fetch(`http://localhost:8000/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
     if (response.ok) {
         const feed = document.getElementById('feed');
         //post_avatar portion

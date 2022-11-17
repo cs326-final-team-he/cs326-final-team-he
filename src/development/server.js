@@ -1,4 +1,3 @@
-const faker = require ('@faker-js/faker');
 // const fetch = (...args) =>
 // 	import('node-fetch').then(({default: fetch}) => fetch(...args));
 const path = require('path');
@@ -26,47 +25,47 @@ const pool = new Pool( {
  */
 
 
-/**
- * Reads profile data of the user
- * Used generally to retreive data regarding the user
- * @return {JSON} Returns json object
- */
-function getProfile() {
-    return {
-        user_name: faker.faker.name.fullName(),
-        user_id: faker.faker.datatype.uuid(),
-        spotify_account: faker.faker.internet.domainName(),
-        playlist: faker.faker.internet.domainName(),
-        favorite_song: faker.faker.music.songName(),
-        favorite_genre: faker.faker.music.genre(),
-        favorite_artist: faker.faker.name.fullName(),
-        friends: [
-            {
-                user_name: faker.faker.name.fullName(),
-                user_id: faker.faker.datatype.uuid(),
-                favorite_song: faker.faker.music.songName(),
-                recent_shared: {
-                    shared_song: faker.faker.music.songName()
-                }
-            }
-        ],
-    };
-}
+// /**
+//  * Reads profile data of the user
+//  * Used generally to retreive data regarding the user
+//  * @return {JSON} Returns json object
+//  */
+// function getProfile() {
+//     return {
+//         user_name: faker.faker.name.fullName(),
+//         user_id: faker.faker.datatype.uuid(),
+//         spotify_account: faker.faker.internet.domainName(),
+//         playlist: faker.faker.internet.domainName(),
+//         favorite_song: faker.faker.music.songName(),
+//         favorite_genre: faker.faker.music.genre(),
+//         favorite_artist: faker.faker.name.fullName(),
+//         friends: [
+//             {
+//                 user_name: faker.faker.name.fullName(),
+//                 user_id: faker.faker.datatype.uuid(),
+//                 favorite_song: faker.faker.music.songName(),
+//                 recent_shared: {
+//                     shared_song: faker.faker.music.songName()
+//                 }
+//             }
+//         ],
+//     };
+// }
 
-/**
- * Reads a specific chirp whenever it is clicked on for more information by a user
- * @return {JSON} Returns json object containing data like content, shared music, like count, comments
- */
-function getChirp() {
-    return {
-        user_name: faker.faker.name.fullName(),
-        chirp_text: faker.faker.lorem.paragraph(2),
-        shared_song_name: faker.faker.music.songName(),
-        shared_song: faker.faker.internet.domainName(),
-        like_count: faker.faker.datatype.number(1000),
-        share_count: faker.faker.datatype.number(1000)
-    };
-}
+// /**
+//  * Reads a specific chirp whenever it is clicked on for more information by a user
+//  * @return {JSON} Returns json object containing data like content, shared music, like count, comments
+//  */
+// function getChirp() {
+//     return {
+//         user_name: faker.faker.name.fullName(),
+//         chirp_text: faker.faker.lorem.paragraph(2),
+//         shared_song_name: faker.faker.music.songName(),
+//         shared_song: faker.faker.internet.domainName(),
+//         like_count: faker.faker.datatype.number(1000),
+//         share_count: faker.faker.datatype.number(1000)
+//     };
+// }
 
 
 /**
@@ -169,51 +168,52 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 // request is incoming data, response is outgoing data
 
-app.get('/Profiles', (req, res) => { //Will get all profiles in DB
-    const client = await pool.client();
-    const result = await client.query('SELECT * from profiles', (err, result) => {
-        if(!err){
-            res.send(result.rows);
-        }
-     });
-     client.release();
+app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from profiles;`);
+        client.release();
+        res.status(200).send();
+    } catch (err) {
+        res.status(404).send();
+    }
 });
 
-app.get('/Profiles/:user_id', (req, res) => { //Will get a profile based on provided user_id
-    const client = await pool.client();
-    const result = await client.query('SELECT * from profiles where user_id=${req.params.user_id}', (err, result) => {
-        if(!err){
-            res.send(result.rows);
-        }
-    });
-    client.release();
+app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from profiles where user_id=${req.params.user_id};`);
+        client.release();
+        res.status(200).send();
+    } catch (err) {
+        res.status(404).send();
+    }
 });
 
-app.get('/Chips/:user_name', (req, res) => { //Will get all chirps posted by user
-    const client = await pool.client();
-    const result = await client.query('SELECT * from profiles where user_name=${req.params.user_name}', (err, result) => {
-        if (!err){
-            res.send(result.rows);
-        }
-    });
-    client.release();
+app.get('/Chips/:user_name', async (req, res) => { //Will get all chirps posted by user
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from chirps where user_name=${req.params.user_name};`);
+        client.release();
+        res.status(200).send();
+    } catch (err) {
+        res.status(404).send();
+    }
 });
 
-app.get('/Chirps', (req, res) => { //Will get all chirps in DB
-    const client = await pool.client();
-    const result = await client.query('SELECT * from chirps', (err, result) => {
-        if(!err){
-            res.send(result.rows);
-        }
-    });
-    client.release();
+app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from chirps;`);
+        client.release();
+        res.status(200).send();
+    } catch (err) {
+        res.status(404).send();
+    }
 });
 
 app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     try {
-        const client = await pool.client();
-        await client.query('CREATE TABLE IF NOT EXISTS profiles (user_name VARCHAR(50), user_id SERIAL, spotify_account VARCHAR(50), playlist VARCHAR(100), favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50))');
-        client.release();
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
@@ -303,14 +303,14 @@ app.put('/putChirp', async (req, res) => {
 app.delete('/deleteProfile', async (req, res) => { // For DELETE
     const { id } = req.params;
     const status = await deleteProfile(id);
-    res.status(status).send("Got a DELETE request at /user");
+    res.status(status).send("Got a DELETE request for profile");
 });
 
 //DELETE request for chirp (delete post)
 app.delete('/deleteChirp', (req, res) => { // For DELETE
     const { user_name, chirp_text } = req.params;
     const status = deleteChirp(user_name, chirp_text);
-    res.status(status).send("Got a DELETE request at /chirp");
+    res.status(status).send("Got a DELETE request for chirp");
 });
 
 app.listen(port, () => {
