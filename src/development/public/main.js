@@ -164,7 +164,7 @@ const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
     add_friend(profileJson, friendJson);
     console.log(profileJson.friends);
-});
+}); 
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
