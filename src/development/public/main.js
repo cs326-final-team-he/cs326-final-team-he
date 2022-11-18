@@ -154,17 +154,17 @@ async function add_friend(profile_json, friend_json) {
 }
 
 // On load call
-const profileJson = await get_profile();
-const friendJson = await get_profile();
-set_profile(profileJson);
+// const profileJson = await get_profile();
+// const friendJson = await get_profile();
+// set_profile(profileJson);
 
-const feedJson = await get_feed();
-await post_chirp(feedJson);
-const addButton = document.getElementById('addButton');
-addButton.addEventListener('click', () => {
-    add_friend(profileJson, friendJson);
-    console.log(profileJson.friends);
-}); 
+// const feedJson = await get_feed();
+// await post_chirp(feedJson);
+// const addButton = document.getElementById('addButton');
+// addButton.addEventListener('click', () => {
+//     add_friend(profileJson, friendJson);
+//     console.log(profileJson.friends);
+// }); 
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
