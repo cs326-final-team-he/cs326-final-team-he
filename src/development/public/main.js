@@ -196,6 +196,7 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
             let callback = (EmbedController) => {};
             IFrameAPI.createController(element, options, callback);
             // if this creates div element then append that
+            //TODO: Add check here so don't add more than one
             shareBoxDiv.appendChild(IFrameAPI);
         };
     }
@@ -211,7 +212,8 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
             let callback = (EmbedController) => {};
             IFrameAPI.createController(element, options, callback);
             // if this creates div element then append that
-              shareBoxDiv.appendChild(IFrameAPI);
+            //TODO: Add check here so don't add more than one
+            shareBoxDiv.appendChild(IFrameAPI);
         };
     }
     else {
