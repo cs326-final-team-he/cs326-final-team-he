@@ -166,18 +166,6 @@ async function deleteProfile(id) {
 app.use(express.json()); // Middleware allows us to use JSON
 app.use(express.static(path.join(__dirname, "/public")));
 
-app.get('/', async (req, res) => { // For CREATES TABLES IF THEY DONT EXIST
-    try{
-    const client = await pool.connect();
-    await client.query(`CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), link_count INT, share_count INT);`);
-    client.release();
-    res.status(200).send();
-    } catch (err) {
-        res.status(404).send(`${err}`);
-    }
-
-});
-
 // request is incoming data, response is outgoing data
 
 app.get('/profiles', async (req, res) => { //Will get all profiles in DB
@@ -217,6 +205,7 @@ app.get('/chirps/:user_name', async (req, res) => { //Will get all chirps posted
 app.get('/chirps', async (req, res) => { //Will get all chirps in DB
     try {
         const client = await pool.connect();
+        await client.query(`CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), link_count INT, share_count INT);`);
         const result = await client.query(`SELECT * from chirps;`);
         client.release();
         res.status(200).send(result.rows);
