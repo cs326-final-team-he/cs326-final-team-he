@@ -154,7 +154,7 @@ async function add_friend(profile_json, friend_json) {
 }
 
 // On load call
-// const profileJson = await get_profile();
+const profileJson = await get_profile();
 // const friendJson = await get_profile();
 // set_profile(profileJson);
 
