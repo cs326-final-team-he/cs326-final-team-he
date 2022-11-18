@@ -157,7 +157,7 @@ async function add_friend(profile_json, friend_json) {
 // const profileJson = await get_profile();
 // const friendJson = await get_profile();
 
-const profielJson = {
+const profileJson = {
     user_name : "Stanley",
     user_id : "user00",
     spotify_account : "stanleya0820",
