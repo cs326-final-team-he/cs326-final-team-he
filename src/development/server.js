@@ -198,7 +198,7 @@ app.get('/Chips/:user_name', async (req, res) => { //Will get all chirps posted 
         res.status(200).send(result.rows);
     } catch (err) {
         res.status(404).send(`Error + ${err}`);
-   
+    }
 });
 
 app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
