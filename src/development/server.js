@@ -298,17 +298,19 @@ app.post('/createFriend', async (req, res) => {
 
 //PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER
 app.put('/putProfile', async (req, res) => {
+    console.log("In putProfile endpoint, starting try-catch");
     try {
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
             // const status = await putProfile(JSON.parse(body)); // commenting out for now
-            res.status(status);
-            if (status === 200) {
-                res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
-            } else {
-                res.send('ERROR with request');
-            }
+            // res.status(status);
+            // if (status === 200) {
+            //     res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
+            // } else {
+            //     res.send('ERROR with request');
+            // }
+            res.send("Successfully updated profile");
         });
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
