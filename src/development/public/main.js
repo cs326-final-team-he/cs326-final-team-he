@@ -168,7 +168,7 @@ async function add_friend(profile_json, friend_json) {
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
-document.getElementsByClassName("sharebox_shareButton").addEventListener('click', async () => {
+document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('click', async () => {
     const chirp = {};
     // assumes song name field doesn't exist
     chirp["user_name"] = document.getElementById("username").value;
