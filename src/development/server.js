@@ -184,7 +184,7 @@ app.get('/', async (req, res) => { // For CREATES TABLES IF THEY DONT EXIST
 app.get('/profiles', async (req, res) => { //Will get all profiles in DB
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from profiles;`);
+        const result = await client.query(`SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_type = 'BASE TABLE'`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
