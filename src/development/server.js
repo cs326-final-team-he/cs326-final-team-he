@@ -168,7 +168,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 // request is incoming data, response is outgoing data
 
-app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
+app.get('/profiles', async (req, res) => { //Will get all profiles in DB
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from profiles;`);
@@ -179,7 +179,7 @@ app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
     }
 });
 
-app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
+app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from profiles where user_id=${req.params.user_id};`);
@@ -190,7 +190,7 @@ app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based o
     }
 });
 
-app.get('/Chips/:user_name', async (req, res) => { //Will get all chirps posted by user
+app.get('/chips/:user_name', async (req, res) => { //Will get all chirps posted by user
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps where user_name=${req.params.user_name};`);
@@ -201,7 +201,7 @@ app.get('/Chips/:user_name', async (req, res) => { //Will get all chirps posted 
     }
 });
 
-app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
+app.get('/chirps', async (req, res) => { //Will get all chirps in DB
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps;`);
