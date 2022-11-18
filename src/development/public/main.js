@@ -154,9 +154,21 @@ async function add_friend(profile_json, friend_json) {
 }
 
 // On load call
-const profileJson = await get_profile();
+// const profileJson = await get_profile();
 // const friendJson = await get_profile();
-// set_profile(profileJson);
+
+const profielJson = {
+    user_name : "Stanley",
+    user_id : "user00",
+    spotify_account : "stanleya0820",
+    playlist : "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=47smL4fuRKCs7eLAAbI4Yg",
+    favorite_song : "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=35303a3e04194417",
+    favorite_genre : "J-POP",
+    favorite_artist : "ZUTOMAYO",
+    friends : "NONE"
+};
+
+set_profile(profileJson);
 
 // const feedJson = await get_feed();
 // await post_chirp(feedJson);
@@ -172,8 +184,8 @@ document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('cli
     const chirp = {};
     // assumes song name field doesn't exist
     chirp["user_name"] = document.getElementById("username").value;
-    chirp["chirp_text"] = document.getElementsByClassName("sharebox_text").value;
-    chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url").value;
+    chirp["chirp_text"] = document.getElementsByClassName("sharebox_text")[0].value;
+    chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url")[0].value;
     chirp["like_count"] = 0;
     chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
     await post_chirp(chirp); 

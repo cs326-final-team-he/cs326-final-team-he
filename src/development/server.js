@@ -302,7 +302,7 @@ app.put('/putProfile', async (req, res) => {
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
-            const status = await putProfile(JSON.parse(body));
+            // const status = await putProfile(JSON.parse(body)); // commenting out for now
             res.status(status);
             if (status === 200) {
                 res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
