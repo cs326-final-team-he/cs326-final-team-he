@@ -195,7 +195,7 @@ document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('cli
 document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
     // Parse input first
     const shared_spotify_url = document.getElementById('shared_spotify_url').value;
-    if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_song)) {
+    if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_spotify_url)) {
         // matches track/playlist spotify link 'structure'
         const shareBoxDiv = document.getElementsByClassName("shareBox");
         // Source: Spotify API Embed website. 
@@ -212,7 +212,7 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
             shareBoxDiv.appendChild(IFrameAPI);
         };
     }
-    else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(shared_song)) {
+    else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(shared_spotify_url)) {
         const shareBoxDiv = document.getElementsByClassName("shareBox");
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API

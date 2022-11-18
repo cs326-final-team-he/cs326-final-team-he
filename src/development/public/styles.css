@@ -210,6 +210,13 @@ body {
   margin-left: auto;
 }
 
+.sharebox_shareButton:hover {
+    background-color: var(--musicmatcher-background);
+    border-radius: 30px;
+    color: var(--musicmatcher-color);
+    transition: color 100ms ease-out;
+}
+
 /*Styling posts*/
 
 .post_avatar span {
