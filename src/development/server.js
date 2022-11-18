@@ -172,7 +172,7 @@ app.get('/profiles', async (req, res) => { //Will get all profiles in DB
     try {
         const client = await pool.connect();
         await client.query(`CREATE TABLE IF NOT EXISTS profiles (user_name VARCHAR(50), user_id SERIAL, spotify_account VARCHAR(50), playlist VARCHAR(100), favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
-        const result = await client.query(`SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_type = 'BASE TABLE'`);
+        const result = await client.query(`SELECT * from profiles;`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
