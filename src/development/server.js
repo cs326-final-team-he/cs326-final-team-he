@@ -77,8 +77,10 @@ const pool = new Pool( {
  * @returns: response code based on result
  */
 async function putProfile(updatedProfile) {
+    console.log("in putProfile");
     try {
         const client = await pool.connect();
+        console.log("Created client");
         const result = await client.query(`UPDATE profiles SET 
                         user_name = '${updatedProfile.user_name}',
                         user_id = '${updatedProfile.user_id}',
