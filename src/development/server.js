@@ -183,7 +183,7 @@ app.get('/profiles', async (req, res) => { //Will get all profiles in DB
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`${err}`);
     }
 });
 
@@ -194,7 +194,7 @@ app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based o
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`${err}`);
     }
 });
 
@@ -205,7 +205,7 @@ app.get('/chirps/:user_name', async (req, res) => { //Will get all chirps posted
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`${err}`);
     }
 });
 
@@ -216,7 +216,7 @@ app.get('/chirps', async (req, res) => { //Will get all chirps in DB
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`${err}`);
     }
 });
 
@@ -237,7 +237,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 
         res.status(200).send();
     } catch(err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`${err}`);
     }
 });
 
@@ -256,7 +256,7 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
         client.release();
         res.status(200).send();
     } catch (err) {
-        res.status(404).send(`Error: ${err}`);
+        res.status(404).send(`${err}`);
     }
 
 });
@@ -297,7 +297,7 @@ app.put('/putChirp', async (req, res) => {
             }
         });
     } catch (err) {
-        res.status(404).send(`Error: ${err}`);
+        res.status(404).send(`${err}`);
     }
 });
 
