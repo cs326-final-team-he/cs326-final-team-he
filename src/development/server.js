@@ -173,9 +173,9 @@ app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
         const client = await pool.connect();
         const result = await client.query(`SELECT * from profiles;`);
         client.release();
-        res.status(200).send();
+        res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send();
+        res.status(404).send(`Error + ${err}`);
     }
 });
 
@@ -184,9 +184,9 @@ app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based o
         const client = await pool.connect();
         const result = await client.query(`SELECT * from profiles where user_id=${req.params.user_id};`);
         client.release();
-        res.status(200).send();
+        res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send();
+        res.status(404).send(`Error + ${err}`);
     }
 });
 
@@ -195,10 +195,10 @@ app.get('/Chips/:user_name', async (req, res) => { //Will get all chirps posted 
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps where user_name=${req.params.user_name};`);
         client.release();
-        res.status(200).send();
+        res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send();
-    }
+        res.status(404).send(`Error + ${err}`);
+   
 });
 
 app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
@@ -206,19 +206,21 @@ app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps;`);
         client.release();
-        res.status(200).send();
+        res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send();
+        res.status(404).send(`Error + ${err}`);
     }
 });
 
 app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     try {
+        const client = await pool.connect();
+        await client.query(`CREATE TABLE IF NOT EXISTS profiles (user_name VARCHAR(50), user_id SERIAL, spotify_account VARCHAR(50), playlist VARCHAR(100), favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50);`);
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const post = JSON.parse(body);
-            const client = await pool.client();
+            const client = await pool.connect();
             const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
                             VALUES ('${post.user_name}', '${post.user_id}',
                                 '${post.spotify_account}', '${post.playlist}',
@@ -235,14 +237,14 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 
 app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     try {
-        const client = await pool.client();
-        await client.query('CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), link_count INT, share_count INT)');
+        const client = await pool.connect();
+        await client.query(`CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), link_count INT, share_count INT);`);
         client.release();
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const post = JSON.parse(body);
-            const client = await pool.client();
+            const client = await pool.connect();
             const result = await client.query(`INSERT INTO chirps (user_name, chirp_text, shared_song_name, shared_song, like_count, share_count)
                 VALUES ('${post.user_name}', '${post.chirp_text}',
                     '${post.shared_song_name}', '${post.shared_song}',
