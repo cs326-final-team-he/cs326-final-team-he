@@ -229,7 +229,7 @@ app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBOD
 app.get('/friends/:user_id', async (req, res) => { //GETS FRIENDS FOR A SPECIFIC USER
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from friends where to=${req.params.user_id};`);
+        const result = await client.query(`SELECT * from friends where user_id=${req.params.user_id};`);
         client.release();
         res.status(200).send(result.rows);
     }
