@@ -135,8 +135,6 @@ body {
   border-right: 1px solid var(--musicmatcher-background);
   min-width: fit-content;
   overflow-y: scroll;
-  -webkit-transform: scaleY(-1);
-  transform: scaleY(-1);
 }
 
 .feed_header {
@@ -225,6 +223,8 @@ body {
   align-items: flex-start;
   border-bottom: 1px solid var(--musicmatcher-background);
   padding-bottom: 10px;
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
 }
 
 .post_body img {

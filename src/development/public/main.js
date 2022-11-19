@@ -1,4 +1,4 @@
-import {CLIENT_ID, CLIENT_SECRET} from './../../../secrets.json';
+import {CLIENT_ID, CLIENT_SECRET} from './../../../secrets.json' assert {type: 'json'};
 /**
  * Gets profile asyncorhonously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
@@ -137,7 +137,7 @@ async function post_chirp(chirp_json) {
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
 
-        feed.appendChild(newPost);
+        feed.prepend(newPost);
     }
 }
 
@@ -220,6 +220,8 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
 
 //On load
 document.addEventListener("load", async function() {
+    console.log(CLIENT_ID);
+    console.log(CLIENT_SECRET);
     const authParams = {
         method: 'POST',
         headers: {
