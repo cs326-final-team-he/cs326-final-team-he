@@ -159,12 +159,12 @@ async function add_friend(profile_json, friend_json) {
 // set_profile(profileJson);
 
 // const feedJson = await get_feed();
-// await post_chirp(feedJson);
-// const addButton = document.getElementById('addButton');
-// addButton.addEventListener('click', () => {
-//     add_friend(profileJson, friendJson);
-//     console.log(profileJson.friends);
-// }); 
+await post_chirp(feedJson);
+const addButton = document.getElementById('addButton');
+addButton.addEventListener('click', () => {
+    add_friend(profileJson, friendJson);
+    console.log(profileJson.friends);
+}); 
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
@@ -183,7 +183,7 @@ document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('cli
 document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
     // Parse input first
     const shared_spotify_url = document.getElementById('shared_spotify_url').value;
-    if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_song)) {
+    if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_spotify_url)) {
         // matches track/playlist spotify link 'structure'
         const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
