@@ -217,7 +217,7 @@ app.get('/chirps', async (req, res) => { //Will get all chirps in DB
 app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
     try {
         const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS friends (TO INT, FROM INT);`);
+        await client.query(`CREATE TABLE IF NOT EXISTS friends (to INT, from INT);`);
         const result = await client.query(`SELECT * from friends;`);
         client.release();
         res.status(200).send(result.rows);
@@ -229,7 +229,7 @@ app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBOD
 app.get('/friends/:user_id', async (req, res) => { //GETS FRIENDS FOR A SPECIFIC USER
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from friends where TO=${req.params.user_id};`);
+        const result = await client.query(`SELECT * from friends where to=${req.params.user_id};`);
         client.release();
         res.status(200).send(result.rows);
     }
