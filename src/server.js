@@ -17,53 +17,6 @@ const pool = new Pool( {
  * We will be adding APIs on server side here
  */
 
-/**
- * CREATE ENDPOINT
- */
-/**
- * Will create and store profile data regarding the user and add it to the database
- * @param {JSON[]} profileDB: database of profiles
- * @param {number} id: id of profile that is being created
- * @param {string} user_name: username for profile that is being created
- * @param {string} favorite_song: favorite song for new profile being created 
- * @param {string} favorite_genre: favorite genre for new profile being created 
- * @param {string} favorite_artist: favorite genre for new profile being created
- * @param {string} spotify_account: link for associated spotify account
- * @param {string} playlist: link to the users's playlist
- * @param {JSON[]} friends: list of friends to be added
- */
-function createProfile(profileDB, id, user_name, favorite_song, favorite_genre, favorite_artist, spotify_account, playlist, friends){
-    const newProfileInfo = {
-        'user_name': user_name,
-        'favorite_song': favorite_song,
-        'favorite_genre': favorite_genre,
-        'favorite_artist': favorite_artist,
-        'spotify_account': spotify_account,
-        'playlist': playlist,
-        'friends': friends 
-    };
-  
-    profileDB.push({'id': id, 'json': newProfileInfo});
-}
-/** 
- * Will create and store a chirp post and add it to the database. Since nobody has seen the post yet, likes and shares will be set to 0. 
- * @param {JSON[]} chirpDB: database of chirps
- * @param {number} id: id of chirp that is being created
- * @param {string} user_name: name of person who posted the chirp
- * @param {string} shared_song_name: name of song to be shared
- * @param {string} shared_song: link of song to be shared
- */
-function createChirp(chirpDB, id, user_name, shared_song_name, shared_song){
-    const newChirpInfo = {
-        'user_name': user_name,
-        'shared_song_name': shared_song_name,
-        'shared_song': shared_song,
-        'like_count': 0,
-        'share_count': 0
-    };
-    
-    chirpDB.push({'id': id, 'json': newChirpInfo});
-}
 
 /**
  * UPDATE ENDPOINT
@@ -223,7 +176,9 @@ app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
 app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     try {
         const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS profiles (user_name VARCHAR(50), user_id SERIAL, spotify_account VARCHAR(50), playlist VARCHAR(100), favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50);`);
+        await client.query(`CREATE TABLE IF NOT EXISTS profiles 
+            (user_name VARCHAR(50), user_id SERIAL, spotify_account VARCHAR(50), playlist VARCHAR(100), 
+            favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
@@ -233,7 +188,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
                             VALUES ('${post.user_name}', '${post.user_id}',
                                 '${post.spotify_account}', '${post.playlist}',
                                 '${post.favorite_song}', '${post.favorite_genre}',
-                                '${post.favorite_artist}')`);
+                                '${post.favorite_artist}');`);
             client.release();
         });
 
@@ -246,7 +201,8 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     try {
         const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
+        await client.query(`CREATE TABLE IF NOT EXISTS chirps 
+            (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
         client.release();
         let body = '';
         req.on('data', data => body += data);
