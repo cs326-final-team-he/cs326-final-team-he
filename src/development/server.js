@@ -302,15 +302,13 @@ app.put('/putProfile', async (req, res) => {
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
-            res.send("Finished");
-            // res.send(body);
-            // const status = await putProfile(JSON.parse(body));
-            // res.status(status);
-            // if (status === 200) {
-            //     res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
-            // } else {
-            //     res.send('ERROR with request');
-            // }
+            const status = await putProfile(JSON.parse(body));
+            res.status(status);
+            if (status === 200) {
+                res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
+            } else {
+                res.send('ERROR with request');
+            }
         });
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
