@@ -136,7 +136,7 @@ async function post_chirp(chirp_json) {
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
 
-        feed.prepend(newPost);
+        feed.appendChild(newPost);
     }
 }
 
@@ -164,11 +164,12 @@ addButton.addEventListener('click', () => {
 document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('click', async () => {
     const chirp = {};
     // assumes song name field doesn't exist
-    chirp["user_name"] = document.getElementById("username").value;
-    chirp["chirp_text"] = document.getElementsByClassName("sharebox_text")[0].value;
-    chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url")[0].value;
+    chirp["user_name"] = document.getElementById("username").textContent;
+    chirp["chirp_text"] = document.getElementById("sharebox_text").value;
+    chirp["shared_song"] = document.getElementById("shared_spotify_url").value;
     chirp["like_count"] = 0;
     chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
+    console.log(chirp);
     await post_chirp(chirp); 
 });
 
