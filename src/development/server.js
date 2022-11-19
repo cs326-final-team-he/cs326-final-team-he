@@ -77,10 +77,8 @@ const pool = new Pool( {
  * @returns: response code based on result
  */
 async function putProfile(updatedProfile) {
-    console.log("in putProfile");
     try {
         const client = await pool.connect();
-        console.log("Created client");
         const result = await client.query(`UPDATE profiles SET 
                         user_name = '${updatedProfile.user_name}',
                         user_id = '${updatedProfile.user_id}',
@@ -193,7 +191,7 @@ app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based o
     }
 });
 
-app.get('/chips/:user_name', async (req, res) => { //Will get all chirps posted by user
+app.get('/chirps/:user_name', async (req, res) => { //Will get all chirps posted by user
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps where user_name=${req.params.user_name};`);
@@ -304,14 +302,13 @@ app.put('/putProfile', async (req, res) => {
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
-            let status = await putProfile(JSON.parse(body)); 
+            const status = await putProfile(JSON.parse(body));
             res.status(status);
             if (status === 200) {
                 res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
             } else {
                 res.send('ERROR with request');
             }
-            res.send("Successfully updated profile");
         });
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
