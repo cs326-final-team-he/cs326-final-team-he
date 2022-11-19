@@ -155,8 +155,7 @@ async function add_friend(profile_json, friend_json) {
 
 // On load call
 // const profileJson = await get_profile();
-// // const friendJson = await get_profile();
-
+// const friendJson = await get_profile();
 const profileJson = {
     user_name : "Stanley",
     user_id : "user00",
@@ -168,27 +167,15 @@ const profileJson = {
     friends : "NONE"
 };
 
-
-// const profileJson = {
-//     user_name : "Stanley",
-//     user_id : "user00",
-//     spotify_account : "stanleya0820",
-//     playlist : "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=47smL4fuRKCs7eLAAbI4Yg",
-//     favorite_song : "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=35303a3e04194417",
-//     favorite_genre : "J-POP",
-//     favorite_artist : "ZUTOMAYO",
-//     friends : "NONE"
-// };
-
 set_profile(profileJson);
 
-// // const feedJson = await get_feed();
-// // await post_chirp(feedJson);
-// const addButton = document.getElementById('addButton');
-// addButton.addEventListener('click', () => {
-//     add_friend(profileJson, friendJson);
-//     console.log(profileJson.friends);
-// }); 
+// const feedJson = await get_feed();
+// await post_chirp(feedJson);
+const addButton = document.getElementById('addButton');
+addButton.addEventListener('click', () => {
+    add_friend(profileJson, friendJson);
+    console.log(profileJson.friends);
+}); 
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
@@ -209,7 +196,7 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
     const shared_spotify_url = document.getElementById('shared_spotify_url').value;
     if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_spotify_url)) {
         // matches track/playlist spotify link 'structure'
-        const shareBoxDiv = document.getElementsByClassName("shareBox");
+        const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
@@ -225,7 +212,7 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         };
     }
     else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(shared_spotify_url)) {
-        const shareBoxDiv = document.getElementsByClassName("shareBox");
+        const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
