@@ -104,7 +104,6 @@ async function putChirp(updatedChirp) {
         const result = await client.query(`UPDATE profiles SET 
                         user_name = '${updatedChirp.user_name}',
                         chirp_text = '${updatedChirp.chirp_text}',
-                        shared_song_name = '${updatedChirp.shared_song_name}',
                         shared_song = '${updatedChirp.shared_song}',
                         like_count = '${updatedChirp.like_count}', 
                         share_count = '${updatedChirp.share_count}';`);
@@ -247,17 +246,17 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     try {
         const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), like_count INT, share_count INT);`);
+        await client.query(`CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
         client.release();
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const post = JSON.parse(body);
             const client = await pool.connect();
-            const result = await client.query(`INSERT INTO chirps (user_name, chirp_text, shared_song_name, shared_song, like_count, share_count)
+            const result = await client.query(`INSERT INTO chirps (user_name, chirp_text, shared_song, like_count, share_count)
                 VALUES ('${post.user_name}', '${post.chirp_text}',
-                    '${post.shared_song_name}', '${post.shared_song}',
-                    '${post.like_count}', '${post.share_count}')`);
+                    '${post.shared_song}',
+                    '${post.like_count}', '${post.share_count}');`);
         });
         client.release();
         res.status(200).send();
