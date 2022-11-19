@@ -155,6 +155,7 @@ async function add_friend(profile_json, friend_json) {
 
 // On load call
 // const profileJson = await get_profile();
+await get_profile(); // create table
 // const friendJson = await get_profile();
 const profileJson = {
     user_name : "Stanley",
