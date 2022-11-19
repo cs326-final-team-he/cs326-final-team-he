@@ -302,7 +302,7 @@ app.put('/putProfile', async (req, res) => {
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
-            res.send(body);
+            // res.send(body);
             // const status = await putProfile(JSON.parse(body));
             // res.status(status);
             // if (status === 200) {
