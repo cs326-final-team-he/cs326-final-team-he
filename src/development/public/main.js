@@ -152,16 +152,76 @@ async function add_friend(profile_json, friend_json) {
     }
     await set_profile(profile_json);
 }
-// On load call
-const profileJson = await get_profile();
-const friendJson = await get_profile();
-set_profile(profileJson);
 
-const feedJson = await get_feed();
-post_chirp(feedJson);
-const addButton = document.getElementById('addButton');
-addButton.addEventListener('click', () => {
-    add_friend(profileJson, friendJson);
-    console.log(profileJson.friends);
+// On load call
+// const profileJson = await get_profile();
+// const friendJson = await get_profile();
+// set_profile(profileJson);
+
+// const feedJson = await get_feed();
+// await post_chirp(feedJson);
+// const addButton = document.getElementById('addButton');
+// addButton.addEventListener('click', () => {
+//     add_friend(profileJson, friendJson);
+//     console.log(profileJson.friends);
+// }); 
+// Basic app functionalities
+
+// When 'share!' button is clicked the chirp should be posted on feed
+document.getElementsByClassName("sharebox_shareButton").addEventListener('click', async () => {
+    const chirp = {};
+    // assumes song name field doesn't exist
+    chirp["user_name"] = document.getElementById("username").value;
+    chirp["chirp_text"] = document.getElementsByClassName("sharebox_text").value;
+    chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url").value;
+    chirp["like_count"] = 0;
+    chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
+    await post_chirp(chirp); 
 });
+
+// Automatically converts to embedded spotify playable when spotify url put in
+document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
+    // Parse input first
+    const shared_spotify_url = document.getElementById('shared_spotify_url').value;
+    if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_song)) {
+        // matches track/playlist spotify link 'structure'
+        const shareBoxDiv = document.getElementsByClassName("shareBox");
+        // Source: Spotify API Embed website. 
+        // If this doesn't work we can try using oEmbded API
+        window.onSpotifyIframeApiReady = (IFrameAPI) => {
+            let element = document.getElementById('embed-iframe');
+            let options = {
+                uri: 'spotify:track:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of song
+              };
+            let callback = (EmbedController) => {};
+            IFrameAPI.createController(element, options, callback);
+            // if this creates div element then append that
+            //TODO: Add check here so don't add more than one
+            shareBoxDiv.appendChild(IFrameAPI);
+        };
+    }
+    else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(shared_song)) {
+        const shareBoxDiv = document.getElementsByClassName("shareBox");
+        // Source: Spotify API Embed website. 
+        // If this doesn't work we can try using oEmbded API
+        window.onSpotifyIframeApiReady = (IFrameAPI) => {
+            let element = document.getElementById('embed-iframe');
+            let options = {
+                uri: 'spotify:playlist:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of playlist
+              };
+            let callback = (EmbedController) => {};
+            IFrameAPI.createController(element, options, callback);
+            // if this creates div element then append that
+            //TODO: Add check here so don't add more than one
+            shareBoxDiv.appendChild(IFrameAPI);
+        };
+    }
+    else {
+        // throw error, url doesn't match format
+        alert("Spotify song/playlist url is invalid. Please enter a valid url!");
+
+        //TODO: Somehow handle case for when the specific song with id cannot be found
+    }
+});
+
 console.log("FINISHED LOADING");
