@@ -1,4 +1,4 @@
-import {CLIENT_ID, CLIENT_SECRET} from './secrets.json' assert {type: 'json'};
+const  {CLIENT_ID, CLIENT_SECRET} = require('./secrets.json');
 const path = require('path');
 const express = require('express');
 
