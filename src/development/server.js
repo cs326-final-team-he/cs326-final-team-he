@@ -79,16 +79,17 @@ const pool = new Pool( {
 async function putProfile(updatedProfile) {
     try {
         const client = await pool.connect();
-        const result = await client.query(`UPDATE profiles SET 
-                        user_name = '${updatedProfile.user_name}',
-                        user_id = '${updatedProfile.user_id}',
-                        spotify_account = '${updatedProfile.spotify_account}',
-                        playlist = '${updatedProfile.playlist}',
-                        favorite_song = '${updatedProfile.favorite_song}', 
-                        favorite_genre = '${updatedProfile.favorite_genre}',
-                        favorite_artist = '${updatedProfile.favorite_artist}', 
-                        friends = '${updatedProfile.friends}'
-                        WHERE user_id = '${updatedProfile.user_id}';`);
+        await client.query("SELECT * FROM profiles;"); // test SQL
+        // const result = await client.query(`UPDATE profiles SET 
+        //                 user_name = '${updatedProfile.user_name}',
+        //                 user_id = '${updatedProfile.user_id}',
+        //                 spotify_account = '${updatedProfile.spotify_account}',
+        //                 playlist = '${updatedProfile.playlist}',
+        //                 favorite_song = '${updatedProfile.favorite_song}', 
+        //                 favorite_genre = '${updatedProfile.favorite_genre}',
+        //                 favorite_artist = '${updatedProfile.favorite_artist}', 
+        //                 friends = '${updatedProfile.friends}'
+        //                 WHERE user_id = '${updatedProfile.user_id}';`);
         client.release();
         return 200;
     } catch (err) {
