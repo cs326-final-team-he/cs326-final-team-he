@@ -1,4 +1,7 @@
-const  {CLIENT_ID, CLIENT_SECRET} = require('./secrets.json');
+const secrets = require('./secrets.json');
+const CLIENT_ID = secrets.CLIENT_ID;
+const CLIENT_SECRET = secrets.CLIENT_SECRET
+
 const path = require('path');
 const express = require('express');
 
@@ -211,8 +214,6 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 //on server startup
 app.get('/', async (req, res) => {
-    console.log(CLIENT_ID);
-    console.log(CLIENT_SECRET);
     const authParams = {
         method: 'POST',
         headers: {
@@ -222,7 +223,7 @@ app.get('/', async (req, res) => {
     }
     const result = await fetch('https://acounts.spotify.com/api/token', authParams);
     const json = result.json();
-    console.log(data);
+    console.log(json);
     res.send(200);
 });
 

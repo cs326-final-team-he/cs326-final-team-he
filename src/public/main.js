@@ -1,3 +1,4 @@
+const  {CLIENT_ID, CLIENT_SECRET} = require('../secrets.json');
 /**
  * Gets profile asyncorhonously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
