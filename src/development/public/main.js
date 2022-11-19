@@ -31,11 +31,9 @@ async function get_feed() {
  */
 async function set_profile(profile_json) {
     // Update User in DB
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, {method: 'PUT', headers: {'Content-Type' : 'application/json;charset=utf-8'}, body: JSON.stringify(profile_json)});
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, {method: 'POST', headers: {'Content-Type' : 'application/json;charset=utf-8'}, body: JSON.stringify(profile_json)});
     if (response.ok) {
         //if went thru, update in front end
-
-        console.log("Set profile went thorugh");
 
         document.getElementById('username').innerHTML = profile_json.user_name;
         document.getElementById('uid').innerHTML = profile_json.user_id;
