@@ -214,6 +214,29 @@ app.get('/chirps', async (req, res) => { //Will get all chirps in DB
     }
 });
 
+app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
+    try {
+        const client = await pool.connect();
+        await client.query(`CREATE TABLE IF NOT EXISTS friends (TO INT, FROM INT);`);
+        const result = await client.query(`SELECT * from friends;`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send(`${err}`)
+    }
+});
+
+app.get('/friends/:user_id', async (req, res) => { //GETS FRIENDS FOR A SPECIFIC USER
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from friends where TO=${req.params.user_id};`);
+        client.release();
+        res.status(200).send(result.rows);
+    }
+    catch(err) {
+        res.status(404).send(`${err}`);
+    }
+});
 app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     try {
         let body = '';
@@ -253,6 +276,22 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
         res.status(404).send(`${err}`);
     }
 
+});
+
+app.post('/createFriend', async (req, res) => {
+    try {
+        let body = ' ';
+        req.on('data', data => body += data);
+        req.on('end', async () => {
+            const post = JSON.parse(body);
+            const client = await pool.connect();
+            const result = await client.query(`INSERT INTO friends (user_id, friend_id)
+                VALUES ('${post.user_id}', '${post.friend_id}');`);
+        });
+    }
+    catch (err) {
+        res.status(404).send(`${err}`)
+    }
 });
 
 
