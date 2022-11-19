@@ -168,12 +168,12 @@ async function add_friend(profile_json, friend_json) {
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
-document.getElementsByClassName("sharebox_shareButton").addEventListener('click', async () => {
+document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('click', async () => {
     const chirp = {};
     // assumes song name field doesn't exist
     chirp["user_name"] = document.getElementById("username").value;
-    chirp["chirp_text"] = document.getElementsByClassName("sharebox_text").value;
-    chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url").value;
+    chirp["chirp_text"] = document.getElementsByClassName("sharebox_text")[0].value;
+    chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url")[0].value;
     chirp["like_count"] = 0;
     chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
     await post_chirp(chirp); 
@@ -185,7 +185,7 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
     const shared_spotify_url = document.getElementById('shared_spotify_url').value;
     if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_song)) {
         // matches track/playlist spotify link 'structure'
-        const shareBoxDiv = document.getElementsByClassName("shareBox");
+        const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
@@ -201,7 +201,7 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         };
     }
     else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(shared_song)) {
-        const shareBoxDiv = document.getElementsByClassName("shareBox");
+        const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
