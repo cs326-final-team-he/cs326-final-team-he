@@ -171,7 +171,9 @@ const profileJson = {
     friends : []
 };
 
-set_profile(profileJson);
+await set_profile(profileJson);
+
+console.log("Successfully set profile");
 
 // const feedJson = await get_feed();
 // await post_chirp(feedJson);
