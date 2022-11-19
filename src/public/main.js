@@ -70,7 +70,7 @@ async function post_chirp(chirp_json) {
     // Right now we update using the ids of specific fields but that really isn't scalable for chirps and friends list. 
     // Need to figure out a way to efficiently update the fields
     const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
-    if (response.ok) {
+    if (response.ok && response.status !== 404) {
         const feed = document.getElementById('feed');
         //post_avatar portion
         const newPost = document.createElement('div');
@@ -138,6 +138,9 @@ async function post_chirp(chirp_json) {
         newPost.appendChild(post_body);
 
         feed.appendChild(newPost);
+    } else {
+        const err = await response.text();
+        console.log(err)
     }
 }
 
@@ -154,27 +157,6 @@ async function add_friend(profile_json, friend_json) {
     await set_profile(profile_json);
 }
 
-// On load call
-// const profileJson = await get_profile();
-await get_profile(); // create table
-// const friendJson = await get_profile();
-const profileJson = {
-    user_name : "Stanley",
-    user_id : "user00",
-    spotify_account : "stanleya0820",
-    playlist : "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=47smL4fuRKCs7eLAAbI4Yg",
-    favorite_song : "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=35303a3e04194417",
-    favorite_genre : "J-POP",
-    favorite_artist : "ZUTOMAYO",
-    friends : []
-};
-
-await set_profile(profileJson);
-
-console.log("Successfully set profile");
-
-// const feedJson = await get_feed();
-// await post_chirp(feedJson);
 const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
     add_friend(profileJson, friendJson);
@@ -191,6 +173,7 @@ document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('cli
     chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url")[0].value;
     chirp["like_count"] = 0;
     chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
+    console.log(chirp);
     await post_chirp(chirp); 
 });
 
@@ -239,4 +222,5 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
     }
 });
 
+//On load
 console.log("FINISHED LOADING");
