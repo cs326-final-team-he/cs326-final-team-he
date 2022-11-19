@@ -306,11 +306,11 @@ app.put('/putProfile', async (req, res) => {
         req.on('end', async () =>{
             let status = await putProfile(JSON.parse(body)); 
             res.status(status);
-            // if (status === 200) {
-            //     res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
-            // } else {
-            //     res.send('ERROR with request');
-            // }
+            if (status === 200) {
+                res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
+            } else {
+                res.send('ERROR with request');
+            }
             res.send("Successfully updated profile");
         });
     } catch (err) {

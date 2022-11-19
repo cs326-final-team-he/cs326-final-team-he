@@ -154,7 +154,7 @@ async function add_friend(profile_json, friend_json) {
 }
 
 // On load call
-// // const profileJson = await get_profile();
+// const profileJson = await get_profile();
 // // const friendJson = await get_profile();
 
 const profileJson = {
@@ -169,16 +169,16 @@ const profileJson = {
 };
 
 
-const profileJson = {
-    user_name : "Stanley",
-    user_id : "user00",
-    spotify_account : "stanleya0820",
-    playlist : "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=47smL4fuRKCs7eLAAbI4Yg",
-    favorite_song : "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=35303a3e04194417",
-    favorite_genre : "J-POP",
-    favorite_artist : "ZUTOMAYO",
-    friends : "NONE"
-};
+// const profileJson = {
+//     user_name : "Stanley",
+//     user_id : "user00",
+//     spotify_account : "stanleya0820",
+//     playlist : "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=47smL4fuRKCs7eLAAbI4Yg",
+//     favorite_song : "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=35303a3e04194417",
+//     favorite_genre : "J-POP",
+//     favorite_artist : "ZUTOMAYO",
+//     friends : "NONE"
+// };
 
 set_profile(profileJson);
 
