@@ -1,5 +1,4 @@
-// const fetch = (...args) =>
-// 	import('node-fetch').then(({default: fetch}) => fetch(...args));
+import {CLIENT_ID, CLIENT_SECRET} from './secrets.json' assert {type: 'json'};
 const path = require('path');
 const express = require('express');
 
@@ -210,7 +209,22 @@ async function deleteProfile(id) {
 app.use(express.json()); // Middleware allows us to use JSON
 app.use(express.static(path.join(__dirname, "/public")));
 
-// request is incoming data, response is outgoing data
+//on server startup
+app.get('/', async (req, res) => {
+    console.log(CLIENT_ID);
+    console.log(CLIENT_SECRET);
+    const authParams = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'grand_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET 
+    }
+    const result = await fetch('https://acounts.spotify.com/api/token', authParams);
+    const json = result.json();
+    console.log(data);
+    res.send(200);
+});
 
 app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
     try {
@@ -300,11 +314,6 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
         res.status(404).send(`Error: ${err}`);
     }
 
-});
-
-
-app.put('/', (req, res) => { // For UPDATE
-    res.send("Got a PUT request at /");
 });
 
 //PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER

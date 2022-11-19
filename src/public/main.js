@@ -1,4 +1,3 @@
-import {CLIENT_ID, CLIENT_SECRET} from '../secrets.json' assert {type: 'json'};
 /**
  * Gets profile asyncorhonously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
@@ -219,18 +218,4 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
 });
 
 //On load
-document.addEventListener("load", async function() {
-    console.log(CLIENT_ID);
-    console.log(CLIENT_SECRET);
-    const authParams = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'grand_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET 
-    }
-    const result = await fetch('https://acounts.spotify.com/api/token', authParams);
-    const json = result.json();
-    console.log(data);
-})
 console.log("FINISHED LOADING");
