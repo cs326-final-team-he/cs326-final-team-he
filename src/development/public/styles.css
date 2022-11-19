@@ -135,6 +135,8 @@ body {
   border-right: 1px solid var(--musicmatcher-background);
   min-width: fit-content;
   overflow-y: scroll;
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
 }
 
 .feed_header {

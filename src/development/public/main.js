@@ -1,3 +1,4 @@
+import {CLIENT_ID, CLIENT_SECRET} from './../../../secrets.json';
 /**
  * Gets profile asyncorhonously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
@@ -153,13 +154,6 @@ async function add_friend(profile_json, friend_json) {
     await set_profile(profile_json);
 }
 
-// On load call
-// const profileJson = await get_profile();
-// const friendJson = await get_profile();
-// set_profile(profileJson);
-
-// const feedJson = await get_feed();
-await post_chirp(feedJson);
 const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
     add_friend(profileJson, friendJson);
@@ -224,4 +218,17 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
     }
 });
 
+//On load
+document.addEventListener("load", async function() {
+    const authParams = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'grand_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET 
+    }
+    const result = await fetch('https://acounts.spotify.com/api/token', authParams);
+    const json = result.json();
+    console.log(data);
+})
 console.log("FINISHED LOADING");
