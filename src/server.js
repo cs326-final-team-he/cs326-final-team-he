@@ -213,8 +213,8 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
                 VALUES ('${post.user_name}', '${post.chirp_text}',
                     '${post.shared_song}',
                     '${post.like_count}', '${post.share_count}');`);
+            client.release();
         });
-        client.release();
         res.status(200).send();
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
