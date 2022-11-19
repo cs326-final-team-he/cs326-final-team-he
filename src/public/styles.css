@@ -223,8 +223,6 @@ body {
   align-items: flex-start;
   border-bottom: 1px solid var(--musicmatcher-background);
   padding-bottom: 10px;
-  -webkit-transform: scaleY(-1);
-  transform: scaleY(-1);
 }
 
 .post_body img {

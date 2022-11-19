@@ -1,4 +1,4 @@
-import {CLIENT_ID, CLIENT_SECRET} from './../../../secrets.json' assert {type: 'json'};
+import {CLIENT_ID, CLIENT_SECRET} from '../secrets.json' assert {type: 'json'};
 /**
  * Gets profile asyncorhonously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
