@@ -1,4 +1,4 @@
-const secrets = require('./secrets.json');
+// const secrets = require('./secrets.json');
 const CLIENT_ID = secrets.CLIENT_ID;
 const CLIENT_SECRET = secrets.CLIENT_SECRET
 
@@ -64,55 +64,6 @@ function createChirp(chirpDB, id, user_name, shared_song_name, shared_song){
     
     chirpDB.push({'id': id, 'json': newChirpInfo});
 }
-
-
-/**
- * READ ENDPOINT
- */
-
-
-// /**
-//  * Reads profile data of the user
-//  * Used generally to retreive data regarding the user
-//  * @return {JSON} Returns json object
-//  */
-// function getProfile() {
-//     return {
-//         user_name: faker.faker.name.fullName(),
-//         user_id: faker.faker.datatype.uuid(),
-//         spotify_account: faker.faker.internet.domainName(),
-//         playlist: faker.faker.internet.domainName(),
-//         favorite_song: faker.faker.music.songName(),
-//         favorite_genre: faker.faker.music.genre(),
-//         favorite_artist: faker.faker.name.fullName(),
-//         friends: [
-//             {
-//                 user_name: faker.faker.name.fullName(),
-//                 user_id: faker.faker.datatype.uuid(),
-//                 favorite_song: faker.faker.music.songName(),
-//                 recent_shared: {
-//                     shared_song: faker.faker.music.songName()
-//                 }
-//             }
-//         ],
-//     };
-// }
-
-// /**
-//  * Reads a specific chirp whenever it is clicked on for more information by a user
-//  * @return {JSON} Returns json object containing data like content, shared music, like count, comments
-//  */
-// function getChirp() {
-//     return {
-//         user_name: faker.faker.name.fullName(),
-//         chirp_text: faker.faker.lorem.paragraph(2),
-//         shared_song_name: faker.faker.music.songName(),
-//         shared_song: faker.faker.internet.domainName(),
-//         like_count: faker.faker.datatype.number(1000),
-//         share_count: faker.faker.datatype.number(1000)
-//     };
-// }
-
 
 /**
  * UPDATE ENDPOINT
@@ -213,19 +164,18 @@ app.use(express.json()); // Middleware allows us to use JSON
 app.use(express.static(path.join(__dirname, "/public")));
 
 //on server startup
-app.get('/', async (req, res) => {
-    const authParams = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'grand_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET 
-    }
-    const result = await fetch('https://acounts.spotify.com/api/token', authParams);
-    const json = result.json();
-    console.log(json);
-    res.send(200);
-});
+// app.get('/', async (req, res) => {
+//     const authParams = {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/x-www-form-urlencoded'
+//         },
+//         body: 'grand_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET 
+//     }
+//     const result = await fetch('https://acounts.spotify.com/api/token', authParams);
+//     const json = result.json();
+//     res.status(200).send(json);
+// });
 
 app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
     try {
