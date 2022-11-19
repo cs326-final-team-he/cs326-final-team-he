@@ -34,6 +34,9 @@ async function set_profile(profile_json) {
     const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, {method: 'PUT', headers: {'Content-Type' : 'application/json;charset=utf-8'}, body: JSON.stringify(profile_json)});
     if (response.ok) {
         //if went thru, update in front end
+
+        console.log("Set profile went thorugh");
+
         document.getElementById('username').innerHTML = profile_json.user_name;
         document.getElementById('uid').innerHTML = profile_json.user_id;
         document.getElementById('spotify_id').innerHTML = profile_json.spotify_account;
@@ -165,7 +168,7 @@ const profileJson = {
     favorite_song : "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=35303a3e04194417",
     favorite_genre : "J-POP",
     favorite_artist : "ZUTOMAYO",
-    friends : "NONE"
+    friends : []
 };
 
 set_profile(profileJson);
