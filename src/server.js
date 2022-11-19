@@ -199,7 +199,7 @@ app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based o
     }
 });
 
-app.get('/Chips/:user_name', async (req, res) => { //Will get all chirps posted by user
+app.get('/Chirps/:user_name', async (req, res) => { //Will get all chirps posted by user
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps where user_name=${req.params.user_name};`);

@@ -69,7 +69,7 @@ async function post_chirp(chirp_json) {
     // Right now we update using the ids of specific fields but that really isn't scalable for chirps and friends list. 
     // Need to figure out a way to efficiently update the fields
     const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
-    if (response.ok) {
+    if (response.ok && response.status !== 404) {
         const feed = document.getElementById('feed');
         //post_avatar portion
         const newPost = document.createElement('div');
@@ -137,6 +137,9 @@ async function post_chirp(chirp_json) {
         newPost.appendChild(post_body);
 
         feed.appendChild(newPost);
+    } else {
+        const err = await response.text();
+        console.log(err)
     }
 }
 
