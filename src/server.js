@@ -247,7 +247,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     try {
         const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), link_count INT, share_count INT);`);
+        await client.query(`CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), like_count INT, share_count INT);`);
         client.release();
         let body = '';
         req.on('data', data => body += data);
