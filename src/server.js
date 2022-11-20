@@ -151,9 +151,6 @@ app.get('/loadFeed', async (req, res) => {
         await client.query(`CREATE TABLE IF NOT EXISTS chirps 
             (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
 
-        // Want to try and drop profiles table once
-        await client.query('DROP TABLE profiles;');
-
         await client.query(`CREATE TABLE IF NOT EXISTS profiles 
             (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
             favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
