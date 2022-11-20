@@ -62,6 +62,14 @@ async function set_profile(profile_json) {
 }
 
 /**
+ * @param {JSON} chirp_json JSON object containing chirp information to update chirps table with 
+ */ 
+async function update_chirp_db(chirp_json) {
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
+    return response;
+}
+
+/**
  * Programatically creates a new chirp based off the given chirp_json
  * @TODO : need to integrate with spotify api for playing music
  * @param {JSON} chirp_json 
@@ -70,9 +78,8 @@ async function post_chirp(chirp_json) {
     // Need to set up the feed
     // Right now we update using the ids of specific fields but that really isn't scalable for chirps and friends list. 
     // Need to figure out a way to efficiently update the fields
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
+    
     if (response.ok && response.status !== 404) {
-        console.log("POST_CHIRP ADDING TO FEED");
         const feed = document.getElementById('feed');
         //post_avatar portion
         const newPost = document.createElement('div');
@@ -139,8 +146,6 @@ async function post_chirp(chirp_json) {
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
 
-        console.log("Running field.appendChild(newPost)");
-
         feed.appendChild(newPost);
     } else {
         const err = await response.text();
@@ -175,7 +180,8 @@ async function post_chirp_wrapper() {
     // chirp["like_count"] = 0;
     // chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
     console.log(chirp);
-    await post_chirp(chirp); 
+    const response = await update_chirp_db(chirp); // Separating out updating chirp and posting chirp
+    await post_chirp(response); 
     alert("Posting chirp");
 }
 
@@ -243,8 +249,14 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
 const response = await fetch(`https://music-matcher-326.herokuapp.com/loadFeed`);
 
 if (response.ok) {
-    const chirpsJson = await response.json();
-    console.log(chirpsJson);
+    const chirpsJsonArr = await response.json();
+    console.log(chirpsJsonArr);
+    
+    // Update the feed
+    for (let i = 0; i < chirpsJsonArr.length; i++) {
+        await post_chirp(chirpsJsonArr[i]);
+    }
+    
 }
 
 // Try setting profile
