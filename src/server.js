@@ -218,7 +218,7 @@ app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
     }
 });
 
-app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
+app.get('/Friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
     try {
         const client = await pool.connect();
         await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id INT, friend_id INT);`);
@@ -281,6 +281,7 @@ app.post('/createFriend', async (req, res) => {
             const result = await client.query(`INSERT INTO friends (user_id, friend_id)
                 VALUES ('${post.user_id}', '${post.friend_id}');`);
         });
+        res.status(200).send();
     }
     catch (err) {
         res.status(404).send(`${err}`)
