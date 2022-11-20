@@ -31,7 +31,7 @@ async function get_feed() {
  */
 async function set_profile(profile_json) {
     // Update User in DB
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, {method: 'PUT', body: profile_json});
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, {method: 'PUT', headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify(profile_json)});
     if (response.ok) {
         //if went thru, update in front end
 
