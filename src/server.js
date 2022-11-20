@@ -305,6 +305,7 @@ app.post('/createFriend', async (req, res) => {
             const result = await client.query(`INSERT INTO friends (user_id, friend_id)
                 VALUES ('${post.user_id}', '${post.friend_id}');`);
         });
+        res.status(200).send();
     }
     catch (err) {
         res.status(404).send(`${err}`)
