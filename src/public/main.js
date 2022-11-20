@@ -146,7 +146,14 @@ async function post_chirp(chirp_json) {
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
 
-        feed.appendChild(newPost);
+        // Check if feed child Node list length > 3(basically contains an existing chirp). If so, use insertBefore(), else, use appendCHild()
+        if (feed.children.length < 3) {
+            // Only contains header and sharebox
+            feed.appendChild(newPost);
+        }
+        else {
+            feed.insertBefore(newPost, feed.children[2]);
+        }
     } else {
         const err = await response.text();
         console.log(err)
@@ -253,7 +260,7 @@ if (response.ok) {
     console.log(chirpsJsonArr);
     
     // Update the feed
-    for (let i = 0; i < chirpsJsonArr.length; i++) {
+    for (let i = chirpsJsonArr.length-1; i >= 0; i--) {
         await post_chirp(chirpsJsonArr[i]);
     }
     
