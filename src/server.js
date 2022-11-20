@@ -31,23 +31,17 @@ async function putProfile(updatedProfile) {
         const client = await pool.connect();
         // Removing 'friends' field for now
 
-        // const result = await client.query(`SELECT * FROM profiles;`);
+        // const result = await client.query(`SELECT * FROM profiles;`); // test query on profile
 
-        const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
-                            VALUES ('${post.user_name}', '${post.user_id}',
-                                '${post.spotify_account}', '${post.playlist}',
-                                '${post.favorite_song}', '${post.favorite_genre}',
-                                '${post.favorite_artist}');`);
-
-        // const result = await client.query(`UPDATE profiles SET 
-        //                 user_name = '${updatedProfile.user_name}',
-        //                 user_id = '${updatedProfile.user_id}',
-        //                 spotify_account = '${updatedProfile.spotify_account}',
-        //                 playlist = '${updatedProfile.playlist}',
-        //                 favorite_song = '${updatedProfile.favorite_song}', 
-        //                 favorite_genre = '${updatedProfile.favorite_genre}',
-        //                 favorite_artist = '${updatedProfile.favorite_artist}', 
-        //                 WHERE user_id = '${updatedProfile.user_id}';`);
+        const result = await client.query(`UPDATE profiles SET 
+                        user_name = '${updatedProfile.user_name}',
+                        user_id = '${updatedProfile.user_id}',
+                        spotify_account = '${updatedProfile.spotify_account}',
+                        playlist = '${updatedProfile.playlist}',
+                        favorite_song = '${updatedProfile.favorite_song}', 
+                        favorite_genre = '${updatedProfile.favorite_genre}',
+                        favorite_artist = '${updatedProfile.favorite_artist}', 
+                        WHERE user_id = '${updatedProfile.user_id}';`);
         client.release();
         return 200;
     } catch (err) {
