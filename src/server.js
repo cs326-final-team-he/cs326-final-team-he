@@ -230,17 +230,6 @@ app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from s
     }
 });
 
-app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
-    try{
-        const client = await pool.client();
-        const result = await client.query(`SELECT * from friends where user_id=${req.params.user_id};`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err){
-        res.status(404).send(`Error + ${err}`)
-    }
-});
-
 app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
     try {
         const client = await pool.connect();
