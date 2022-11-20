@@ -274,6 +274,6 @@ const profile_json = {
 
 // console.log(profile_json);
 
-// const result = await set_profile(profile_json);
+const result = await set_profile(profile_json);
 
 console.log("FINISHED LOADING");
