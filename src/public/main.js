@@ -203,7 +203,7 @@ document.getElementById("sharebox_shareButton").addEventListener('click', () => 
 document.getElementById("sharebox_shareButton").addEventListener('click', (post_chirp_wrapper));
 
 // Automatically converts to embedded spotify playable when spotify url put in
-document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
+document.getElementById('shared_spotify_url').addEventListener("keydown", () => {
     // Parse input first
     const shared_spotify_url = document.getElementById('shared_spotify_url').value;
     if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_spotify_url)) {
