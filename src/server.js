@@ -161,6 +161,10 @@ app.get('/loadFeed', async (req, res) => {
         await client.query(`CREATE TABLE IF NOT EXISTS profiles 
             (user_name VARCHAR(50), user_id VARCHAR(50) PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
             favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
+        
+        //adding friends table as well...
+        await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
+
 
         client.release();
 
@@ -170,7 +174,7 @@ app.get('/loadFeed', async (req, res) => {
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send('Error + ${err}');
+        res.status(404).send(`Error + ${err}`);
     }
 })
 
@@ -207,6 +211,17 @@ app.get('/Chirps/:user_name', async (req, res) => { //Will get all chirps posted
     }
 });
 
+app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
+    try{
+        const client = await pool.client();
+        const result = await client.query(`SELECT * from friends where user_id=${req.params.user_id};`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err){
+        res.status(404).send(`Error + ${err}`)
+    }
+});
+
 app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
     try {
         const client = await pool.connect();
@@ -218,10 +233,9 @@ app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
     }
 });
 
-app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
+app.get('/Friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
     try {
         const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id INT, friend_id INT);`);
         const result = await client.query(`SELECT * from friends;`);
         client.release();
         res.status(200).send(result.rows);
@@ -341,6 +355,9 @@ app.delete('/deleteChirp', (req, res) => { // For DELETE
     const status = deleteChirp(user_name, chirp_text);
     res.status(status).send("Got a DELETE request for chirp");
 });
+
+//DELETE request for friends (delete friend)
+app.delete('/deleteFriend')
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
