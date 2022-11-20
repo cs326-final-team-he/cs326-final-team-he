@@ -161,16 +161,19 @@ async function post_chirp(chirp_json) {
 }
 
 async function add_friend(profile_json, friend_json) {
-    const friend =             
+    const friendConnection =             
     {
-        user_name: friend_json.user_name,
-        user_id: friend_json.user_id,
-        favorite_song: friend_json.favorite_song,
-        recent_shared: {
-            shared_song: 'WAHT IS EVEN GOING ON HAHAHAHHA'
-        }
+        user_id: profile_json.user_id,
+        friend_json: friend_json.user_id
     }
-    await set_profile(profile_json);
+    await update_friends_db(friendConnection);
+}
+
+/**
+ * Will add new friend to database
+ */
+async function update_friends_db(friendConnection) {
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend`, {method: 'POST', body: JSON.stringify(friendConnection)});
 }
 
 async function post_chirp_wrapper() {

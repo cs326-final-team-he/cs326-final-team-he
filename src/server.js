@@ -30,11 +30,9 @@ async function putProfile(updatedProfile) {
     try {
         const client = await pool.connect();
         // Removing 'friends' field for now
-
         const select_user_id_result = await client.query(`SELECT * FROM profiles;`); // test query on profile
-
         if (select_user_id_result.rowCount > 0) { // if user exists in table
-             const result = await client.query(`UPDATE profiles SET 
+             const result = await client.query(`UPDATE profiles SET
                         user_name = '${updatedProfile.user_name}',
                         user_id = '${updatedProfile.user_id}',
                         spotify_account = '${updatedProfile.spotify_account}',
@@ -229,6 +227,17 @@ app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from s
         res.status(200).send(result.rows);
     } catch (err){
         res.status(404).send(`Error: ${err}`)
+    }
+});
+
+app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
+    try{
+        const client = await pool.client();
+        const result = await client.query(`SELECT * from friends where user_id=${req.params.user_id};`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err){
+        res.status(404).send(`Error + ${err}`)
     }
 });
 
