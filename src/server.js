@@ -133,7 +133,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 // });
 
 // Test loading all tables beforehand on startup
-app.get('/', async (req, res) => {
+app.get('/loadFeed', async (req, res) => {
     try {
         const client = await pool.connect();
         // Start off with creating chirps table
@@ -142,15 +142,13 @@ app.get('/', async (req, res) => {
         client.release();
 
         // Now try loading feed
-        const feed_client = await pool.connect();
-        const result = await client.query("SELECT * FROM chirps;");
-        feed_client.release();
-        // res.send((await feed_result).rows);
+        const client_2 = await pool.connect();
+        const result = await client.query(`SELECT * from chirps;`);
+        client.release();
         res.status(200).send(result.rows);
     } catch (err) {
         res.status(404).send('Error + ${err}');
     }
-    
 })
 
 app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
