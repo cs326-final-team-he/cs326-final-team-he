@@ -215,7 +215,10 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         // If this doesn't work we can try using oEmbded API
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
             let element = document.getElementById('embed-iframe');
+            console.log("Embedding track");
             let options = {
+                width: '60%',
+                height: '200',
                 uri: 'spotify:track:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of song
               };
             let callback = (EmbedController) => {};
@@ -231,7 +234,10 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         // If this doesn't work we can try using oEmbded API
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
             let element = document.getElementById('embed-iframe');
+            console.log("Embedding playlist");
             let options = {
+                width: '60%',
+                height: '200',
                 uri: 'spotify:playlist:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of playlist
               };
             let callback = (EmbedController) => {};
@@ -261,7 +267,6 @@ if (response.ok) {
     for (let i = 0; i < chirpsJsonArr.length; i++) {
         await post_chirp(chirpsJsonArr[i]);
     }
-    
 }
 
 // Try setting profile
