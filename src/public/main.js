@@ -1,3 +1,5 @@
+import { pool } from "../server";
+
 /**
  * Gets profile asynchronously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
@@ -239,13 +241,13 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
 
 //On load
 
-const {Pool} = require('pg');
-const pool = new Pool( {
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});
+// const {Pool} = require('pg');
+// const pool = new Pool( {
+//     connectionString: process.env.DATABASE_URL,
+//     ssl: {
+//         rejectUnauthorized: false
+//     }
+// });
 
 // Trying to add create tabel statements on load
 const client = await pool.connect();
