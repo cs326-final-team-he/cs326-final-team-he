@@ -129,6 +129,7 @@ async function post_chirp(chirp_json) {
 
         const favorite = document.createElement('span');
         favorite.classList.add('material-icons');
+        favorite.classList.add('likeButton');
         favorite.innerText = 'favorite_border';
 
         const publish = document.createElement('span');
@@ -174,6 +175,7 @@ async function add_friend(profile_json, friend_json) {
  */
 async function update_friends_db(friendConnection) {
     const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend`, {method: 'POST', body: JSON.stringify(friendConnection)});
+    return response;
 }
 
 async function post_chirp_wrapper() {
