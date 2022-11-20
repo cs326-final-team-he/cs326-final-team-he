@@ -72,6 +72,7 @@ async function post_chirp(chirp_json) {
     // Need to figure out a way to efficiently update the fields
     const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
     if (response.ok && response.status !== 404) {
+        console.log("POST_CHIRP ADDING TO FEED");
         const feed = document.getElementById('feed');
         //post_avatar portion
         const newPost = document.createElement('div');
@@ -137,6 +138,8 @@ async function post_chirp(chirp_json) {
 
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
+
+        console.log("Running field.appendChild(newPost)");
 
         feed.appendChild(newPost);
     } else {
