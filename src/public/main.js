@@ -163,13 +163,17 @@ async function add_friend(profile_json, friend_json) {
 
 async function post_chirp_wrapper() {
     console.log("In post_chirp_wrapper");
-    const chirp = {};
+    const chirp = { user_name: document.getElementById("username").value, 
+                    chirp_text: document.getElementById("sharebox_text").value, 
+                    shared_song: document.getElementById("shared_spotify_url").value, 
+                    like_count: 0, 
+                    share_count: 0 };
     // assumes song name field doesn't exist
-    chirp["user_name"] = document.getElementById("username").value;
-    chirp["chirp_text"] = document.getElementsByClassName("sharebox_text")[0].value;
-    chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url")[0].value;
-    chirp["like_count"] = 0;
-    chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
+    // chirp["user_name"] = document.getElementById("username").value;
+    // chirp["chirp_text"] = document.getElementsByClassName("sharebox_text")[0].value;
+    // chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url")[0].value;
+    // chirp["like_count"] = 0;
+    // chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
     console.log(chirp);
     await post_chirp(chirp); 
     alert("Posting chirp");
