@@ -1,5 +1,5 @@
 /**
- * Gets profile asyncorhonously for a given user (no params for now)
+ * Gets profile asynchronously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
  */
  async function get_profile() {
@@ -34,29 +34,39 @@ async function set_profile(profile_json) {
     const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, {method: 'PUT', body: JSON.stringify(profile_json)});
     if (response.ok) {
         //if went thru, update in front end
+
         document.getElementById('username').innerHTML = profile_json.user_name;
         document.getElementById('uid').innerHTML = profile_json.user_id;
         document.getElementById('spotify_id').innerHTML = profile_json.spotify_account;
         document.getElementById('list').innerHTML = profile_json.playlist;
         document.getElementById('song').innerHTML = profile_json.favorite_song;
     
-        const friends = profileJson.friends;
+        // commenting out for now
+        // const friends = profile_json.friends;
         //todo: make this less ugly
-        if (friends.length > 0) {
-            document.getElementById('f1_user_name').innerHTML = profileJson.friends[0].user_name;
-            // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-            document.getElementById('f1_song').innerHTML = profileJson.friends[0].favorite_song;        
-        } if (friends.length > 1) {
-            document.getElementById('f2_user_name').innerHTML = profileJson.friends[1].user_name;
-            // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-            document.getElementById('f2_song').innerHTML = profileJson.friends[1].favorite_song;
-        } if (friends.length > 2) {
-            document.getElementById('f3_user_name').innerHTML = profileJson.friends[2].user_name;
-            // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-            document.getElementById('f3_song').innerHTML = profileJson.friends[2].favorite_song;
-        }
+        // if (friends.length > 0) {
+        //     document.getElementById('f1_user_name').innerHTML = profileJson.friends[0].user_name;
+        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
+        //     document.getElementById('f1_song').innerHTML = profileJson.friends[0].favorite_song;        
+        // } if (friends.length > 1) {
+        //     document.getElementById('f2_user_name').innerHTML = profileJson.friends[1].user_name;
+        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
+        //     document.getElementById('f2_song').innerHTML = profileJson.friends[1].favorite_song;
+        // } if (friends.length > 2) {
+        //     document.getElementById('f3_user_name').innerHTML = profileJson.friends[2].user_name;
+        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
+        //     document.getElementById('f3_song').innerHTML = profileJson.friends[2].favorite_song;
+        // }
     }
 
+}
+
+/**
+ * @param {JSON} chirp_json JSON object containing chirp information to update chirps table with 
+ */ 
+async function update_chirp_db(chirp_json) {
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
+    return response;
 }
 
 /**
@@ -68,7 +78,7 @@ async function post_chirp(chirp_json) {
     // Need to set up the feed
     // Right now we update using the ids of specific fields but that really isn't scalable for chirps and friends list. 
     // Need to figure out a way to efficiently update the fields
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
+    
     if (response.ok && response.status !== 404) {
         const feed = document.getElementById('feed');
         //post_avatar portion
@@ -136,7 +146,14 @@ async function post_chirp(chirp_json) {
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
 
-        feed.appendChild(newPost);
+        // Check if feed child Node list length > 3(basically contains an existing chirp). If so, use insertBefore(), else, use appendCHild()
+        if (feed.children.length < 3) {
+            // Only contains header and sharebox
+            feed.appendChild(newPost);
+        }
+        else {
+            feed.insertBefore(newPost, feed.children[2]);
+        }
     } else {
         const err = await response.text();
         console.log(err)
@@ -156,6 +173,19 @@ async function add_friend(profile_json, friend_json) {
     await set_profile(profile_json);
 }
 
+async function post_chirp_wrapper() {
+    console.log("In post_chirp_wrapper");
+    const chirp = { user_name: document.getElementById("username").value, 
+                    chirp_text: document.getElementById("sharebox_text").value, 
+                    shared_song: document.getElementById("shared_spotify_url").value, 
+                    like_count: 0, 
+                    share_count: 0 };
+    console.log(chirp);
+    const response = await update_chirp_db(chirp); // Separating out updating chirp and posting chirp
+    await post_chirp(response); 
+    alert("Posting chirp");
+}
+
 const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
     add_friend(profileJson, friendJson);
@@ -164,17 +194,10 @@ addButton.addEventListener('click', () => {
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
-document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('click', async () => {
-    const chirp = {};
-    // assumes song name field doesn't exist
-    chirp["user_name"] = document.getElementById("username").textContent;
-    chirp["chirp_text"] = document.getElementById("sharebox_text").value;
-    chirp["shared_song"] = document.getElementById("shared_spotify_url").value;
-    chirp["like_count"] = 0;
-    chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
-    console.log(chirp);
-    await post_chirp(chirp); 
-});
+document.getElementById("sharebox_shareButton").addEventListener('click', () => {
+    console.log("TEST");
+})
+document.getElementById("sharebox_shareButton").addEventListener('click', (post_chirp_wrapper));
 
 // Automatically converts to embedded spotify playable when spotify url put in
 document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
@@ -197,7 +220,7 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
             shareBoxDiv.appendChild(IFrameAPI);
         };
     }
-    else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(shared_song)) {
+    else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(shared_spotify_url)) {
         const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
@@ -222,4 +245,35 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
 });
 
 //On load
+
+// Test onload table creation
+const response = await fetch(`https://music-matcher-326.herokuapp.com/loadFeed`);
+
+if (response.ok) {
+    const chirpsJsonArr = await response.json();
+    console.log(chirpsJsonArr);
+    
+    for (let i = 0; i < chirpsJsonArr.length; i++) {
+        await post_chirp(chirpsJsonArr[i]);
+    }
+    
+}
+
+// Try setting profile
+const profile = await get_profile();
+// console.log(profile);
+const profile_json = {
+    user_name: "Stanley",
+    user_id: "saraki0820",
+    spotify_account: "stanleya0820",
+    playlist: "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=uvsN2ufRTnK37ho8upGvWQ",
+    favorite_genre: "J-POP",
+    favorite_artist: "ZUTOMAYO",
+    favorite_song: "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=40743dee036c46c0"
+}; // Removing friends field for now
+
+// console.log(profile_json);
+
+const result = await set_profile(profile_json);
+
 console.log("FINISHED LOADING");

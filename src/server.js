@@ -29,7 +29,12 @@ const pool = new Pool( {
 async function putProfile(updatedProfile) {
     try {
         const client = await pool.connect();
-        const result = await client.query(`UPDATE profiles SET 
+        // Removing 'friends' field for now
+
+        const select_user_id_result = await client.query(`SELECT * FROM profiles;`); // test query on profile
+
+        if (select_user_id_result.rowCount > 0) { // if user exists in table
+             const result = await client.query(`UPDATE profiles SET 
                         user_name = '${updatedProfile.user_name}',
                         user_id = '${updatedProfile.user_id}',
                         spotify_account = '${updatedProfile.spotify_account}',
@@ -37,8 +42,17 @@ async function putProfile(updatedProfile) {
                         favorite_song = '${updatedProfile.favorite_song}', 
                         favorite_genre = '${updatedProfile.favorite_genre}',
                         favorite_artist = '${updatedProfile.favorite_artist}', 
-                        friends = '${updatedProfile.friends}'
                         WHERE user_id = '${updatedProfile.user_id}';`);
+        }
+        else {
+            // User not in table yet, create entry for them
+            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
+                            VALUES ('${updatedProfile.user_name}', '${updatedProfile.user_id}',
+                                '${updatedProfile.spotify_account}', '${updatedProfile.playlist}',
+                                '${updatedProfile.favorite_song}', '${updatedProfile.favorite_genre}',
+                                '${updatedProfile.favorite_artist}');`);
+        }
+       
         client.release();
         return 200;
     } catch (err) {
@@ -54,7 +68,7 @@ async function putProfile(updatedProfile) {
 async function putChirp(updatedChirp) {
     try {
         const client = await pool.connect();
-        const result = await client.query(`UPDATE profiles SET 
+        const result = await client.query(`UPDATE chirp SET 
                         user_name = '${updatedChirp.user_name}',
                         chirp_text = '${updatedChirp.chirp_text}',
                         shared_song = '${updatedChirp.shared_song}',
@@ -78,7 +92,7 @@ async function putChirp(updatedChirp) {
 async function deleteProfile(id) {
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM profiles WHERE user_id = ${id};`)
+        const result = await cient.query(`DELETE FROM profiles WHERE user_id = ${id};`)
         client.release();
         return 200;
     } catch (err) {
@@ -129,44 +143,73 @@ app.use(express.static(path.join(__dirname, "/public")));
 //     res.status(200).send(json);
 // });
 
-app.get('/profiles', async (req, res) => { //Will get all profiles in DB
+// Test loading all tables beforehand on startup
+app.get('/loadFeed', async (req, res) => {
     try {
         const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS profiles (user_name VARCHAR(50), user_id SERIAL, spotify_account VARCHAR(50), playlist VARCHAR(100), favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
+
+        // Start off with creating chirps table
+        await client.query(`CREATE TABLE IF NOT EXISTS chirps 
+            (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
+
+        // await client.query('DROP TABLE profiles;'); // DO NOT RUN UNLESS WANT TO DROP PROFILES TABLE
+
+        // await client.query(`CREATE TABLE IF NOT EXISTS profiles 
+        //     (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
+        //     favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
+
+        await client.query(`CREATE TABLE IF NOT EXISTS profiles 
+            (user_name VARCHAR(50), user_id VARCHAR(50) PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
+            favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
+
+        client.release();
+
+        // Now try loading feed
+        const client_2 = await pool.connect();
+        const result = await client.query(`SELECT * from chirps;`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send('Error + ${err}');
+    }
+})
+
+app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
+    try {
+        const client = await pool.connect();
         const result = await client.query(`SELECT * from profiles;`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`${err}`);
+        res.status(404).send(`Error + ${err}`);
     }
 });
 
-app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
+app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from profiles where user_id=${req.params.user_id};`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`${err}`);
+        res.status(404).send(`Error + ${err}`);
     }
 });
 
-app.get('/chirps/:user_name', async (req, res) => { //Will get all chirps posted by user
+app.get('/Chirps/:user_name', async (req, res) => { //Will get all chirps posted by user
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps where user_name=${req.params.user_name};`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`${err}`);
+        res.status(404).send(`Error + ${err}`);
     }
 });
 
-app.get('/chirps', async (req, res) => { //Will get all chirps in DB
+app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
     try {
         const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS chirps (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song_name VARCHAR(50), shared_song VARCHAR(100), link_count INT, share_count INT);`);
         const result = await client.query(`SELECT * from chirps;`);
         client.release();
         res.status(200).send(result.rows);
@@ -187,17 +230,6 @@ app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBOD
     }
 });
 
-app.get('/friends/:user_id', async (req, res) => { //GETS FRIENDS FOR A SPECIFIC USER
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from friends where user_id=${req.params.user_id};`);
-        client.release();
-        res.status(200).send(result.rows);
-    }
-    catch(err) {
-        res.status(404).send(`${err}`);
-    }
-});
 app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     try {
         let body = '';
@@ -215,7 +247,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 
         res.status(200).send();
     } catch(err) {
-        res.status(404).send(`${err}`);
+        res.status(404).send(`Error + ${err}`);
     }
 });
 
@@ -234,7 +266,7 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
         });
         res.status(200).send();
     } catch (err) {
-        res.status(404).send(`${err}`);
+        res.status(404).send(`Error: ${err}`);
     }
 
 });
@@ -292,7 +324,7 @@ app.put('/putChirp', async (req, res) => {
             }
         });
     } catch (err) {
-        res.status(404).send(`${err}`);
+        res.status(404).send(`Error: ${err}`);
     }
 });
 
