@@ -372,7 +372,7 @@ app.delete('/deleteFriend', (req, res) => {
     const {user_id, friend_id} = req.params;
     const status = deleteFriend(user_id, friend_id);
     res.status(status).send("Got a DELETE request for friend");
-})
+});
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
