@@ -40,7 +40,7 @@ async function putProfile(updatedProfile) {
                         favorite_song = '${updatedProfile.favorite_song}', 
                         favorite_genre = '${updatedProfile.favorite_genre}',
                         favorite_artist = '${updatedProfile.favorite_artist}', 
-                        WHERE user_id = '${updatedProfile.user_id}'`);
+                        WHERE user_id = '${updatedProfile.user_id}';`);
         }
         else {
             // User not in table yet, create entry for them
