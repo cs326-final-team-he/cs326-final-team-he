@@ -260,7 +260,10 @@ if (response.ok) {
     console.log(chirpsJsonArr);
     
     // Update the feed
-    for (let i = chirpsJsonArr.length-1; i >= 0; i--) {
+    // for (let i = chirpsJsonArr.length-1; i >= 0; i--) {
+    //     await post_chirp(chirpsJsonArr[i]);
+    // }
+    for (let i = 0; i < chirpsJsonArr.length; i++) {
         await post_chirp(chirpsJsonArr[i]);
     }
     
