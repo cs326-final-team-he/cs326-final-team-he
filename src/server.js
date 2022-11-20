@@ -356,7 +356,7 @@ app.put('/putChirp', async (req, res) => {
 //DELETE request for user (delete profile)
 app.delete('/deleteProfile/:user_id', async (req, res) => { // For DELETE
     const { user_id } = req.params;
-    const status = await deleteProfile(id);
+    const status = await deleteProfile(user_id);
     res.status(status).send("Got a DELETE request for profile");
 });
 
