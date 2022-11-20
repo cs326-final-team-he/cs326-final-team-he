@@ -134,18 +134,23 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 // Test loading all tables beforehand on startup
 app.get('/', async (req, res) => {
-    const client = await pool.connect();
-    // Start off with creating chirps table
-    await client.query(`CREATE TABLE IF NOT EXISTS chirps 
-        (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
-    client.release();
+    try {
+        const client = await pool.connect();
+        // Start off with creating chirps table
+        await client.query(`CREATE TABLE IF NOT EXISTS chirps 
+            (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
+        client.release();
 
-    // Now try loading feed
-    const feed_client = await pool.connect();
-    const feed_result = await client.query("SELECT * FROM chirps");
-    feed_client.release();
-    // res.send((await feed_result).rows);
-    res.status(200).send(feed_result.rows);
+        // Now try loading feed
+        const feed_client = await pool.connect();
+        const result = await client.query("SELECT * FROM chirps");
+        result.release();
+        // res.send((await feed_result).rows);
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send('Error + ${err}');
+    }
+    
 })
 
 app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
