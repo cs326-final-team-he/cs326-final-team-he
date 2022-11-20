@@ -116,6 +116,16 @@ async function deleteProfile(id) {
     }
 }
 
+async function deleteFriend(user_id, friend_id) {
+    try{
+        const client = await pool.connect();
+        const result = await client.query(`DELETE FROM friends WHERE user_id = '${user_id}' AND friend_id = '${friend_id}';`);
+        client.release();
+        return 200;
+    }   catch (err){
+        return 404;
+    }
+}
 
 /**
  * Server calls
@@ -357,7 +367,11 @@ app.delete('/deleteChirp', (req, res) => { // For DELETE
 });
 
 //DELETE request for friends (delete friend)
-app.delete('/deleteFriend')
+app.delete('/deleteFriend', (req, res) => {
+    const {user_id, friend_id} = req.params;
+    const status = deleteFriend(user_id, friend_id);
+    res.status(status).send("Got a DELETE request for friend");
+})
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
