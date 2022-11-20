@@ -33,6 +33,15 @@ async function putProfile(updatedProfile) {
 
         const result = await client.query(`SELECT * FROM profiles;`);
 
+        // const test = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, 
+        //                                 favorite_song, favorite_genre, favorite_artist)
+        //                                 VALUES `)
+        const query = "UPDATE profiles SET user_name=($1), user_id=($2), spotify_account = ($3), playlist = ($4), favorite_song = ($5), favorite_genre = ($6), favorite_artist = ($7) WHERE user_id = ($8)";
+        const test_inset = await client.query(query, [updatedProfile.user_name, updatedProfile.user_id, 
+                                                        updatedProfile.spotify_account, updatedProfile.playlist, 
+                                                        updatedProfile.favorite_song, updatedProfile.favorite_genre, 
+                                                        updatedProfile.favorite_artist, updatedProfile.user_id]);
+
         // const result = await client.query(`UPDATE profiles SET 
         //                 user_name = '${updatedProfile.user_name}',
         //                 user_id = '${updatedProfile.user_id}',
@@ -57,7 +66,7 @@ async function putProfile(updatedProfile) {
 async function putChirp(updatedChirp) {
     try {
         const client = await pool.connect();
-        const result = await client.query(`UPDATE profiles SET 
+        const result = await client.query(`UPDATE chirp SET 
                         user_name = '${updatedChirp.user_name}',
                         chirp_text = '${updatedChirp.chirp_text}',
                         shared_song = '${updatedChirp.shared_song}',

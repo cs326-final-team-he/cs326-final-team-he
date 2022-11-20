@@ -41,21 +41,22 @@ async function set_profile(profile_json) {
         document.getElementById('list').innerHTML = profile_json.playlist;
         document.getElementById('song').innerHTML = profile_json.favorite_song;
     
-        const friends = profileJson.friends;
+        // commenting out for now
+        // const friends = profile_json.friends;
         //todo: make this less ugly
-        if (friends.length > 0) {
-            document.getElementById('f1_user_name').innerHTML = profileJson.friends[0].user_name;
-            // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-            document.getElementById('f1_song').innerHTML = profileJson.friends[0].favorite_song;        
-        } if (friends.length > 1) {
-            document.getElementById('f2_user_name').innerHTML = profileJson.friends[1].user_name;
-            // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-            document.getElementById('f2_song').innerHTML = profileJson.friends[1].favorite_song;
-        } if (friends.length > 2) {
-            document.getElementById('f3_user_name').innerHTML = profileJson.friends[2].user_name;
-            // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-            document.getElementById('f3_song').innerHTML = profileJson.friends[2].favorite_song;
-        }
+        // if (friends.length > 0) {
+        //     document.getElementById('f1_user_name').innerHTML = profileJson.friends[0].user_name;
+        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
+        //     document.getElementById('f1_song').innerHTML = profileJson.friends[0].favorite_song;        
+        // } if (friends.length > 1) {
+        //     document.getElementById('f2_user_name').innerHTML = profileJson.friends[1].user_name;
+        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
+        //     document.getElementById('f2_song').innerHTML = profileJson.friends[1].favorite_song;
+        // } if (friends.length > 2) {
+        //     document.getElementById('f3_user_name').innerHTML = profileJson.friends[2].user_name;
+        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
+        //     document.getElementById('f3_song').innerHTML = profileJson.friends[2].favorite_song;
+        // }
     }
 
 }
