@@ -14,10 +14,17 @@ const pool = new Pool( {
 });
 
 //clean up text so no horribly bad things happen to databases
+/**
+ * 
+ * @param {string} str 
+ * @returns string
+ */
 function cleanText(str) {
     return str.split('').map(char => {
-        if (char === '\'') {
-            return '\'\'';
+        if (char === "'") {
+            return "''";
+        } else {
+            return char;
         }
     }).join('');
 }
@@ -255,8 +262,8 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
                 '${cleanText(post.user_id)}',
                 '${cleanText(post.chirp_text)}',
                 '${cleanText(post.shared_song)}',
-                '${cleanText(post.like_count)}',
-                '${cleanText(post.share_count)}');`);
+                '${post.like_count}',
+                '${post.share_count}');`);
             client.release();
         });
         res.status(200).send();
