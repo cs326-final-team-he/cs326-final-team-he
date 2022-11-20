@@ -31,13 +31,18 @@ async function putProfile(updatedProfile) {
         const client = await pool.connect();
         // Removing 'friends' field for now
 
-        const result = await client.query(`SELECT * FROM profiles;`);
+        // const result = await client.query(`SELECT * FROM profiles;`);
+        // const query = "INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8))"
 
-        // const test = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, 
-        //                                 favorite_song, favorite_genre, favorite_artist)
-        //                                 VALUES `)
-        const query = "UPDATE profiles SET user_name=($1), user_id=($2), spotify_account = ($3), playlist = ($4), favorite_song = ($5), favorite_genre = ($6), favorite_artist = ($7) WHERE user_id = ($8)";
-        const test_inset = await client.query(query, [updatedProfile.user_name, updatedProfile.user_id, 
+        // const test_insert_2 = await client.query(query, [updatedProfile.user_name, updatedProfile.user_id, 
+        //                                                     updatedProfile.spotify_account, updatedProfile.playlist, 
+        //                                                     updatedProfile.favorite_song, updatedProfile.favorite_genre, 
+        //                                                     updatedProfile.favorite_artist, updatedProfile.user_id]);
+
+        // const test = await client.query('INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist) VALUES ')
+
+        const query = "UPDATE profiles SET user_name=($1), user_id=($2), spotify_account = ($3), playlist = ($4), favorite_song = ($5), favorite_genre = ($6), favorite_artist = ($7) WHERE user_id = ($8);";
+        const test_insert = await client.query(query, [updatedProfile.user_name, updatedProfile.user_id, 
                                                         updatedProfile.spotify_account, updatedProfile.playlist, 
                                                         updatedProfile.favorite_song, updatedProfile.favorite_genre, 
                                                         updatedProfile.favorite_artist, updatedProfile.user_id]);
