@@ -177,7 +177,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     try {
         const client = await pool.connect();
         await client.query(`CREATE TABLE IF NOT EXISTS profiles 
-            (user_name VARCHAR(50), user_id SERIAL, spotify_account VARCHAR(50), playlist VARCHAR(100), 
+            (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
             favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
         let body = '';
         req.on('data', data => body += data);
