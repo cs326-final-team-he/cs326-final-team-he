@@ -1,6 +1,6 @@
 // const secrets = require('./secrets.json');
-// const CLIENT_ID = secrets.CLIENT_ID;
-// const CLIENT_SECRET = secrets.CLIENT_SECRET
+//const CLIENT_ID = secrets.CLIENT_ID;
+//const CLIENT_SECRET = secrets.CLIENT_SECRET
 
 const path = require('path');
 const express = require('express');
