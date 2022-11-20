@@ -34,7 +34,7 @@ async function putProfile(updatedProfile) {
         const select_user_id_result = await client.query(`SELECT * FROM profiles;`); // test query on profile
 
         if (select_user_id_result.rowCount > 0) { // if user exists in table
-             const result = await client.query(`UPDATE profiles SET 
+             const result = await client.query(`UPDATE profiles SET (
                         user_name = '${updatedProfile.user_name}',
                         user_id = '${updatedProfile.user_id}',
                         spotify_account = '${updatedProfile.spotify_account}',
@@ -42,7 +42,7 @@ async function putProfile(updatedProfile) {
                         favorite_song = '${updatedProfile.favorite_song}', 
                         favorite_genre = '${updatedProfile.favorite_genre}',
                         favorite_artist = '${updatedProfile.favorite_artist}', 
-                        WHERE user_id = '${updatedProfile.user_id}';`);
+                        WHERE user_id = '${updatedProfile.user_id}');`);
         }
         else {
             // User not in table yet, create entry for them
@@ -308,7 +308,7 @@ app.post('/createFriend', async (req, res) => {
         res.status(200).send();
     }
     catch (err) {
-        res.status(404).send(`${err}`)
+        res.status(404).send(`Error: ${err}`)
     }
 });
 
@@ -354,21 +354,21 @@ app.put('/putChirp', async (req, res) => {
 });
 
 //DELETE request for user (delete profile)
-app.delete('/deleteProfile', async (req, res) => { // For DELETE
-    const { id } = req.params;
-    const status = await deleteProfile(id);
+app.delete('/deleteProfile/:user_id', async (req, res) => { // For DELETE
+    const { user_id } = req.params;
+    const status = await deleteProfile(user_id);
     res.status(status).send("Got a DELETE request for profile");
 });
 
 //DELETE request for chirp (delete post)
-app.delete('/deleteChirp', (req, res) => { // For DELETE
+app.delete('/deleteChirp/:user_name/:chirp_text', (req, res) => { // For DELETE
     const { user_name, chirp_text } = req.params;
     const status = deleteChirp(user_name, chirp_text);
     res.status(status).send("Got a DELETE request for chirp");
 });
 
 //DELETE request for friends (delete friend)
-app.delete('/deleteFriend', (req, res) => {
+app.delete('/deleteFriend/:user_id/:friend_id', (req, res) => {
     const {user_id, friend_id} = req.params;
     const status = deleteFriend(user_id, friend_id);
     res.status(status).send("Got a DELETE request for friend");
