@@ -268,7 +268,7 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
 
 app.post('/createFriend', async (req, res) => {
     try {
-        let body = ' ';
+        let body = '';
         req.on('data', data => body += data);
         req.on('end', async () => {
             const post = JSON.parse(body);
