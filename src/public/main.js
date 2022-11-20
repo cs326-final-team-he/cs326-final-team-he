@@ -161,15 +161,7 @@ async function add_friend(profile_json, friend_json) {
     await set_profile(profile_json);
 }
 
-const addButton = document.getElementById('addButton');
-addButton.addEventListener('click', () => {
-    add_friend(profileJson, friendJson);
-    console.log(profileJson.friends);
-}); 
-// Basic app functionalities
-
-// When 'share!' button is clicked the chirp should be posted on feed
-document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('click', async () => {
+async function post_chirp_wrapper() {
     const chirp = {};
     // assumes song name field doesn't exist
     chirp["user_name"] = document.getElementById("username").value;
@@ -179,7 +171,18 @@ document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('cli
     chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
     console.log(chirp);
     await post_chirp(chirp); 
-});
+    alert("Posting chirp");
+}
+
+const addButton = document.getElementById('addButton');
+addButton.addEventListener('click', () => {
+    add_friend(profileJson, friendJson);
+    console.log(profileJson.friends);
+}); 
+// Basic app functionalities
+
+// When 'share!' button is clicked the chirp should be posted on feed
+document.getElementById("sharebox_shareButton").addEventListener('click', post_chirp_wrapper);
 
 // Automatically converts to embedded spotify playable when spotify url put in
 document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
@@ -240,7 +243,7 @@ const profile_json = {
     favorite_song: "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=40743dee036c46c0"
 }; // Removing friends field for now
 
-console.log(profile_json);
+// console.log(profile_json);
 
 // const result = await set_profile(profile_json);
 
