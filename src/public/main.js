@@ -162,6 +162,7 @@ async function add_friend(profile_json, friend_json) {
 }
 
 async function post_chirp_wrapper() {
+    console.log("In post_chirp_wrapper");
     const chirp = {};
     // assumes song name field doesn't exist
     chirp["user_name"] = document.getElementById("username").value;
@@ -182,7 +183,10 @@ addButton.addEventListener('click', () => {
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
-document.getElementById("sharebox_shareButton").addEventListener('click', post_chirp_wrapper);
+document.getElementById("sharebox_shareButton").addEventListener('click', () => {
+    console.log("TEST");
+})
+document.getElementById("sharebox_shareButton").addEventListener('click', (post_chirp_wrapper));
 
 // Automatically converts to embedded spotify playable when spotify url put in
 document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
