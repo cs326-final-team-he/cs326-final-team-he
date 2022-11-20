@@ -14,21 +14,6 @@ const pool = new Pool( {
 });
 
 /**
- * Returns a hash code from a string
- * @param  {String} str The string to hash.
- * @return {Number}    A 32bit integer
- * @FROM https://stackoverflow.com/questions/6122571/simple-non-secure-hash-function-for-javascript
- */
- function hashCode(str) {
-    let hash = 0;
-    for (let i = 0, len = str.length; i < len; i++) {
-        let chr = str.charCodeAt(i);
-        hash = (hash << 5) - hash + chr;
-        hash |= 0; // Convert to 32bit integer
-    }
-    return hash;
-}
-/**
  * We will be adding APIs on server side here
  */
 
@@ -114,7 +99,7 @@ app.get('/loadFeed', async (req, res) => {
 
         // Start off with creating chirps table
         await client.query(`CREATE TABLE IF NOT EXISTS chirps 
-            (chirp_id INT PRIMARY KEY, timestamp INT, user_name VARCHAR(50), user_id VARCHAR(50), 
+            (chirp_id SERIAL PRIMARY KEY, timestamp BIGINT, user_name VARCHAR(50), user_id VARCHAR(50), 
             chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
 
         // await client.query('DROP TABLE profiles;'); // DO NOT RUN UNLESS WANT TO DROP PROFILES TABLE
@@ -179,7 +164,7 @@ app.get('/Chirps/:user_id', async (req, res) => { //Will get all chirps posted b
 app.get('/Chirps/:chirp_id', async (req, res) => { //Gets specific chirp
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from chirps where cchirp_id=${req.params.chirp_id};`);
+        const result = await client.query(`SELECT * from chirps where chirp_id=${req.params.chirp_id};`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
@@ -248,11 +233,11 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const post = JSON.parse(body);
-            const chirp_id = hashCode(`${post.user_name}${timestamp}`);
             const client = await pool.connect();
-            const result = await client.query(`INSERT INTO chirps (chirp_id, timestamp, user_name, user_id, chirp_text, shared_song, like_count, share_count)
+            const result = await client.query(`INSERT INTO chirps 
+            (chirp_id, timestamp, user_name, user_id, chirp_text, shared_song, like_count, share_count)
             VALUES (
-                '${chirp_id}',
+                DEFAULT,
                 '${timestamp}',
                 '${post.user_name}',
                 '${post.user_id}',
