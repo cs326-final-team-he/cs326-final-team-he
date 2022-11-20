@@ -245,6 +245,7 @@ const response = await fetch(`https://music-matcher-326.herokuapp.com/`);
     if (response.ok) {
         // const chirpJson = await response.json();
         console.log(response);
+        // call some kind of update feed function here
     }
 
 // Try setting profile
