@@ -228,14 +228,15 @@ const profile = await get_profile();
 // console.log(profile);
 const profile_json = {
     user_name: "Stanley",
-    user_id: "saraki",
+    user_id: "staraki",
     spotify_account: "stanleya0820",
     playlist: "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=uvsN2ufRTnK37ho8upGvWQ",
     favorite_genre: "J-POP",
     favorite_artist: "ZUTOMAYO",
-    favorite_song: "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=40743dee036c46c0",
-    friends: []
-};
+    favorite_song: "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=40743dee036c46c0"
+}; // Removing friends field for now
+
+console.log(profile_json);
 
 await set_profile(profile_json);
 console.log("FINISHED LOADING");

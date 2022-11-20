@@ -29,6 +29,7 @@ const pool = new Pool( {
 async function putProfile(updatedProfile) {
     try {
         const client = await pool.connect();
+        // Removing 'friends' field for nwo
         const result = await client.query(`UPDATE profiles SET 
                         user_name = '${updatedProfile.user_name}',
                         user_id = '${updatedProfile.user_id}',
@@ -37,7 +38,6 @@ async function putProfile(updatedProfile) {
                         favorite_song = '${updatedProfile.favorite_song}', 
                         favorite_genre = '${updatedProfile.favorite_genre}',
                         favorite_artist = '${updatedProfile.favorite_artist}', 
-                        friends = '${updatedProfile.friends}'
                         WHERE user_id = '${updatedProfile.user_id}';`);
         client.release();
         return 200;
@@ -178,7 +178,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
         const client = await pool.connect();
         await client.query(`CREATE TABLE IF NOT EXISTS profiles 
             (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
-            favorite_song VARCHAR(50), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
+            favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
