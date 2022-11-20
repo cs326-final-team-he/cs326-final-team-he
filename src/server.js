@@ -184,7 +184,7 @@ app.get('/loadFeed', async (req, res) => {
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`Error: ${err}`);
     }
 })
 
@@ -195,7 +195,7 @@ app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`Error: ${err}`);
     }
 });
 
@@ -206,7 +206,7 @@ app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based o
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`Error: ${err}`);
     }
 });
 
@@ -217,7 +217,7 @@ app.get('/Chirps/:user_name', async (req, res) => { //Will get all chirps posted
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`Error: ${err}`);
     }
 });
 
@@ -228,7 +228,7 @@ app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from s
         client.release();
         res.status(200).send(result.rows);
     } catch (err){
-        res.status(404).send(`Error + ${err}`)
+        res.status(404).send(`Error: ${err}`)
     }
 });
 
@@ -239,7 +239,7 @@ app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`${err}`);
+        res.status(404).send(`Error: ${err}`);
     }
 });
 
@@ -250,7 +250,7 @@ app.get('/Friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBOD
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`${err}`)
+        res.status(404).send(`Error: ${err}`)
     }
 });
 
@@ -271,7 +271,7 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 
         res.status(200).send();
     } catch(err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`Error: ${err}`);
     }
 });
 
@@ -308,7 +308,7 @@ app.post('/createFriend', async (req, res) => {
         res.status(200).send();
     }
     catch (err) {
-        res.status(404).send(`${err}`)
+        res.status(404).send(`Error: ${err}`)
     }
 });
 
