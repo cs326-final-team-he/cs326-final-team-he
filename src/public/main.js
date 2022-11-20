@@ -180,12 +180,6 @@ async function post_chirp_wrapper() {
                     shared_song: document.getElementById("shared_spotify_url").value, 
                     like_count: 0, 
                     share_count: 0 };
-    // assumes song name field doesn't exist
-    // chirp["user_name"] = document.getElementById("username").value;
-    // chirp["chirp_text"] = document.getElementsByClassName("sharebox_text")[0].value;
-    // chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url")[0].value;
-    // chirp["like_count"] = 0;
-    // chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
     console.log(chirp);
     const response = await update_chirp_db(chirp); // Separating out updating chirp and posting chirp
     await post_chirp(response); 
@@ -259,10 +253,6 @@ if (response.ok) {
     const chirpsJsonArr = await response.json();
     console.log(chirpsJsonArr);
     
-    // Update the feed
-    // for (let i = chirpsJsonArr.length-1; i >= 0; i--) {
-    //     await post_chirp(chirpsJsonArr[i]);
-    // }
     for (let i = 0; i < chirpsJsonArr.length; i++) {
         await post_chirp(chirpsJsonArr[i]);
     }
