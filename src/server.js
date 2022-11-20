@@ -21,42 +21,6 @@ const pool = new Pool( {
 /**
  * UPDATE ENDPOINT
  */
-/**
- * Updates a specific profile using putJSON
- * @param {JSON} updatedProfile: the updated profile content. MUST HAVE THE SAME USER_ID AS ORIGINAL
- * @returns: response code based on result
- */
-async function putProfile(updatedProfile) {
-    try {
-        const client = await pool.connect();
-        // Removing 'friends' field for now
-        const select_user_id_result = await client.query(`SELECT * FROM profiles;`); // test query on profile
-        if (select_user_id_result.rowCount > 0) { // if user exists in table
-             const result = await client.query(`UPDATE profiles SET
-                        user_name = '${updatedProfile.user_name}',
-                        user_id = '${updatedProfile.user_id}',
-                        spotify_account = '${updatedProfile.spotify_account}',
-                        playlist = '${updatedProfile.playlist}',
-                        favorite_song = '${updatedProfile.favorite_song}', 
-                        favorite_genre = '${updatedProfile.favorite_genre}',
-                        favorite_artist = '${updatedProfile.favorite_artist}', 
-                        WHERE user_id = '${updatedProfile.user_id}';`);
-        }
-        else {
-            // User not in table yet, create entry for them
-            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
-                            VALUES ('${updatedProfile.user_name}', '${updatedProfile.user_id}',
-                                '${updatedProfile.spotify_account}', '${updatedProfile.playlist}',
-                                '${updatedProfile.favorite_song}', '${updatedProfile.favorite_genre}',
-                                '${updatedProfile.favorite_artist}');`);
-        }
-       
-        client.release();
-        return 200;
-    } catch (err) {
-        return 404;
-    }
-}
 
 /**
  * Updates a specific chirp using putJSON
@@ -330,14 +294,27 @@ app.put('/putProfile', async (req, res) => {
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const updatedProfile = JSON.parse(body);
-            const status = await putProfile(updatedProfile);
-            res.status(status);
-            if (status === 200) {
-                res.send('Successfully updated profile with id: ' + updatedProfile.user_id);
-            } else {
-                res.send('ERROR with request');
+            const client = await pool.connect();
+            // Removing 'friends' field for now
+            const select_user_id_result = await client.query(`SELECT * FROM profiles;`); // test query on profile
+            if (select_user_id_result.rowCount > 0) { // if user exists in table
+                    const result = await client.query(`UPDATE profiles SET
+                            user_name = '${updatedProfile.user_name}',
+                            user_id = '${updatedProfile.user_id}',
+                            spotify_account = '${updatedProfile.spotify_account}',
+                            playlist = '${updatedProfile.playlist}',
+                            favorite_song = '${updatedProfile.favorite_song}', 
+                            favorite_genre = '${updatedProfile.favorite_genre}',
+                            favorite_artist = '${updatedProfile.favorite_artist}', 
+                            WHERE user_id = '${updatedProfile.user_id}';`);
             }
+            else {
+                // User dne, should not be used for creation
+                throw new Error('USING PUT FOR CREATING PROFILE');
+            }
+            client.release();
         });
+        res.status(200).send();
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
