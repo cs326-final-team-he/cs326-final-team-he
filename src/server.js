@@ -305,7 +305,7 @@ app.put('/putProfile', async (req, res) => {
                             playlist = '${updatedProfile.playlist}',
                             favorite_song = '${updatedProfile.favorite_song}', 
                             favorite_genre = '${updatedProfile.favorite_genre}',
-                            favorite_artist = '${updatedProfile.favorite_artist}', 
+                            favorite_artist = '${updatedProfile.favorite_artist}' 
                             WHERE user_id = '${updatedProfile.user_id}';`);
             }
             else {
