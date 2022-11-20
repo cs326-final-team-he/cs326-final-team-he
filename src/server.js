@@ -13,6 +13,14 @@ const pool = new Pool( {
     }
 });
 
+//clean up text so no horribly bad things happen to databases
+function cleanText(str) {
+    return str.split('').map(char => {
+        if (char === '\'') {
+            return '\'\'';
+        }
+    }).join('');
+}
 /**
  * We will be adding APIs on server side here
  */
@@ -213,10 +221,14 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
             const post = JSON.parse(body);
             const client = await pool.connect();
             const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
-                            VALUES ('${post.user_name}', '${post.user_id}',
-                                '${post.spotify_account}', '${post.playlist}',
-                                '${post.favorite_song}', '${post.favorite_genre}',
-                                '${post.favorite_artist}');`);
+                            VALUES (
+                                '${cleanText(post.user_name)}', 
+                                '${cleanText(post.user_id)}',
+                                '${cleanText(post.spotify_account)}', 
+                                '${cleanText(post.playlist)}',
+                                '${cleanText(post.favorite_song)}', 
+                                '${cleanText(post.favorite_genre)}',
+                                '${cleanText(post.favorite_artist)}');`);
             client.release();
         });
 
@@ -239,12 +251,12 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
             VALUES (
                 DEFAULT,
                 '${timestamp}',
-                '${post.user_name}',
-                '${post.user_id}',
-                '${post.chirp_text}',
-                '${post.shared_song}',
-                '${post.like_count}',
-                '${post.share_count}');`);
+                '${cleanText(post.user_name)}',
+                '${cleanText(post.user_id)}',
+                '${cleanText(post.chirp_text)}',
+                '${cleanText(post.shared_song)}',
+                '${cleanText(post.like_count)}',
+                '${cleanText(post.share_count)}');`);
             client.release();
         });
         res.status(200).send();
@@ -283,13 +295,13 @@ app.put('/putProfile', async (req, res) => {
             const client = await pool.connect();
             // Removing 'friends' field for now
             const result = await client.query(`UPDATE profiles SET
-                    user_name = '${updatedProfile.user_name}',
-                    user_id = '${updatedProfile.user_id}',
-                    spotify_account = '${updatedProfile.spotify_account}',
-                    playlist = '${updatedProfile.playlist}',
-                    favorite_song = '${updatedProfile.favorite_song}', 
-                    favorite_genre = '${updatedProfile.favorite_genre}',
-                    favorite_artist = '${updatedProfile.favorite_artist}' 
+                    user_name = '${cleanText(updatedProfile.user_name)}',
+                    user_id = '${cleanText(updatedProfile.user_id)}',
+                    spotify_account = '${cleanText(updatedProfile.spotify_account)}',
+                    playlist = '${cleanText(updatedProfile.playlist)}',
+                    favorite_song = '${cleanText(updatedProfile.favorite_song)}', 
+                    favorite_genre = '${cleanText(updatedProfile.favorite_genre)}',
+                    favorite_artist = '${cleanText(updatedProfile.favorite_artist)}' 
                     WHERE user_id = '${updatedProfile.user_id}';`);
             client.release();
         });
@@ -308,14 +320,14 @@ app.put('/putChirp', async (req, res) => {
             const updatedChirp = JSON.parse(body);
             const client = await pool.connect();
             const result = await client.query(`UPDATE chirp SET 
-                    chirp_id = '${updatedChirp.chirp_id}',
-                    timestamp = '${updatedChirp.timestamp}'
-                    user_name = '${updatedChirp.user_name}',
-                    chirp_text = '${updatedChirp.chirp_text}',
-                    shared_song = '${updatedChirp.shared_song}',
-                    like_count = '${updatedChirp.like_count}', 
-                    share_count = '${updatedChirp.share_count}'
-                    WHERE chirp_id = '${updatedChirp.chirp_id}';`);
+                    chirp_id = '${cleanText(updatedChirp.chirp_id)}',
+                    timestamp = '${cleanText(updatedChirp.timestamp)}'
+                    user_name = '${cleanText(updatedChirp.user_name)}',
+                    chirp_text = '${cleanText(updatedChirp.chirp_text)}',
+                    shared_song = '${cleanText(updatedChirp.shared_song)}',
+                    like_count = '${cleanText(updatedChirp.like_count)}', 
+                    share_count = '${cleanText(updatedChirp.share_count)}'
+                    WHERE chirp_id = '${cleanText(updatedChirp.chirp_id)}';`);
             client.release();
             //nothing was updated bc no chirp matched the requirements
             if (result.rowCount === 0) {
