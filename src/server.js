@@ -1,7 +1,6 @@
 // const secrets = require('./secrets.json');
 // const CLIENT_ID = secrets.CLIENT_ID;
 // const CLIENT_SECRET = secrets.CLIENT_SECRET
-
 const path = require('path');
 const express = require('express');
 
@@ -13,34 +12,27 @@ const pool = new Pool( {
         rejectUnauthorized: false
     }
 });
+
+/**
+ * Returns a hash code from a string
+ * @param  {String} str The string to hash.
+ * @return {Number}    A 32bit integer
+ * @see https://stackoverflow.com/questions/6122571/simple-non-secure-hash-function-for-javascript
+ */
+ function hashCode(str) {
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+        let chr = str.charCodeAt(i);
+        hash = (hash << 5) - hash + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+}
 /**
  * We will be adding APIs on server side here
  */
 
 
-/**
- * UPDATE ENDPOINT
- */
-
-/**
- * Updates a specific chirp using putJSON
- * @param {JSON} updatedChirp: the updated chirp content. MUST CONTAIN ALL ELEMENTS OF CHIRP
- * @returns: response code based on result
- */
-async function putChirp(updatedChirp) {
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`UPDATE chirp SET 
-                        user_name = '${updatedChirp.user_name}',
-                        chirp_text = '${updatedChirp.chirp_text}',
-                        shared_song = '${updatedChirp.shared_song}',
-                        like_count = '${updatedChirp.like_count}', 
-                        share_count = '${updatedChirp.share_count}';`);
-        client.release();
-        return 200;
-    } catch (err) {
-        return 404;
-    }}
 
 /**
  * DELETE ENDPOINT
@@ -67,10 +59,10 @@ async function deleteProfile(id) {
  * @param {number} id: the id of the chirp 
  * @returns: corresponding response code
  */
- async function deleteChirp(user_name, chirp_text) {
+ async function deleteChirp(id) {
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM chirps WHERE user_name = '${user_name}' AND chirp_text = '${chirp_text}';`);
+        const result = await client.query(`DELETE FROM chirps WHERE chirp_id = ${id};`);
         client.release();
         return 200;
     } catch (err) {
@@ -122,7 +114,7 @@ app.get('/loadFeed', async (req, res) => {
 
         // Start off with creating chirps table
         await client.query(`CREATE TABLE IF NOT EXISTS chirps 
-            (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
+            (chirp_id INT, timestamp INT, user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
 
         // await client.query('DROP TABLE profiles;'); // DO NOT RUN UNLESS WANT TO DROP PROFILES TABLE
 
@@ -251,12 +243,14 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     try {
         let body = '';
+        const timestamp = new Date().getTime();
         req.on('data', data => body += data);
         req.on('end', async () =>{
             const post = JSON.parse(body);
+            const chirp_id = hashCode(`${post.user_name}${timestamp}`);
             const client = await pool.connect();
-            const result = await client.query(`INSERT INTO chirps (user_name, chirp_text, shared_song, like_count, share_count)
-                VALUES ('${post.user_name}', '${post.chirp_text}',
+            const result = await client.query(`INSERT INTO chirps (chirp_id, timestamp, user_name, chirp_text, shared_song, like_count, share_count)
+            VALUES ('${chirp_id}', '${timestamp}', '${post.user_name}', '${post.chirp_text}',
                     '${post.shared_song}',
                     '${post.like_count}', '${post.share_count}');`);
             client.release();
@@ -296,22 +290,19 @@ app.put('/putProfile', async (req, res) => {
             const updatedProfile = JSON.parse(body);
             const client = await pool.connect();
             // Removing 'friends' field for now
-            const select_user_id_result = await client.query(`SELECT * FROM profiles;`); // test query on profile
-            if (select_user_id_result.rowCount > 0) { // if user exists in table
-                    const result = await client.query(`UPDATE profiles SET
-                            user_name = '${updatedProfile.user_name}',
-                            user_id = '${updatedProfile.user_id}',
-                            spotify_account = '${updatedProfile.spotify_account}',
-                            playlist = '${updatedProfile.playlist}',
+            const result = await client.query(`UPDATE profiles SET
+                    user_name = '${updatedProfile.user_name}',
+                    user_id = '${updatedProfile.user_id}',
+                    spotify_account = '${updatedProfile.spotify_account}',
+                    playlist = '${updatedProfile.playlist}',
+                    favorite_song = '${updatedProfile.favorite_song}', 
                             favorite_song = '${updatedProfile.favorite_song}', 
-                            favorite_genre = '${updatedProfile.favorite_genre}',
+                    favorite_song = '${updatedProfile.favorite_song}', 
+                    favorite_genre = '${updatedProfile.favorite_genre}',
+                    favorite_artist = '${updatedProfile.favorite_artist}' 
                             favorite_artist = '${updatedProfile.favorite_artist}' 
-                            WHERE user_id = '${updatedProfile.user_id}';`);
-            }
-            else {
-                // User dne, should not be used for creation
-                throw new Error('USING PUT FOR CREATING PROFILE');
-            }
+                    favorite_artist = '${updatedProfile.favorite_artist}' 
+                    WHERE user_id = '${updatedProfile.user_id}';`);
             client.release();
         });
         res.status(200).send();
@@ -326,14 +317,25 @@ app.put('/putChirp', async (req, res) => {
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
-            const status = await putChirp(JSON.parse(body));
-            res.status(status);
-            if (status === 200) {
-                res.send('Successfully updated chirp');
-            } else {
-                res.send('ERROR with request');
+            const updatedChirp = JSON.parse(body);
+            const client = await pool.connect();
+            const result = await client.query(`UPDATE chirp SET 
+                            chirp_id = '${updatedChirp.chirp_id}',
+                            timestamp = '${updatedChirp.timestamp}'
+                            user_name = '${updatedChirp.user_name}',
+                            chirp_text = '${updatedChirp.chirp_text}',
+                            shared_song = '${updatedChirp.shared_song}',
+                            like_count = '${updatedChirp.like_count}', 
+                            share_count = '${updatedChirp.share_count}'
+                            WHERE chirp_id = '${updatedChirp.chirp_id}';`);
+                            //TODO: we need to give chirps an id
+            client.release();
+            //nothing was updated bc no chirp matched the requirements
+            if (result.rowCount === 0) {
+                res.status(304).send();
             }
         });
+        res.status(200).send();
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
