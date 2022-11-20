@@ -138,14 +138,13 @@ app.get('/', async (req, res) => {
     // Start off with creating chirps table
     await client.query(`CREATE TABLE IF NOT EXISTS chirps 
         (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
-    const feed_result = client.query("SELECT * FROM chirps");
-    console.log(feed_result.rows());
     client.release();
 
-    // // Now try loading feed
-    // const feed_client = await pool.connect();
-    // const feed_result = client.query("SELECT * FROM chirps");
-
+    // Now try loading feed
+    const feed_client = await pool.connect();
+    const feed_result = client.query("SELECT * FROM chirps");
+    console.log((await feed_result).rows());
+    feed_client.release();
 })
 
 app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
