@@ -180,7 +180,7 @@ async function update_friends_db(friendConnection) {
 async function post_chirp_wrapper() {
     console.log("In post_chirp_wrapper");
     const chirp = { user_name: document.getElementById("username").value, 
-                    user_id: document.getElementById('user_id').value
+                    user_id: document.getElementById('user_id').value,
                     chirp_text: document.getElementById("sharebox_text").value, 
                     shared_song: document.getElementById("shared_spotify_url").value, 
                     like_count: 0, 
