@@ -179,10 +179,10 @@ async function update_friends_db(friendConnection) {
 
 async function post_chirp_wrapper() {
     console.log("In post_chirp_wrapper");
-    const chirp = { user_name: document.getElementById("username").value, 
-                    user_id: document.getElementById('user_id').value,
-                    chirp_text: document.getElementById("sharebox_text").value, 
-                    shared_song: document.getElementById("shared_spotify_url").value, 
+    const chirp = { user_name: document.getElementById("username").innerHTML, 
+                    user_id: document.getElementById('user_id').innerHTML,
+                    chirp_text: document.getElementById("sharebox_text").innerHTML, 
+                    shared_song: document.getElementById("shared_spotify_url").innerHTML, 
                     like_count: 0, 
                     share_count: 0 };
     const response = await update_chirp_db(chirp); // Separating out updating chirp and posting chirp
