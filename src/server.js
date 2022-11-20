@@ -33,25 +33,31 @@ async function putProfile(updatedProfile) {
 
         const select_user_id_result = await client.query(`SELECT * FROM profiles;`); // test query on profile
 
-        if (select_user_id_result.rowCount > 0) { // if user exists in table
-             const result = await client.query(`UPDATE profiles SET 
-                        user_name = '${updatedProfile.user_name}',
-                        user_id = '${updatedProfile.user_id}',
-                        spotify_account = '${updatedProfile.spotify_account}',
-                        playlist = '${updatedProfile.playlist}',
-                        favorite_song = '${updatedProfile.favorite_song}', 
-                        favorite_genre = '${updatedProfile.favorite_genre}',
-                        favorite_artist = '${updatedProfile.favorite_artist}', 
-                        WHERE user_id = '${updatedProfile.user_id}';`);
-        }
-        else {
-            // User not in table yet, create entry for them
-            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
+                    const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
                             VALUES ('${updatedProfile.user_name}', '${updatedProfile.user_id}',
                                 '${updatedProfile.spotify_account}', '${updatedProfile.playlist}',
                                 '${updatedProfile.favorite_song}', '${updatedProfile.favorite_genre}',
                                 '${updatedProfile.favorite_artist}');`);
-        }
+
+        // if (select_user_id_result.rowCount > 0) { // if user exists in table
+        //      const result = await client.query(`UPDATE profiles SET 
+        //                 user_name = '${updatedProfile.user_name}',
+        //                 user_id = '${updatedProfile.user_id}',
+        //                 spotify_account = '${updatedProfile.spotify_account}',
+        //                 playlist = '${updatedProfile.playlist}',
+        //                 favorite_song = '${updatedProfile.favorite_song}', 
+        //                 favorite_genre = '${updatedProfile.favorite_genre}',
+        //                 favorite_artist = '${updatedProfile.favorite_artist}', 
+        //                 WHERE user_id = '${updatedProfile.user_id}';`);
+        // }
+        // else {
+        //     // User not in table yet, create entry for them
+        //     const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
+        //                     VALUES ('${updatedProfile.user_name}', '${updatedProfile.user_id}',
+        //                         '${updatedProfile.spotify_account}', '${updatedProfile.playlist}',
+        //                         '${updatedProfile.favorite_song}', '${updatedProfile.favorite_genre}',
+        //                         '${updatedProfile.favorite_artist}');`);
+        // }
        
         client.release();
         return 200;
