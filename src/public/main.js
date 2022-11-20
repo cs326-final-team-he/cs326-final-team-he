@@ -1,5 +1,3 @@
-import { pool } from "../server";
-
 /**
  * Gets profile asynchronously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
@@ -240,24 +238,6 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
 });
 
 //On load
-
-// const {Pool} = require('pg');
-// const pool = new Pool( {
-//     connectionString: process.env.DATABASE_URL,
-//     ssl: {
-//         rejectUnauthorized: false
-//     }
-// });
-
-// Trying to add create tabel statements on load
-const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS chirps 
-            (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
-const feed_result = client.query("SELECT * FROM chirps");
-console.log(feed_result.rows());
-client.release();
-
-
 
 // Try setting profile
 const profile = await get_profile();
