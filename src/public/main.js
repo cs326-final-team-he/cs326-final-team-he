@@ -7,7 +7,7 @@
     if (response.ok) {
         const profileJson = await response.json();
         console.log(profileJson[0]);
-        return profileJson;
+        return profileJson[0];
     }
 }
 
