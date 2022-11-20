@@ -354,21 +354,21 @@ app.put('/putChirp', async (req, res) => {
 });
 
 //DELETE request for user (delete profile)
-app.delete('/deleteProfile', async (req, res) => { // For DELETE
-    const { id } = req.params;
+app.delete('/deleteProfile/:user_id', async (req, res) => { // For DELETE
+    const { user_id } = req.params;
     const status = await deleteProfile(id);
     res.status(status).send("Got a DELETE request for profile");
 });
 
 //DELETE request for chirp (delete post)
-app.delete('/deleteChirp', (req, res) => { // For DELETE
+app.delete('/deleteChirp/:user_name/:chirp_text', (req, res) => { // For DELETE
     const { user_name, chirp_text } = req.params;
     const status = deleteChirp(user_name, chirp_text);
     res.status(status).send("Got a DELETE request for chirp");
 });
 
 //DELETE request for friends (delete friend)
-app.delete('/deleteFriend', (req, res) => {
+app.delete('/deleteFriend/:user_id/:friend_id', (req, res) => {
     const {user_id, friend_id} = req.params;
     const status = deleteFriend(user_id, friend_id);
     res.status(status).send("Got a DELETE request for friend");
