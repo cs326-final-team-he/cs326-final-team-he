@@ -30,7 +30,6 @@ async function putProfile(updatedProfile) {
     try {
         const client = await pool.connect();
         // Removing 'friends' field for now
-
         const select_user_id_result = await client.query(`SELECT * FROM profiles;`); // test query on profile
 
         if (select_user_id_result.rowCount > 0) { // if user exists in table
