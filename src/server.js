@@ -29,16 +29,19 @@ const pool = new Pool( {
 async function putProfile(updatedProfile) {
     try {
         const client = await pool.connect();
-        // Removing 'friends' field for nwo
-        const result = await client.query(`UPDATE profiles SET 
-                        user_name = '${updatedProfile.user_name}',
-                        user_id = '${updatedProfile.user_id}',
-                        spotify_account = '${updatedProfile.spotify_account}',
-                        playlist = '${updatedProfile.playlist}',
-                        favorite_song = '${updatedProfile.favorite_song}', 
-                        favorite_genre = '${updatedProfile.favorite_genre}',
-                        favorite_artist = '${updatedProfile.favorite_artist}', 
-                        WHERE user_id = '${updatedProfile.user_id}';`);
+        // Removing 'friends' field for now
+
+        const result = await client.query(`SELECT * FROM profiles;`);
+
+        // const result = await client.query(`UPDATE profiles SET 
+        //                 user_name = '${updatedProfile.user_name}',
+        //                 user_id = '${updatedProfile.user_id}',
+        //                 spotify_account = '${updatedProfile.spotify_account}',
+        //                 playlist = '${updatedProfile.playlist}',
+        //                 favorite_song = '${updatedProfile.favorite_song}', 
+        //                 favorite_genre = '${updatedProfile.favorite_genre}',
+        //                 favorite_artist = '${updatedProfile.favorite_artist}', 
+        //                 WHERE user_id = '${updatedProfile.user_id}';`);
         client.release();
         return 200;
     } catch (err) {
