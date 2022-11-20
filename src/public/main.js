@@ -69,7 +69,7 @@ async function post_chirp(chirp_json) {
     // Right now we update using the ids of specific fields but that really isn't scalable for chirps and friends list. 
     // Need to figure out a way to efficiently update the fields
     const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
-    if (response.ok) {
+    if (response.ok && response.status !== 404) {
         const feed = document.getElementById('feed');
         //post_avatar portion
         const newPost = document.createElement('div');
@@ -137,6 +137,9 @@ async function post_chirp(chirp_json) {
         newPost.appendChild(post_body);
 
         feed.appendChild(newPost);
+    } else {
+        const err = await response.text();
+        console.log(err)
     }
 }
 
@@ -153,13 +156,6 @@ async function add_friend(profile_json, friend_json) {
     await set_profile(profile_json);
 }
 
-// On load call
-// const profileJson = await get_profile();
-// const friendJson = await get_profile();
-// set_profile(profileJson);
-
-// const feedJson = await get_feed();
-// await post_chirp(feedJson);
 const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
     add_friend(profileJson, friendJson);
@@ -171,11 +167,12 @@ addButton.addEventListener('click', () => {
 document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('click', async () => {
     const chirp = {};
     // assumes song name field doesn't exist
-    chirp["user_name"] = document.getElementById("username").value;
-    chirp["chirp_text"] = document.getElementsByClassName("sharebox_text").value;
-    chirp["shared_song"] = document.getElementsByClassName("shared_spotify_url").value;
+    chirp["user_name"] = document.getElementById("username").textContent;
+    chirp["chirp_text"] = document.getElementById("sharebox_text").value;
+    chirp["shared_song"] = document.getElementById("shared_spotify_url").value;
     chirp["like_count"] = 0;
     chirp["share_count"] = 0; // Consider making object for a chirp and the feed to keep count of individual chirps' like and share count
+    console.log(chirp);
     await post_chirp(chirp); 
 });
 
@@ -183,9 +180,9 @@ document.getElementsByClassName("sharebox_shareButton")[0].addEventListener('cli
 document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
     // Parse input first
     const shared_spotify_url = document.getElementById('shared_spotify_url').value;
-    if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_song)) {
+    if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_spotify_url)) {
         // matches track/playlist spotify link 'structure'
-        const shareBoxDiv = document.getElementsByClassName("shareBox");
+        const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
@@ -201,7 +198,7 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         };
     }
     else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(shared_song)) {
-        const shareBoxDiv = document.getElementsByClassName("shareBox");
+        const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
@@ -224,4 +221,5 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
     }
 });
 
+//On load
 console.log("FINISHED LOADING");

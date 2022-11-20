@@ -72,4 +72,4 @@ npm-debug.log
 /*.env
 
 #it's a secret!
-secrets.json
+/src/secrets.json
