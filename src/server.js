@@ -42,7 +42,7 @@ async function putProfile(updatedProfile) {
                         favorite_song = '${updatedProfile.favorite_song}', 
                         favorite_genre = '${updatedProfile.favorite_genre}',
                         favorite_artist = '${updatedProfile.favorite_artist}', 
-                        WHERE user_id = '${updatedProfile.user_id}';'`);
+                        WHERE user_id = '${updatedProfile.user_id}';`);
         }
         else {
             // User not in table yet, create entry for them
@@ -50,7 +50,7 @@ async function putProfile(updatedProfile) {
                             VALUES ('${updatedProfile.user_name}', '${updatedProfile.user_id}',
                                 '${updatedProfile.spotify_account}', '${updatedProfile.playlist}',
                                 '${updatedProfile.favorite_song}', '${updatedProfile.favorite_genre}',
-                                '${updatedProfile.favorite_artist}');'`);
+                                '${updatedProfile.favorite_artist}');`);
         }
        
         client.release();
@@ -152,7 +152,7 @@ app.get('/loadFeed', async (req, res) => {
         await client.query(`CREATE TABLE IF NOT EXISTS chirps 
             (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
 
-        await client.query('DROP TABLE profiles;'); // DO NOT RUN UNLESS WANT TO DROP PROFILES TABLE
+        // await client.query('DROP TABLE profiles;'); // DO NOT RUN UNLESS WANT TO DROP PROFILES TABLE
 
         await client.query(`CREATE TABLE IF NOT EXISTS profiles 
             (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
