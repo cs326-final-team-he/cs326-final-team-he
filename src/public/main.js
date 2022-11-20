@@ -239,6 +239,15 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
 
 //On load
 
+// Test onload table creation
+const response = await fetch(`https://music-matcher-326.herokuapp.com/`);
+
+    if (response.ok) {
+        const chirpJson = await response.json();
+        console.log(chirpJson);
+        return chirpJson;
+    }
+
 // Try setting profile
 const profile = await get_profile();
 // console.log(profile);
