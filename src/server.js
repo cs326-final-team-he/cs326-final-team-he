@@ -32,12 +32,12 @@ async function putProfile(updatedProfile) {
         // Removing 'friends' field for now
 
         // const result = await client.query(`SELECT * FROM profiles;`);
-        const query = "INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8))"
+        const query = "INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8));"
 
-        const test_insert_2 = await client.query(query, [updatedProfile.user_name, updatedProfile.user_id, 
-                                                            updatedProfile.spotify_account, updatedProfile.playlist, 
-                                                            updatedProfile.favorite_song, updatedProfile.favorite_genre, 
-                                                            updatedProfile.favorite_artist, updatedProfile.user_id]);
+        // const test_insert_2 = await client.query(query, [updatedProfile.user_name, updatedProfile.user_id, 
+        //                                                     updatedProfile.spotify_account, updatedProfile.playlist, 
+        //                                                     updatedProfile.favorite_song, updatedProfile.favorite_genre, 
+        //                                                     updatedProfile.favorite_artist, updatedProfile.user_id]);
 
         // const test = await client.query('INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist) VALUES ')
 
