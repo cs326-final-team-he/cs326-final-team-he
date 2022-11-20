@@ -6,7 +6,7 @@
     const response = await fetch(`https://music-matcher-326.herokuapp.com/profiles`);
     if (response.ok) {
         const profileJson = await response.json();
-        console.log(profileJson);
+        console.log(profileJson[0]);
         return profileJson;
     }
 }
