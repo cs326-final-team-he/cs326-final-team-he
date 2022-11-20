@@ -143,8 +143,8 @@ app.get('/', async (req, res) => {
     // Now try loading feed
     const feed_client = await pool.connect();
     const feed_result = client.query("SELECT * FROM chirps");
-    console.log((await feed_result).rows());
     feed_client.release();
+    res.send((await feed_result).rows());
 })
 
 app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
