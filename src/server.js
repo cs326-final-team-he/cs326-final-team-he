@@ -143,7 +143,7 @@ app.get('/', async (req, res) => {
 
         // Now try loading feed
         const feed_client = await pool.connect();
-        const result = await client.query("SELECT * FROM chirps");
+        const result = await client.query("SELECT * FROM chirps;");
         feed_client.release();
         // res.send((await feed_result).rows);
         res.status(200).send(result.rows);
