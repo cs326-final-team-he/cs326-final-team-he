@@ -214,21 +214,24 @@ app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.status(404).send(`Error + ${err}`);
+        res.status(404).send(`${err}`);
+    }
+});
+
+app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
+    try {
+        const client = await pool.connect();
+        await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id INT, friend_id INT);`);
+        const result = await client.query(`SELECT * from friends;`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send(`${err}`)
     }
 });
 
 app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
     try {
-        const client = await pool.connect();
-        // await client.query(`CREATE TABLE IF NOT EXISTS profiles 
-        //     (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
-        //     favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
-
-        await client.query(`CREATE TABLE IF NOT EXISTS profiles 
-            (user_name VARCHAR(50), user_id VARCHAR(50) PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
-            favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
-
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
@@ -250,10 +253,6 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
 
 app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     try {
-        const client = await pool.connect();
-        await client.query(`CREATE TABLE IF NOT EXISTS chirps 
-            (user_name VARCHAR(50), chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
-        client.release();
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
@@ -271,6 +270,24 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     }
 
 });
+
+app.post('/createFriend', async (req, res) => {
+    try {
+        let body = ' ';
+        req.on('data', data => body += data);
+        req.on('end', async () => {
+            const post = JSON.parse(body);
+            const client = await pool.connect();
+            const result = await client.query(`INSERT INTO friends (user_id, friend_id)
+                VALUES ('${post.user_id}', '${post.friend_id}');`);
+        });
+    }
+    catch (err) {
+        res.status(404).send(`${err}`)
+    }
+});
+
+
 
 //PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER
 app.put('/putProfile', async (req, res) => {
