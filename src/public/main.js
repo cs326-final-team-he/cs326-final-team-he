@@ -174,6 +174,7 @@ async function add_friend(profile_json, friend_json) {
  */
 async function update_friends_db(friendConnection) {
     const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend`, {method: 'POST', body: JSON.stringify(friendConnection)});
+    return response;
 }
 
 async function post_chirp_wrapper() {
