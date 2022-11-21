@@ -146,6 +146,7 @@ async function post_chirp(chirp_json) {
 
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
+        embed_link(chirp_json.shared_song, newPost); // Embed spotify song/track to post
 
         // Check if feed child Node list length > 3(basically contains an existing chirp). If so, use insertBefore(), else, use appendCHild()
         if (feed.children.length < 3) {
@@ -191,6 +192,55 @@ async function post_chirp_wrapper() {
     alert("Posting chirp");
 }
 
+/**
+ * 
+ * @param {String} spotify_url The url of the spotify playlist/song to embed
+ * @param {HTMLelement} divElem The div elem to add the embedded link to
+ */
+function embed_link(spotify_url, divElem) {
+    if (/https:\/\/open.spotify.com\/track\/.*/.test(spotify_url)) {
+        // matches track/playlist spotify link 'structure'
+        // const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
+        
+
+        const iframe = document.createElement("iframe"); 
+
+        console.log("Setting up iframe styling");
+
+        iframe.src = "https://open.spotify.com/embed?uri=spotify:track:" + spotify_url.split("/")[4].split("?")[0];
+        iframe.width = "300";
+        iframe.height = "200";
+        iframe.allowTransparency = "true";
+        iframe.allow = "encrypted-media";
+
+        divElem.appendChild(iframe);
+    }
+    else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(spotify_url)) {
+        // const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
+
+        const iframe = document.createElement("iframe"); 
+
+        console.log("Setting up iframe styling");
+
+        iframe.src = "https://open.spotify.com/embed?uri=spotify:playlist:" + spotify_url.split("/")[4].split("?")[0];
+        iframe.width = "300";
+        iframe.height = "200";
+        iframe.allowTransparency = "true";
+        iframe.allow = "encrypted-media";
+
+        divElem.appendChild(iframe);
+    }
+    else if (spotify_url.length === 0) {
+        // Do nothing
+    }
+    else {
+        // throw error, url doesn't match format
+        alert("Spotify song/playlist url is invalid. Please enter a valid url!");
+
+        //TODO: Somehow handle case for when the specific song with id cannot be found
+    }
+}
+
 const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
     add_friend(profileJson, friendJson);
@@ -205,94 +255,12 @@ document.getElementById("sharebox_shareButton").addEventListener('click', () => 
 document.getElementById("sharebox_shareButton").addEventListener('click', (post_chirp_wrapper));
 
 // Automatically converts to embedded spotify playable when spotify url put in
-document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
+document.getElementById('embed_button').addEventListener("click", () => {
     // Parse input first
     const shared_spotify_url = document.getElementById('shared_spotify_url').value;
     console.log("Starting spotify link embed");
-    if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_spotify_url)) {
-        // matches track/playlist spotify link 'structure'
-        const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
-        // Source: Spotify API Embed website. 
-        // If this doesn't work we can try using oEmbded API
-        // console.log("Before window.onSpotifyIFrameApiReady");
-
-        const iframe = document.createElement("iframe"); 
-
-        console.log("Setting up iframe styling");
-
-        // iframe.style = "border-radius:12px";
-        // iframe.src = "https://open.spotify.com/embed/track/" + shared_spotify_url.split("/")[4].split("?")[0] + "?utm_source=generator";
-        // iframe.width = "200%";
-        // iframe.height = "200";
-
-        iframe.src = "https://open.spotify.com/embed?uri=spotify:track:" + shared_spotify_url.split("/")[4].split("?")[0];
-        iframe.width = "300";
-        iframe.height = "200";
-        iframe.allowTransparency = "true";
-        iframe.allow = "encrypted-media";
-
-        shareBoxDiv.appendChild(iframe);
-
-        // this.window.onSpotifyIframeApiReady = (IFrameAPI) => {
-        //     console.log("Creating embed div");
-        //     let element = document.getElementById('embed-iframe');
-        //     console.log("Embedding track");
-        //     let options = {
-        //         width: '60%',
-        //         height: '200',
-        //         // uri: 'spotify:track:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of song
-        //         uri: "spotify:episode:7makk4oTQel546B0PZlDM5"
-        //       };
-        //     let callback = (EmbedController) => {};
-        //     IFrameAPI.createController(element, options, callback);
-        //     // if this creates div element then append that
-        //     //TODO: Add check here so don't add more than one
-        //     shareBoxDiv.appendChild(IFrameAPI);
-        // };
-    }
-    else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(shared_spotify_url)) {
-        const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
-        // Source: Spotify API Embed website. 
-        // If this doesn't work we can try using oEmbded API
-        // console.log("Before window.onspotifyiframeapiready");
-
-        const iframe = document.createElement("iframe"); 
-
-        console.log("Setting up iframe styling");
-
-        // iframe.style = "border-radius:12px";
-        // iframe.src = "https://open.spotify.com/embed/playlist/" + shared_spotify_url.split("/")[4].split("?")[0] + "?utm_source=generator";
-        iframe.src = "https://open.spotify.com/embed?uri=spotify:playlist:" + shared_spotify_url.split("/")[4].split("?")[0];
-        iframe.width = "300";
-        iframe.height = "200";
-        iframe.allowTransparency = "true";
-        iframe.allow = "encrypted-media";
-
-        shareBoxDiv.appendChild(iframe);
-
-        // this.window.onSpotifyIframeApiReady = (IFrameAPI) => {
-        //     console.log("Creating embed div");
-        //     let element = document.getElementById('embed-iframe');
-        //     console.log("Embedding playlist");
-        //     let options = {
-        //         width: '60%',
-        //         height: '200',
-        //         // uri: 'spotify:playlist:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of playlist
-        //         uri: "spotify:episode:7makk4oTQel546B0PZlDM5"
-        //       };
-        //     let callback = (EmbedController) => {};
-        //     IFrameAPI.createController(element, options, callback);
-        //     // if this creates div element then append that
-        //     //TODO: Add check here so don't add more than one
-        //     shareBoxDiv.appendChild(IFrameAPI);
-        // };
-    }
-    else {
-        // throw error, url doesn't match format
-        alert("Spotify song/playlist url is invalid. Please enter a valid url!");
-
-        //TODO: Somehow handle case for when the specific song with id cannot be found
-    }
+    const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
+    embed_link(shared_spotify_url, shareBoxDiv);
 });
 
 //On load
