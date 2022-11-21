@@ -214,7 +214,9 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
+        console.log("Before window.onSpotifyIFrameApiReady");
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
+            console.log("Creating embed div");
             let element = document.getElementById('embed-iframe');
             console.log("Embedding track");
             let options = {
@@ -234,7 +236,9 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
+        console.log("Before window.onspotifyiframeapiready");
         window.onSpotifyIframeApiReady = (IFrameAPI) => {
+            console.log("Creating embed div");
             let element = document.getElementById('embed-iframe');
             console.log("Embedding playlist");
             let options = {
