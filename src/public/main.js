@@ -35,12 +35,12 @@ async function set_profile(profile_json) {
     if (response.ok) {
         //if went thru, update in front end
 
-        document.getElementById('username').innerHTML = profile_json.user_name;
-        document.getElementById('uid').innerHTML = profile_json.user_id;
-        document.getElementById('spotify_id').innerHTML = profile_json.spotify_account;
-        document.getElementById('list').innerHTML = profile_json.playlist;
+        document.getElementById('username').value = profile_json.user_name;
+        document.getElementById('uid').value = profile_json.user_id;
+        document.getElementById('spotify_id').value = profile_json.spotify_account;
+        document.getElementById('list').value = profile_json.playlist;
         embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
-        document.getElementById('song').innerHTML = profile_json.favorite_song;
+        document.getElementById('song').value = profile_json.favorite_song;
         embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
     
         // commenting out for now
@@ -183,8 +183,8 @@ async function update_friends_db(friendConnection) {
 
 async function post_chirp_wrapper() {
     console.log("In post_chirp_wrapper");
-    const chirp = { user_name: document.getElementById("username").innerHTML, 
-                    user_id: document.getElementById('uid').innerHTML,
+    const chirp = { user_name: document.getElementById("username").value, 
+                    user_id: document.getElementById('uid').value,
                     chirp_text: document.getElementById("sharebox_text").value, 
                     shared_song: document.getElementById("shared_spotify_url").value, 
                     like_count: 0, 

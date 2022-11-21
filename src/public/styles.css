@@ -23,7 +23,7 @@ body {
   font-size: 25px;
 }
 
-.siderbarOption h2 {
+.sidebarOption h2 {
   font-weight: 800;
   font-size: 20px;
   margin-right: 20px;
@@ -81,45 +81,51 @@ body {
   max-width: 1300px;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 10px;
+  padding: 10px;
 }
 
-.siderbar {
+.sidebar {
   border-right: 1px solid var(--musicmatcher-background);
   flex: 0.2;
-  min-width: 250px;
+  min-width: 200px;
   margin-top: 20px;
-  padding-left: 200px;
-  padding-right: 200px;
+  padding-left: 10px;
+  padding-right: 310px;
+  word-wrap: break-word;
 }
 
 .profile {
   margin: auto;
   width: 50%;
+  min-width: 300px;
   padding: 10px;
 }
 
 .user_id {
   margin: auto;
   width: 50%;
+  min-width: 300px;
   padding: 10px;
 }
 
 .spotify {
   margin: auto;
   width: 50%;
+  min-width: 300px;
   padding: 10px;
 }
 
 .playlist {
   margin: auto;
   width: 50%;
+  min-width: 300px;
   padding: 10px;
 }
 
 .favorite_song {
   margin: auto;
   width: 50%;
+  min-width: 300px;
   padding: 10px;
 }
 
