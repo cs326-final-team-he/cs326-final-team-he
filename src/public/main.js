@@ -214,7 +214,24 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
-        console.log("Before window.onSpotifyIFrameApiReady");
+        // console.log("Before window.onSpotifyIFrameApiReady");
+
+        const iframe = document.createElement("iframe"); 
+
+        console.log("Setting up iframe styling");
+
+        // iframe.style = "border-radius:12px";
+        // iframe.src = "https://open.spotify.com/embed/track/" + shared_spotify_url.split("/")[4].split("?")[0] + "?utm_source=generator";
+        // iframe.width = "200%";
+        // iframe.height = "200";
+
+        iframe.src = "https://open.spotify.com/embed?uri=spotify:track:" + shared_spotify_url.split("/")[4].split("?")[0];
+        iframe.width = "300";
+        iframe.height = "200";
+        iframe.allowTransparency = "true";
+        iframe.allow = "encrypted-media";
+
+
         // this.window.onSpotifyIframeApiReady = (IFrameAPI) => {
         //     console.log("Creating embed div");
         //     let element = document.getElementById('embed-iframe');
@@ -236,7 +253,20 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
         // Source: Spotify API Embed website. 
         // If this doesn't work we can try using oEmbded API
-        console.log("Before window.onspotifyiframeapiready");
+        // console.log("Before window.onspotifyiframeapiready");
+
+        const iframe = document.createElement("iframe"); 
+
+        console.log("Setting up iframe styling");
+
+        // iframe.style = "border-radius:12px";
+        // iframe.src = "https://open.spotify.com/embed/playlist/" + shared_spotify_url.split("/")[4].split("?")[0] + "?utm_source=generator";
+        iframe.src = "https://open.spotify.com/embed?uri=spotify:playlist:" + shared_spotify_url.split("/")[4].split("?")[0];
+        iframe.width = "300";
+        iframe.height = "200";
+        iframe.allowTransparency = "true";
+        iframe.allow = "encrypted-media";
+
         // this.window.onSpotifyIframeApiReady = (IFrameAPI) => {
         //     console.log("Creating embed div");
         //     let element = document.getElementById('embed-iframe');
