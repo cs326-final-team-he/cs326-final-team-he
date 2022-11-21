@@ -231,6 +231,7 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         iframe.allowTransparency = "true";
         iframe.allow = "encrypted-media";
 
+        shareBoxDiv.appendChild(iframe);
 
         // this.window.onSpotifyIframeApiReady = (IFrameAPI) => {
         //     console.log("Creating embed div");
@@ -266,6 +267,8 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
         iframe.height = "200";
         iframe.allowTransparency = "true";
         iframe.allow = "encrypted-media";
+
+        shareBoxDiv.appendChild(iframe);
 
         // this.window.onSpotifyIframeApiReady = (IFrameAPI) => {
         //     console.log("Creating embed div");
