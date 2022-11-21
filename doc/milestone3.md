@@ -1,1 +1,32 @@
+## Database Documentation
 
+For our project, we decided to use a PostgreSQL database. In this database, there are three tables. These tables are for individual users, chirps (posts), and friends. A more detailed description on what these tables are and what their fields are is in the documentation below: 
+
+profiles table:
+
+| Column          | Data Type | Description                                            |
+|-----------------|-----------|--------------------------------------------------------|
+| user_name       | String    | The username of the profile                            |
+| user_id         | Integer   | The id of the profile                                  |
+| spotify_account | String    | Stores name of spotify account associated with profile |
+| playlist        | String    | Stores text of link to Profile's spotify playlist      |
+| favorite_song   | String    | Stores text of link to Profile's favorite song         | 
+| favorite_genre  | String    | Stores the profile's favorite genre of music           |
+| favorite_artist | String    | Stores the profile's favorite music artist             |
+
+chirps table:
+
+| Column          | Data Type | Description                                            |
+|-----------------|-----------|--------------------------------------------------------|
+| user_name       | String    | The username of the profile that posted this chirp     |
+| chirp_text      | String    | The text that the user typed into this chirp (content) |
+| shared_song     | String    | Stores text of link to song shared in the chirp        |
+| like_count      | Integer   | The number of likes that this chirp has gotten         |
+| share_count     | Integer   | The number of times this chirp was shared              | 
+
+friends table:
+
+| Column          | Data Type | Description                                            |
+|-----------------|-----------|--------------------------------------------------------|
+| user_id         | Integer   | The id of the user that is making a friend             |
+| friend_id       | Integer   | The id of the user that the user_id is friends with    |
