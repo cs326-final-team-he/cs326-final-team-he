@@ -39,7 +39,9 @@ async function set_profile(profile_json) {
         document.getElementById('uid').innerHTML = profile_json.user_id;
         document.getElementById('spotify_id').innerHTML = profile_json.spotify_account;
         document.getElementById('list').innerHTML = profile_json.playlist;
+        embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
         document.getElementById('song').innerHTML = profile_json.favorite_song;
+        embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
     
         // commenting out for now
         // const friends = profile_json.friends;
@@ -223,6 +225,19 @@ function embed_link(spotify_url, divElem) {
         console.log("Setting up iframe styling");
 
         iframe.src = "https://open.spotify.com/embed?uri=spotify:playlist:" + spotify_url.split("/")[4].split("?")[0];
+        iframe.width = "300";
+        iframe.height = "200";
+        iframe.allowTransparency = "true";
+        iframe.allow = "encrypted-media";
+
+        divElem.appendChild(iframe);
+    }
+    else if (/https:\/\/open.spotify.com\/album\/.*/.test(spotify_url)) {
+        const iframe = document.createElement("iframe"); 
+
+        console.log("Setting up iframe styling");
+
+        iframe.src = "https://open.spotify.com/embed?uri=spotify:album:" + spotify_url.split("/")[4].split("?")[0];
         iframe.width = "300";
         iframe.height = "200";
         iframe.allowTransparency = "true";
