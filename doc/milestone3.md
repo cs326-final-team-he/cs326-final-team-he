@@ -30,3 +30,6 @@ friends table:
 |-----------------|-----------|--------------------------------------------------------|
 | user_id         | Integer   | The id of the user that is making a friend             |
 | friend_id       | Integer   | The id of the user that the user_id is friends with    |
+
+## Division of Labor:
+Joseph Machiaverna: Converted a lot of our endpoints to use the postgreSQL database. Added some more endpoints which included /Chirps/:user_name in order to obtain all of the posts written by a single user, /Profiles/:user_id in order to obtain a single profile. Implmented the new friends table and added Create, Read, and Delete endpoints for it. Also added a endpoint that enables us to obtain a list of friends for a user. Updated update_friends_db in main.js to work with our new model. Fixed various bugs hindering our project across our code. 
