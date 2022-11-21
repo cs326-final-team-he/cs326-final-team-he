@@ -60,9 +60,26 @@ async function set_profile(profile_json) {
         //     document.getElementById('f3_song').innerHTML = profileJson.friends[2].favorite_song;
         // }
     }
-
 }
 
+/**
+ * Adds a profile to the database given the populated fields in the sidebar
+ */
+async function add_profile() {
+    const profile = {};
+    profile.user_name = document.getElementById('username').value;
+    profile.user_id = document.getElementById('uid').value;
+    profile.spotify_account = document.getElementById('spotify_id').value;
+    profile.playlist = document.getElementById('list').value;
+    profile.favorite_song = document.getElementById('song').value;
+    profile.favorite_artist = document.getElementById('artist').value;
+    profile.favorite_genre = document.getElementById('genre').value;
+
+    embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
+    embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
+
+    const response = await fetch('https://music-matcher-326.herokuapp.com/createProfile', {method: 'POST', body: JSON.stringify(profile)})
+}
 /**
  * @param {JSON} chirp_json JSON object containing chirp information to update chirps table with 
  */ 
@@ -268,6 +285,8 @@ document.getElementById("sharebox_shareButton").addEventListener('click', () => 
     console.log("TEST");
 })
 document.getElementById("sharebox_shareButton").addEventListener('click', (post_chirp_wrapper));
+
+document.getElementById("sharebox_shareButton").addEventListener('click', add_profile);
 
 // Automatically converts to embedded spotify playable when spotify url put in
 document.getElementById('embed_button').addEventListener("click", () => {

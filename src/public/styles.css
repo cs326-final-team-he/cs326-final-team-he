@@ -129,6 +129,20 @@ body {
   padding: 10px;
 }
 
+.favorite_genre {
+  margin: auto;
+  width: 50%;
+  min-width: 300px;
+  padding: 10px;
+}
+
+.favorite_artist {
+  margin: auto;
+  width: 50%;
+  min-width: 300px;
+  padding: 10px;
+}
+
 /* TO ENLARGE ACCOUNT PROFILE */
 
 /* .fa-twitter {
