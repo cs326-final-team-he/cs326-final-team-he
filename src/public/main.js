@@ -208,6 +208,7 @@ document.getElementById("sharebox_shareButton").addEventListener('click', (post_
 document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
     // Parse input first
     const shared_spotify_url = document.getElementById('shared_spotify_url').value;
+    console.log("Starting spotify link embed");
     if (/https:\/\/open.spotify.com\/track\/.*/.test(shared_spotify_url)) {
         // matches track/playlist spotify link 'structure'
         const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
@@ -219,7 +220,8 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
             let options = {
                 width: '60%',
                 height: '200',
-                uri: 'spotify:track:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of song
+                // uri: 'spotify:track:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of song
+                uri: "spotify:episode:7makk4oTQel546B0PZlDM5"
               };
             let callback = (EmbedController) => {};
             IFrameAPI.createController(element, options, callback);
@@ -238,7 +240,8 @@ document.getElementById('shared_spotify_url').addEventListener("keyup", () => {
             let options = {
                 width: '60%',
                 height: '200',
-                uri: 'spotify:playlist:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of playlist
+                // uri: 'spotify:playlist:' + shared_spotify_url.split("/")[4].split("?")[0] // Gets id of playlist
+                uri: "spotify:episode:7makk4oTQel546B0PZlDM5"
               };
             let callback = (EmbedController) => {};
             IFrameAPI.createController(element, options, callback);
