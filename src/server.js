@@ -235,7 +235,8 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
                                 '${cleanText(post.playlist)}',
                                 '${cleanText(post.favorite_song)}', 
                                 '${cleanText(post.favorite_genre)}',
-                                '${cleanText(post.favorite_artist)}');`);
+                                '${cleanText(post.favorite_artist)}')
+                                ON CONFLICT (user_id) DO NOTHING;`);
             client.release();
         });
 
