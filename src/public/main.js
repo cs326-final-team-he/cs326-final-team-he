@@ -276,8 +276,8 @@ function embed_link(spotify_url, divElem) {
 
 const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
-    add_friend(profileJson, friendJson);
-    console.log(profileJson.friends);
+    add_friend(profile_json, friendJson);
+    console.log(profile_json.friends);
 }); 
 // Basic app functionalities
 
