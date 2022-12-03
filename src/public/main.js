@@ -151,7 +151,7 @@ async function post_chirp(chirp_json) {
         favorite.classList.add('material-icons');
         favorite.classList.add('like_button');
         favorite.innerText = 'favorite_border';
-
+        favorite.text = str(chirp_json.like_count);
         const publish = document.createElement('span');
         publish.classList.add('material-icons');
         publish.innerText = 'publish';
@@ -167,7 +167,6 @@ async function post_chirp(chirp_json) {
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
         embed_link(chirp_json.shared_song, newPost); // Embed spotify song/track to post
-
         // Check if feed child Node list length > 3(basically contains an existing chirp). If so, use insertBefore(), else, use appendCHild()
         if (feed.children.length < 3) {
             // Only contains header and sharebox
