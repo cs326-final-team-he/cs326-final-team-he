@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <script src="https://open.spotify.com/embed-podcast/iframe-api/v1" async></script> 
     <!-- sidebar starts-->
     <div class="sidebar">
         <div class="accountProfileIcon">
@@ -24,7 +25,7 @@
         </div>
         <div class="profile">
             <h2>Profile</h2>
-            <p id="username">lorem</p>
+            <input type="text" placeholder="username" id="username">
         </div>
 
         <div class="sidebarOption">
@@ -33,8 +34,8 @@
             </span>
         </div>
         <div class="user_id">
-            <h2>User ID</h2>
-            <p id="uid">lorem</p>
+            <h2>User ID</h2>    
+            <input type="text" placeholder="user ID" id="uid">
         </div>
 
         <div class="sidebarOption">
@@ -42,7 +43,7 @@
         </div>
         <div class="spotify">
             <h2>Spotify</h2>
-            <p id="spotify_id">lorem</p>
+            <input type="text" placeholder="Spotify Profile" id="spotify_id">
         </div>
 
         <div class="sidebarOption">
@@ -52,7 +53,7 @@
         </div>
         <div class="playlist">
             <h2>Playlist</h2>
-            <p id="list">lorem</p>
+            <input type="text" placeholder="Playlist" id="list">
         </div>
 
         <div class="sidebarOption">
@@ -62,7 +63,17 @@
         </div>
         <div class="favorite_song">
             <h2>Favorite Song</h2>
-            <p id="song">lorem</p>
+            <input type="text" placeholder="Favorite Song" id="song">
+        </div>
+
+        <div class="favorite_genre">
+            <h2>Favorite Genre</h2>
+            <input type="text" placeholder="Favorite Genre" id="genre">
+        </div>
+
+        <div class="favorite_artist">
+            <h2>Favorite Artist</h2>
+            <input type="text" placeholder="Favorite Artist" id="artist">
         </div>
 
         <button class="sidebar_share">Share a song or playlist!</button>
@@ -89,6 +100,9 @@
                         play_circle
                     </span> -->
                     <input type="text" id="shared_spotify_url" placeholder="Enter a song or playlist url!">
+                    <button type="button" id="embed_button">Embed song/playlist!</button>
+                    <div id="embed-iframe"></div>
+                    
                 </div>
                 <button id="sharebox_shareButton">share!</button>
             </form>
