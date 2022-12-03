@@ -144,7 +144,7 @@ body {
 }
 
 .like_button:hover {
-  color: red
+  background-color: red
 }
 
 /* TO ENLARGE ACCOUNT PROFILE */
