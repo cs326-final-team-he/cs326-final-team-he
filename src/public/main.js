@@ -1,5 +1,3 @@
-const { render } = require("ejs");
-
 /**
  * Gets profile asynchronously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
@@ -154,7 +152,7 @@ async function post_chirp(chirp_json) {
         favorite.classList.add('like_button');
         favorite.innerText = 'favorite_border';
         favorite.addEventListener('click', () => {
-            console.log(chirp_json.like_count);
+            console.log('LIKE!');
         });
         const publish = document.createElement('span');
         publish.classList.add('material-icons');
