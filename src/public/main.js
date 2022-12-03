@@ -160,7 +160,6 @@ async function post_chirp(chirp_json) {
                 favorite.style.color = 'black';
                 chirp_json.like_count-=1;
             }
-            console.log(chirp_json.like_count);
         });
         const publish = document.createElement('span');
         publish.classList.add('material-icons');
