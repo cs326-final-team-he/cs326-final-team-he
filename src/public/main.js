@@ -152,7 +152,14 @@ async function post_chirp(chirp_json) {
         favorite.classList.add('like_button');
         favorite.innerText = 'favorite_border';
         favorite.addEventListener('click', () => {
-            favorite.style.color = 'red';
+            if (favorite.style.color != 'red') {
+                favorite.style.color = 'red';
+                chirp_json.like_count+=1
+            }
+            else {
+                favorite.style.color = 'black';
+                chirp_json.like_count-=1;
+            }
         });
         const publish = document.createElement('span');
         publish.classList.add('material-icons');
