@@ -187,6 +187,7 @@ app.get('/Chirps/:chirp_id', async (req, res) => { //Gets specific chirp
     }
 })
 
+
 app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
     try{
         const client = await pool.client();
@@ -197,7 +198,6 @@ app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from s
         res.status(404).send(`Error: ${err}`)
     }
 });
-
 app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
     try {
         const client = await pool.connect();
