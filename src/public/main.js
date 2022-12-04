@@ -167,7 +167,8 @@ async function post_chirp(chirp_json) {
                 chirp_text: chirp_json.chirp_text,
                 shared_song: chirp_json.shared_song,
                 like_count: chirp_json.like_count,
-                share_count: chirp_json.share_count
+                share_count: chirp_json.share_count,
+                user_id: chirp_json.user_id
             };
             await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: JSON.stringify(chirpEdit)});
         });

@@ -334,7 +334,8 @@ app.put('/putChirp', async (req, res) => {
                     chirp_text = '${cleanText(updatedChirp.chirp_text)}',
                     shared_song = '${cleanText(updatedChirp.shared_song)}',
                     like_count = '${updatedChirp.like_count}', 
-                    share_count = '${updatedChirp.share_count}'
+                    share_count = '${updatedChirp.share_count}',
+                    user_id = '${updatedChirp.user_id}'
                     WHERE chirp_id = '${updatedChirp.chirp_id}';`);
             console.log('updated');
             client.release();
