@@ -40,4 +40,6 @@
     }
 }
 
+const test = document.getElementById('test').addEventListener('click', async () => await fetch('https://music-matcher-326.herokuapp.com/login'));
+
 const btn = document.getElementById('register_btn').addEventListener('click', register);
