@@ -160,10 +160,10 @@ app.get('/', checkLoggedIn, async (req, res) => {
  * I don't get how we get user but ok
  */
 app.get('/main', checkLoggedIn, (req, res) => {
-    res.redirect(`/main/:${req.user}`)
+    return res.redirect(`/main/:${req.user}`)
 });
 app.get('/main/:user_id', checkLoggedIn, (req, res) => {
-    res.sendFile('public/main.html', { 'root' : __dirname })
+    return res.sendFile('public/main.html', { 'root' : __dirname })
 });
 app.get('/loadFeed', checkLoggedIn, async (req, res) => {
     try {
@@ -204,7 +204,7 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    res.sendFile('public/login.html', { 'root' : __dirname })
+    return res.sendFile('public/login.html', { 'root' : __dirname })
 });
 
 /**
@@ -217,11 +217,8 @@ app.post('/login',
 	     'failureRedirect' : '/login'      // otherwise, back to login
 	 }));
 
-app.get('/registerRedirect', (req, res) => {
-    res.redirect('register');
-});
 app.get('/register', (req, res) => {
-    res.sendFile('public/register.html', { 'root' : __dirname });
+    return res.sendFile('public/register.html', { 'root' : __dirname });
 });
 // Test loading all tables beforehand on startup
 
