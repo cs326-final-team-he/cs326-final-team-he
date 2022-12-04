@@ -160,7 +160,16 @@ async function post_chirp(chirp_json) {
                 favorite.style.color = 'black';
                 chirp_json.like_count-=1;
             }
-            console.log(chirp_json.user_id);
+            const chirpEdit = {
+                chirp_id: chirp_json.chirp_id,
+                timestamp: chirp_json.timestamp,
+                user_name: chirp_json.user_name,
+                chirp_text: chirp_json.chirp_text,
+                shared_song: chirp_json.shared_song,
+                like_count: chirp_json.like_count,
+                share_count: chirp_json.share_count,
+                user_id: chirp_json.user_id
+            };
             await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: JSON.stringify(chirpEdit)});
         });
         const publish = document.createElement('span');
