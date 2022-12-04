@@ -164,7 +164,7 @@ app.get('/', checkLoggedIn, async (req, res) => {
  * I don't get how we get user but ok
  */
 app.get('/main', checkLoggedIn, (req, res) => {
-    return res.redirect(`/main/:${req.user}`)
+    return res.redirect(301, `/main/:${req.user}`)
 });
 app.get('/main/:user_id', checkLoggedIn, (req, res) => {
     return res.sendFile('public/main.html', { 'root' : __dirname })
@@ -245,7 +245,7 @@ app.post('/register', async (req, res) => { // For CREATE PROFILE
             client.release();
         });
 
-        res.redirect('/login')
+        res.redirect(301, '/login');
     } catch(err) {
         res.status(404).send(`Error: ${err}`);
     }
