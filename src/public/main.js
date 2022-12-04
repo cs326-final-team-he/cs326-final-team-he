@@ -163,9 +163,9 @@ async function post_chirp(chirp_json) {
         favorite.classList.add('material-icons');
         favorite.classList.add('like_button');
         favorite.innerText = 'favorite_border';
-        const likedPost = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${profile_json.user_id}/${chirp_json.chirp_id}`);
-        console.log(likedPost);
-        if (likedPost) {
+        const response = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${profile_json.user_id}/${chirp_json.chirp_id}`);
+        const likedPost = response.json();
+        if (likedPost.json()) {
             favorite.style.color = 'black';
         }
         favorite.addEventListener('click', async () => {
