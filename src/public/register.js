@@ -23,7 +23,7 @@
     profile.favorite_genre = document.getElementById('fgenreInput').value;
 
     //check if profile w user id alr exists
-    const check = await fetch(`https://music-matcher-326.herokuapp.com/profiles/:${profile.user_id}`);
+    const check = await fetch(`https://music-matcher-326.herokuapp.com/profiles/${profile.user_id}`);
     if (check.ok && check.status !== 404) {
         const rows = await check.json();
         if (rows.length === 1) {
@@ -33,7 +33,8 @@
         // embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
         // embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
         //create profile
-        const response = await fetch('https://music-matcher-326.herokuapp.com/register', {method: 'POST', body: JSON.stringify(profile)})
+        const response = await fetch('https://music-matcher-326.herokuapp.com/register', {method: 'POST', body: JSON.stringify(profile)});
+        console.log(response.status);
     } else {
         //error server-side
         const err = await check.text();
