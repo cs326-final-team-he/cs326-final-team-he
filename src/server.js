@@ -163,7 +163,7 @@ app.get('/main', checkLoggedIn, (req, res) => {
     return res.redirect(`/main/:${req.user}`)
 });
 app.get('/main/:user_id', checkLoggedIn, (req, res) => {
-    return res.redirect('/main.html');
+    return res.sendFile('public/main.html', { 'root' : __dirname })
 });
 app.get('/loadFeed', checkLoggedIn, async (req, res) => {
     try {
@@ -204,7 +204,7 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    return res.redirect('/login.html');
+    return res.sendFile('public/login.html', { 'root' : __dirname })
 });
 
 /**
@@ -218,7 +218,33 @@ app.post('/login',
 	 }));
 
 app.get('/register', (req, res) => {
-    return res.redirect('/register.html');
+    return res.sendFile('public/register.html', { 'root' : __dirname });
+});
+
+app.post('/register', async (req, res) => { // For CREATE PROFILE
+    try {
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () =>{
+            const post = JSON.parse(body);
+            const client = await pool.connect();
+            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
+                            VALUES (
+                                '${cleanText(post.user_name)}', 
+                                '${cleanText(post.user_id)}',
+                                '${cleanText(post.spotify_account)}', 
+                                '${cleanText(post.playlist)}',
+                                '${cleanText(post.favorite_song)}', 
+                                '${cleanText(post.favorite_genre)}',
+                                '${cleanText(post.favorite_artist)}')
+                                ON CONFLICT (user_id) DO NOTHING;`);
+            client.release();
+        });
+
+        res.redirect('/login')
+    } catch(err) {
+        res.status(404).send(`Error: ${err}`);
+    }
 });
 // Test loading all tables beforehand on startup
 
@@ -296,32 +322,6 @@ app.get('/Friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBOD
         res.status(200).send(result.rows);
     } catch (err) {
         res.status(404).send(`Error: ${err}`)
-    }
-});
-
-app.post('/register', async (req, res) => { // For CREATE PROFILE
-    try {
-        let body = '';
-        req.on('data', data => body += data);
-        req.on('end', async () =>{
-            const post = JSON.parse(body);
-            const client = await pool.connect();
-            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
-                            VALUES (
-                                '${cleanText(post.user_name)}', 
-                                '${cleanText(post.user_id)}',
-                                '${cleanText(post.spotify_account)}', 
-                                '${cleanText(post.playlist)}',
-                                '${cleanText(post.favorite_song)}', 
-                                '${cleanText(post.favorite_genre)}',
-                                '${cleanText(post.favorite_artist)}')
-                                ON CONFLICT (user_id) DO NOTHING;`);
-            client.release();
-        });
-
-        res.status(200).send();
-    } catch(err) {
-        res.status(404).send(`Error: ${err}`);
     }
 });
 

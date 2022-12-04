@@ -11,8 +11,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 /// NEW
-const minicrypt = require('./miniCrypt');
-const mc = new minicrypt();
+const { MiniCrypt } = require('./miniCrypt');
+const mc = new MiniCrypt();
 
 // Session configuration
 
