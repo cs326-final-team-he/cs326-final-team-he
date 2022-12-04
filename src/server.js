@@ -179,6 +179,17 @@ app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based o
     }
 });
 
+app.get('/likedChirps', async(req, res) => {
+    try{
+        const client = await pool.connect();
+        const result = await client.query('SELECT * from likedChirps;');
+        client.release();
+        res.status(200).send(result.rows);
+    }catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
 app.get('/Chirps/:user_id', async (req, res) => { //Will get all chirps posted by user
     try {
         const client = await pool.connect();
