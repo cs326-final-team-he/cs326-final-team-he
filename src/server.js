@@ -220,7 +220,7 @@ app.post('/login',
 app.get('/registerRedirect', (req, res) => {
     res.redirect('register');
 });
-app.get('register', (req, res) => {
+app.get('/register', (req, res) => {
     res.sendFile('public/register.html', { 'root' : __dirname });
 });
 // Test loading all tables beforehand on startup
