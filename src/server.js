@@ -215,7 +215,10 @@ app.post('/login',
 	     'failureRedirect' : '/login'      // otherwise, back to login
 	 }));
 
-app.get('/register', (req, res) => {
+app.get('/registerRedirect', (req, res) => {
+    res.redirect('register');
+});
+app.get('register', (req, res) => {
     res.sendFile('public/register.html', { 'root' : __dirname });
 });
 // Test loading all tables beforehand on startup

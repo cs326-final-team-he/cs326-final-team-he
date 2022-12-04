@@ -23,7 +23,7 @@
     profile.favorite_genre = document.getElementById('fgenreInput').value;
 
     //check if profile w user id alr exists
-    const check = await fetch(`https://music-matcher-326.herokuapp.com/profile/:${profile.user_id}`);
+    const check = await fetch(`https://music-matcher-326.herokuapp.com/profiles/:${profile.user_id}`);
     if (check.ok && check.status !== 404) {
         const rows = await check.json();
         if (rows.length === 1) {
