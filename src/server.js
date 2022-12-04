@@ -149,7 +149,7 @@ app.get('/loadFeed', async (req, res) => {
 
         // Now try loading feed
         const client_2 = await pool.connect();
-        const result = await client.query(`SELECT * from chirps;`);
+        const result = await client.query(`SELECT * from chirps ORDER BY timestamp;`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
