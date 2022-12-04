@@ -190,6 +190,17 @@ app.get('/likedChirps', async(req, res) => {
     }
 });
 
+app.get('/likedChirps/:user_id/:chirp_id', async (req, res) => {
+    try{
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from likedChrips WHERE user_id='${req.params.user_id}' AND chirp_id='${req.params.chirp_id}';`);
+        client.release();
+        res.status(200).send(result.rows);
+    }catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
 app.get('/Chirps/:user_id', async (req, res) => { //Will get all chirps posted by user
     try {
         const client = await pool.connect();
