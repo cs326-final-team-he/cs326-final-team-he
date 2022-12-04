@@ -153,6 +153,17 @@ function checkLoggedIn(req, res, next) {
     }
 }
 app.get('/', checkLoggedIn, async (req, res) => {
+    res.redirect('/main');
+});
+
+/**
+ * I don't get how we get user but ok
+ */
+app.get('/main', checkLoggedIn, (req, res) => {
+    res.redirect(`/main/:${req.user}`)
+});
+
+app.get('/main/:userId', checkLoggedIn, async (req, res) => {
     try {
         const client = await pool.connect();
 
@@ -178,22 +189,20 @@ app.get('/', checkLoggedIn, async (req, res) => {
         client.release();
 
         //retrieve userId
-        let user_id = '';
-        req.on('data', data => user_id += data);
-        req.on('end', async () =>{
-
-        });
+        const user_id = req.params.userId;
+        //retrieve profile
+        const profile = await client.query('SELECT * FROM profiles WHERE user_id = $1;', [user_id]);
         // Now try loading feed
         const result = await client.query(`SELECT * from chirps;`);
         client.release();
-        res.status(200).send(result.rows);
+        res.status(200).json({"profile": profile.rows[0], "chirps": result.rows});
     } catch (err) {
-        res.status(404).send(`Error: ${err}`);
+        res.status(404).json({"Error": `Error: ${err}`});
     }
-});
+})
 
 app.get('/login', (req, res) => {
-    res.sendFile('login.html')
+    res.sendFile('public/login.html', { 'root' : __dirname })
 });
 
 /**
@@ -202,12 +211,12 @@ app.get('/login', (req, res) => {
 // Handle post data from the login.html form.
 app.post('/login',
 	 passport.authenticate('local' , {     // use username/password authentication
-	     'successRedirect' : '/private',   // when we login, go to /private 
+	     'successRedirect' : '/main',   // when we login, go to /private 
 	     'failureRedirect' : '/login'      // otherwise, back to login
 	 }));
 
 app.get('/register', (req, res) => {
-    res.sendFile('register.html');
+    res.sendFile('public/register.html', { 'root' : __dirname });
 });
 // Test loading all tables beforehand on startup
 
