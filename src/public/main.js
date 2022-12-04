@@ -161,7 +161,7 @@ async function post_chirp(chirp_json) {
                 chirp_json.like_count-=1;
             }
             const chirpEdit = {
-                chrip_id: chirp_json.chrip_id,
+                chirp_id: chirp_json.chirp_id,
                 timestamp: chirp_json.timestamp,
                 user_name: chirp_json.user_name,
                 chirp_text: chirp_json.chirp_text,
