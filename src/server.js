@@ -6,6 +6,7 @@ const express = require('express');
 
 //Postgres DB stuff
 const {Pool} = require('pg');
+const { stat } = require('fs');
 const pool = new Pool( {
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -81,6 +82,16 @@ async function deleteFriend(user_id, friend_id) {
     }
 }
 
+async function deleteLike(user_id, chirp_id) {
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`DELETE FROM likedChirps WHERE user_id = '${user_id}' AND chirp_id = '${chirp_id}';`);
+        client.release();
+        return 200;
+    } catch (err) {
+        return 404;
+    }
+}
 /**
  * Server calls
  */
@@ -129,6 +140,9 @@ app.get('/loadFeed', async (req, res) => {
         
         //adding friends table as well...
         await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
+
+        //adding likedChirps table...
+        await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id: INT);`);
 
 
         client.release();
@@ -274,6 +288,23 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
 
 });
 
+app.post('/createLike', async(req, res) => {
+    try{
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () => {
+            const post = JSON.parse(body);
+            const client = await pool.connect();
+            const result = await client.query(`INSERT INTO likedChirps (user_id, chirp_id)
+                VALUES ('${post.user_id}, '${post.chirp_id});`);
+        });
+        res.status(200).send();
+    }
+    catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
 app.post('/createFriend', async (req, res) => {
     try {
         let body = '';
@@ -287,7 +318,7 @@ app.post('/createFriend', async (req, res) => {
         res.status(200).send();
     }
     catch (err) {
-        res.status(404).send(`Error: ${err}`)
+        res.status(404).send(`Error: ${err}`);
     }
 });
 
@@ -368,6 +399,12 @@ app.delete('/deleteFriend/:user_id/:friend_id', (req, res) => {
     const {user_id, friend_id} = req.params;
     const status = deleteFriend(user_id, friend_id);
     res.status(status).send("Got a DELETE request for friend");
+});
+
+app.delete('/deleteLike/:user_id/:chirp_id', (req, res) => {
+    const {user_id, chirp_id} = req.params;
+    const status = deleteLike(user_id, chirp_id);
+    res.status(status).send("Got a DELETE request for a like");
 });
 
 app.listen(port, () => {
