@@ -142,7 +142,7 @@ app.get('/loadFeed', async (req, res) => {
         await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
 
         //adding likedChirps table...
-        await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id: INT);`);
+        await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id INT);`);
 
 
         client.release();
