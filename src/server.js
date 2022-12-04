@@ -270,7 +270,6 @@ app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based o
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        res.
         res.status(404).send(`Error: ${err}`);
     }
 });
