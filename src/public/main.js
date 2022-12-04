@@ -154,10 +154,10 @@ async function post_chirp(chirp_json) {
         favorite.addEventListener('click', async () => {
             if (favorite.style.color != 'red') {
                 favorite.style.color = 'red';
-                const like = {
-                    user_id: profile_json.user_id,
-                    chirp_id: chirp_json.user_id
-                }
+                //const like = {
+                    //user_id: profile_json.user_id,
+                    //chirp_id: chirp_json.chirp_id
+                //};
                 await fetch(`https://music-matcher-326.herokuapp.com/createLike`, {method: 'POST', body: JSON.stringify(like)});
                 chirp_json.like_count+=1;
             }
