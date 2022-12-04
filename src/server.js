@@ -336,6 +336,7 @@ app.put('/putChirp', async (req, res) => {
                     like_count = '${updatedChirp.like_count}', 
                     share_count = '${updatedChirp.share_count}'
                     WHERE chirp_id = '${updatedChirp.chirp_id}';`);
+            console.log('updated');
             client.release();
             //nothing was updated bc no chirp matched the requirements
             if (result.rowCount === 0) {
