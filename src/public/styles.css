@@ -473,7 +473,7 @@ body {
   text-align: center;
 }
 .form_header {
-    font-size: xx-large;
+    font-size: large;
 }
 .form {
   flex: 0.5;
@@ -507,7 +507,6 @@ body {
 
 .form-search {
   display: flex;
-  align-items: center;
   background-color: var(--musicmatcher-background);
   padding: 10px;
   border-radius: 20px;
@@ -523,4 +522,23 @@ body {
 
 .rec_add_music span {
   font-size: 30px;
+}
+#register_btn {
+  background-color: var(--musicmatcher-color);
+  float: right;
+  border: none;
+  color: white;
+  font-weight: 900;
+  border-radius: 30px;
+  width: 150px;
+  height: 50px;
+  margin-top: 20px;
+  margin-left: auto;
+}
+
+#register_btn:hover {
+    background-color: var(--musicmatcher-background);
+    border-radius: 30px;
+    color: var(--musicmatcher-color);
+    transition: color 100ms ease-out;
 }

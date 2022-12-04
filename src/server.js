@@ -3,9 +3,59 @@
 // const CLIENT_SECRET = secrets.CLIENT_SECRET
 const path = require('path');
 const express = require('express');
+const expressSession = require('express-session');  // for managing session state
+const passport = require('passport');               // handles authentication
+const LocalStrategy = require('passport-local').Strategy; // username/password strategy
 
 //Postgres DB stuff
 const {Pool} = require('pg');
+
+// Session configuration
+
+const session = {
+    secret : process.env.SECRET || 'SECRET', // set this encryption key in Heroku config (never in GitHub)!
+    resave : false,
+    saveUninitialized: false
+};
+
+// Passport configuration
+
+const strategy = new LocalStrategy(
+    async (username, password, done) => {
+	if (!findUser(username)) {
+	    // no such user
+	    await new Promise((r) => setTimeout(r, 2000)); // two second delay
+	    return done(null, false, { 'message' : 'Wrong username' });
+	}
+	if (!validatePassword(username, password)) {
+	    // invalid password
+	    // should disable logins after N messages
+	    // delay return to rate-limit brute-force attacks
+	    await new Promise((r) => setTimeout(r, 2000)); // two second delay
+	    return done(null, false, { 'message' : 'Wrong password' });
+	}
+	// success!
+	// should create a user object here, associated with a unique identifier
+	return done(null, username);
+    });
+
+
+// App configuration
+
+app.use(expressSession(session));
+passport.use(strategy);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Convert user object to a unique identifier.
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+// Convert a unique identifier to a user object.
+passport.deserializeUser((uid, done) => {
+    done(null, uid);
+});
+
 const pool = new Pool( {
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -93,22 +143,17 @@ async function deleteFriend(user_id, friend_id) {
 app.use(express.json()); // Middleware allows us to use JSON
 app.use(express.static(path.join(__dirname, "/public")));
 
-//on server startup
-// app.get('/', async (req, res) => {
-//     const authParams = {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/x-www-form-urlencoded'
-//         },
-//         body: 'grand_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET 
-//     }
-//     const result = await fetch('https://acounts.spotify.com/api/token', authParams);
-//     const json = result.json();
-//     res.status(200).send(json);
-// });
-
-// Test loading all tables beforehand on startup
-app.get('/loadFeed', async (req, res) => {
+function checkLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+	// If we are authenticated, run the next route.
+        console.log(req);
+	    next();
+    } else {
+	// Otherwise, redirect to the login page.
+	    res.redirect('/login');
+    }
+}
+app.get('/', checkLoggedIn, async (req, res) => {
     try {
         const client = await pool.connect();
 
@@ -133,15 +178,39 @@ app.get('/loadFeed', async (req, res) => {
 
         client.release();
 
+        //retrieve userId
+        let user_id = '';
+        req.on('data', data => user_id += data);
+        req.on('end', async () =>{
+            
+        });
         // Now try loading feed
-        const client_2 = await pool.connect();
         const result = await client.query(`SELECT * from chirps;`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
-})
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile('login.html')
+});
+
+/**
+ * I dont know how this works TODO
+ */
+// Handle post data from the login.html form.
+app.post('/login',
+	 passport.authenticate('local' , {     // use username/password authentication
+	     'successRedirect' : '/private',   // when we login, go to /private 
+	     'failureRedirect' : '/login'      // otherwise, back to login
+	 }));
+
+app.get('/register', (req, res) => {
+    res.sendFile('register.html');
+});
+// Test loading all tables beforehand on startup
 
 app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
     try {
@@ -220,7 +289,7 @@ app.get('/Friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBOD
     }
 });
 
-app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
+app.post('/register', async (req, res) => { // For CREATE PROFILE
     try {
         let body = '';
         req.on('data', data => body += data);

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to MusicMatcher!</title>
 
+    <script type="module" src="/register.js" defer></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" 
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" 
@@ -20,10 +21,10 @@
         </div>
         <!-- start of form1 -->
         <form>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="emailInput">Email Address</label>
                 <input type="email" id="emailInput" placeholder="Enter Email">
-            </div>
+            </div> -->
 
             <div class="form-group">
                 <label for="usernameInput">Username</label>
@@ -34,8 +35,12 @@
                 <input type="text" id="userIDInput" placeholder="Enter UserID">
             </div>
             <div class="form-group">
-                <label for="passwordInput">UserID</label>
+                <label for="passwordInput">Password</label>
                 <input type="password" id="passwordInput" placeholder="Enter Password">
+            </div>
+            <div class="form-group">
+                <label for="passwordInput2">Verify Password</label>
+                <input type="password" id="passwordInput2" placeholder="Enter Password">
             </div>
             <!-- how does spotify authentication work? -->
             <div class="form-group">
@@ -45,46 +50,32 @@
 
             <div class="form-group">
                 <label for="playlistInput">Playlist</label>
-                <input type="text" id="playlistInput" placeholder="Enter Playlist (Optional)">
+                <input type="text" id="playlistInput" placeholder="Enter Playlist">
             </div>
 
             <div class="form-group">
                 <label for="fsongInput">Favorite Song</label>
-                <input type="text" id="fsongInput" placeholder="Favorite Song (Optional)">
-            </div>
-        </form>
-
-        <!-- form2 -->
-        <div class="form_header">
-            <h2>Now tell us a bit about your music taste</h2>
-        </div>
-        <form>
-            <div class="form-search">
-                <span class="material-icons widgets_searchIcon"> search</span>
-                <input type="text" id="fgenresInput" placeholder="Search for Genres">
+                <input type="text" id="fsongInput" placeholder="Favorite Song">
             </div>
 
-            <div class="form-search">
-                <span class="material-icons widgets_searchIcon"> search</span>
-                <input type="text" id="fartistsInput" placeholder="Search for Artists">
+            <div class="form-group">
+                <label for="fartistInput">Favorite Artist</label>
+                <input type="text" id="fartistInput" placeholder="Favorite Artist">
             </div>
 
-            <div class="form-search">
-                <span class="material-icons widgets_searchIcon"> search</span>
-                <input type="text" id="falbumsInput" placeholder="Search for Albums">
+            <div class="form-group">
+                <label for="fgenreInput">Favorite Genre</label>
+                <input type="text" id="fgenreInput" placeholder="Favorite Genre">
             </div>
-        </form>
-
         <!-- form3 -->
-        <div class="form_header">
+        <!-- <div class="form_header">
             <h2>MusicMatcher is better with friends!<br>Follow some people now!</h2>
         </div>
-        <form>
             <div class="form-search">
                 <span class="material-icons widgets_searchIcon"> search</span>
                 <input type="text" id="friendsInput" placeholder="Search for people to follow">
-            </div>
-        </form>
+            </div> -->
+            <button id="register_btn">Create Account!</button>
     </div>
 </body>
 </html>
