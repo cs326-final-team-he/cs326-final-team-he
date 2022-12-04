@@ -10,6 +10,10 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 //Postgres DB stuff
 const {Pool} = require('pg');
 
+//encryption
+const { MiniCrypt } = require('./miniCrypt');
+const mc = new MiniCrypt();
+
 // Session configuration
 
 const session = {
@@ -248,18 +252,19 @@ app.post('/register', async (req, res) => { // For CREATE PROFILE
 });
 // Test loading all tables beforehand on startup
 
-app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
+app.get('/profiles', async (req, res) => { //Will get all profiles in DB
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from profiles;`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
+        console.log('err');
         res.status(404).send(`Error: ${err}`);
     }
 });
 
-app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
+app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from profiles where user_id=${req.params.user_id};`);
@@ -270,40 +275,7 @@ app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based o
     }
 });
 
-app.get('/Chirps/:user_id', async (req, res) => { //Will get all chirps posted by user
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from chirps where user_id=${req.params.user_id};`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
-});
-
-app.get('/Chirps/:chirp_id', async (req, res) => { //Gets specific chirp
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from chirps where chirp_id=${req.params.chirp_id};`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
-})
-
-app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
-    try{
-        const client = await pool.client();
-        const result = await client.query(`SELECT * from friends where user_id=${req.params.user_id};`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err){
-        res.status(404).send(`Error: ${err}`)
-    }
-});
-
-app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
+app.get('/chirps', async (req, res) => { //Will get all chirps in DB
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps;`);
@@ -314,7 +286,40 @@ app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
     }
 });
 
-app.get('/Friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
+app.get('/chirps/:user_id', async (req, res) => { //Will get all chirps posted by user
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from chirps where user_id=${req.params.user_id};`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+app.get('/chirps/:chirp_id', async (req, res) => { //Gets specific chirp
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from chirps where chirp_id=${req.params.chirp_id};`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+})
+
+app.get('/friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
+    try{
+        const client = await pool.client();
+        const result = await client.query(`SELECT * from friends where user_id=${req.params.user_id};`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err){
+        res.status(404).send(`Error: ${err}`)
+    }
+});
+
+app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from friends;`);
