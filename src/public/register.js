@@ -36,6 +36,8 @@
         const response = await fetch('https://music-matcher-326.herokuapp.com/register', {method: 'POST', body: JSON.stringify(profile)})
     } else {
         //error server-side
+        const err = await check.text();
+        console.log(err);
         alert('Error talking with server, please try again later.');
     }
 }

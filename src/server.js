@@ -259,7 +259,6 @@ app.get('/profiles', async (req, res) => { //Will get all profiles in DB
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
-        console.log('err');
         res.status(404).send(`Error: ${err}`);
     }
 });
@@ -267,10 +266,11 @@ app.get('/profiles', async (req, res) => { //Will get all profiles in DB
 app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from profiles where user_id=${req.params.user_id};`);
+        const result = await client.query(`SELECT * FROM profiles WHERE user_id=${req.params.user_id};`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
+        res.
         res.status(404).send(`Error: ${err}`);
     }
 });
