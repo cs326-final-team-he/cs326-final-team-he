@@ -162,8 +162,10 @@ app.get('/', checkLoggedIn, async (req, res) => {
 app.get('/main', checkLoggedIn, (req, res) => {
     res.redirect(`/main/:${req.user}`)
 });
-
-app.get('/main/:userId', checkLoggedIn, async (req, res) => {
+app.get('/main/:user_id', checkLoggedIn, (req, res) => {
+    res.sendFile('public/main.html', { 'root' : __dirname })
+});
+app.get('/loadFeed', checkLoggedIn, async (req, res) => {
     try {
         const client = await pool.connect();
 
