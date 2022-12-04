@@ -1,3 +1,15 @@
+// Try setting profile
+const profile = await get_profile();
+// console.log(profile);
+const profile_json = {
+    user_name: "Stanley",
+    user_id: "saraki0820",
+    spotify_account: "stanleya0820",
+    playlist: "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=uvsN2ufRTnK37ho8upGvWQ",
+    favorite_genre: "J-POP",
+    favorite_artist: "ZUTOMAYO",
+    favorite_song: "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=40743dee036c46c0"
+}; // Removing friends field for now
 /**
  * Gets profile asynchronously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
@@ -340,19 +352,6 @@ if (response.ok) {
         await post_chirp(chirpsJsonArr[i]);
     }
 }
-
-// Try setting profile
-const profile = await get_profile();
-// console.log(profile);
-const profile_json = {
-    user_name: "Stanley",
-    user_id: "saraki0820",
-    spotify_account: "stanleya0820",
-    playlist: "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=uvsN2ufRTnK37ho8upGvWQ",
-    favorite_genre: "J-POP",
-    favorite_artist: "ZUTOMAYO",
-    favorite_song: "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=40743dee036c46c0"
-}; // Removing friends field for now
 
 // console.log(profile_json);
 
