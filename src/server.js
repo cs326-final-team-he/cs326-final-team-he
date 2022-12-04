@@ -163,7 +163,7 @@ app.get('/main', checkLoggedIn, (req, res) => {
     return res.redirect(`/main/:${req.user}`)
 });
 app.get('/main/:user_id', checkLoggedIn, (req, res) => {
-    return res.sendFile('public/main.html', { 'root' : __dirname })
+    return res.redirect('/main.html');
 });
 app.get('/loadFeed', checkLoggedIn, async (req, res) => {
     try {
@@ -204,7 +204,7 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    return res.sendFile('public/login.html', { 'root' : __dirname })
+    return res.redirect('/login.html');
 });
 
 /**
@@ -218,7 +218,7 @@ app.post('/login',
 	 }));
 
 app.get('/register', (req, res) => {
-    return res.sendFile('public/register.html', { 'root' : __dirname });
+    return res.redirect('/register.html');
 });
 // Test loading all tables beforehand on startup
 
