@@ -266,7 +266,7 @@ app.get('/profiles', async (req, res) => { //Will get all profiles in DB
 app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM profiles WHERE user_id=${req.params.user_id};`);
+        const result = await client.query(`SELECT * FROM profiles WHERE user_id=$1;`, [req.params.user_id]);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
@@ -288,7 +288,7 @@ app.get('/chirps', async (req, res) => { //Will get all chirps in DB
 app.get('/chirps/:user_id', async (req, res) => { //Will get all chirps posted by user
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from chirps where user_id=${req.params.user_id};`);
+        const result = await client.query(`SELECT * from chirps where user_id='${req.params.user_id}';`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
@@ -299,7 +299,7 @@ app.get('/chirps/:user_id', async (req, res) => { //Will get all chirps posted b
 app.get('/chirps/:chirp_id', async (req, res) => { //Gets specific chirp
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from chirps where chirp_id=${req.params.chirp_id};`);
+        const result = await client.query(`SELECT * from chirps where chirp_id='${req.params.chirp_id}';`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
@@ -310,7 +310,7 @@ app.get('/chirps/:chirp_id', async (req, res) => { //Gets specific chirp
 app.get('/friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
     try{
         const client = await pool.client();
-        const result = await client.query(`SELECT * from friends where user_id=${req.params.user_id};`);
+        const result = await client.query(`SELECT * from friends where user_id='${req.params.user_id}';`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err){
