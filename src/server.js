@@ -39,8 +39,15 @@ const strategy = new LocalStrategy(
 	return done(null, username);
     });
 
-
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
 // App configuration
+const app = express();
+
+app.use(express.json()); // Middleware allows us to use JSON
+app.use(express.static(path.join(__dirname, "/public")));
 
 app.use(expressSession(session));
 passport.use(strategy);
@@ -135,14 +142,6 @@ async function deleteFriend(user_id, friend_id) {
  * Server calls
  */
 
- const app = express();
- let port = process.env.PORT;
- if (port == null || port == "") {
-   port = 8000;
- }
-app.use(express.json()); // Middleware allows us to use JSON
-app.use(express.static(path.join(__dirname, "/public")));
-
 function checkLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
 	// If we are authenticated, run the next route.
@@ -182,7 +181,7 @@ app.get('/', checkLoggedIn, async (req, res) => {
         let user_id = '';
         req.on('data', data => user_id += data);
         req.on('end', async () =>{
-            
+
         });
         // Now try loading feed
         const result = await client.query(`SELECT * from chirps;`);
