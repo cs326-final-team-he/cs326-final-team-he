@@ -164,6 +164,7 @@ async function post_chirp(chirp_json) {
         favorite.classList.add('like_button');
         favorite.innerText = 'favorite_border';
         const likedPost = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${profile_json.user_id}/${chirp_json.chirp_id}`);
+        console.log(likedPost);
         if (likedPost.length == 0) {
             favorite.style.color = 'black';
         }
