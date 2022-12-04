@@ -151,15 +151,25 @@ async function post_chirp(chirp_json) {
         favorite.classList.add('material-icons');
         favorite.classList.add('like_button');
         favorite.innerText = 'favorite_border';
-        favorite.addEventListener('click', () => {
+        favorite.addEventListener('click', async () => {
             if (favorite.style.color != 'red') {
                 favorite.style.color = 'red';
-                chirp_json.like_count+=1
+                chirp_json.like_count+=1;
             }
             else {
                 favorite.style.color = 'black';
                 chirp_json.like_count-=1;
             }
+            const chirpEdit = {
+                chrip_id: chirp_json.chrip_id,
+                timestamp: chirp_json.timestamp,
+                user_name: chirp_json.user_name,
+                chirp_text: chirp_json.chirp_text,
+                shared_song: chirp_json.shared_song,
+                like_count: chirp_json.like_count,
+                share_count: chirp_json.share_count
+            };
+            await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: JSON.stringify(chirpEdit)});
         });
         const publish = document.createElement('span');
         publish.classList.add('material-icons');
