@@ -349,7 +349,6 @@ const response = await fetch(`https://music-matcher-326.herokuapp.com/loadFeed`)
 
 if (response.ok) {
     const chirpsJsonArr = await response.json();
-    console.log(chirpsJsonArr);
     
     for (let i = 0; i < chirpsJsonArr.length; i++) {
         await post_chirp(chirpsJsonArr[i]);
