@@ -56,10 +56,34 @@ async function set_profile(profile_json) {
         embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
         const response = await fetch(`https://music-matcher-326.herokuapp.com/Friends/${profile_json.user_id}`);
         const friends = response.json();
-        friends.then(value => {
-            if (value.length >= 0) {
+        friends.then(async value => {
+            if (value.length > 0) {
+                const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[0].friend_id}`);
+                const friend_1 = response.json();
+                friend_1.then(friendInfo => {
+                    document.getElementById('f1_user_name').innerHTML = friendInfo[0].user_name;
+                    document.getElementById('f1_uid').innerHTML = friendInfo[0].user_id;
+                    document.getElementById('f1_song').innerHTML = friendInfo[0].favorite_song; 
+                });
             }
-            document.getElementById('f1_user_name').innerHTML = value
+            if (value.length > 1) {
+                const response = await fetch(`https://music-matcher-326-herokuapp.com/Profiles/${value[1].friend_id}`);
+                const friend_2 = response.json();
+                friend_2.then(friendInfo => {
+                    document.getElementById('f2_user_name').innerHTML = friendInfo[0].user_name;
+                    document.getElementById('f2_uid').innerHTML = friendInfo[0].user_id;
+                    document.getElementById('f2_song').innerHTML = friendInfo[0].favorite_song;                     
+                });
+            }
+            if (value.length > 2) {
+                const response = await fetch(`https://music-matcher-326-herokuapp.com/Profiles/${value[2].friend_id}`);
+                const friend_3 = response.json();
+                friend_3.then(friendInfo => {
+                    document.getElementById('f3_user_name').innerHTML = friendInfo[0].user_name;
+                    document.getElementById('f3_uid').innerHTML = friendInfo[0].user_id;
+                    document.getElementById('f3_song').innerHTML = friendInfo[0].favorite_song;                           
+                });
+            }
         });
         // commenting out for now
         //todo: make this less ugly
