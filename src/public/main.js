@@ -58,6 +58,7 @@ async function set_profile(profile_json) {
         const friends = response.json();
         friends.then(async value => {
             if (value.length > 0) {
+                console.log(value[0]);
                 const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[0].friend_id}`);
                 const friend_1 = response.json();
                 friend_1.then(friendInfo => {
