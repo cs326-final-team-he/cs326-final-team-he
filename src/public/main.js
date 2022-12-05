@@ -68,7 +68,7 @@ async function set_profile(profile_json) {
                 });
             }
             if (value.length > 1) {
-                const response = await fetch(`https://music-matcher-326-herokuapp.com/Profiles/${value[1].friend_id}`);
+                const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[1].friend_id}`);
                 const friend_2 = response.json();
                 friend_2.then(friendInfo => {
                     document.getElementById('f2_user_name').innerHTML = friendInfo[0].user_name;
@@ -77,7 +77,7 @@ async function set_profile(profile_json) {
                 });
             }
             if (value.length > 2) {
-                const response = await fetch(`https://music-matcher-326-herokuapp.com/Profiles/${value[2].friend_id}`);
+                const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[2].friend_id}`);
                 const friend_3 = response.json();
                 friend_3.then(friendInfo => {
                     document.getElementById('f3_user_name').innerHTML = friendInfo[0].user_name;
