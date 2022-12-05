@@ -63,7 +63,7 @@ async function set_profile(profile_json) {
                 const friend_1 = response.json();
                 friend_1.then(friendInfo => {
                     document.getElementById('f1_user_name').innerHTML = friendInfo[0].user_name;
-                    document.getElementById('f1_uid').innerHTML = friendInfo[0].user_id;
+                    document.getElementById('f1_uid').innerHTML = "hehe"
                     document.getElementById('f1_song').innerHTML = friendInfo[0].favorite_song; 
                 });
             }
