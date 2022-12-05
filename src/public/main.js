@@ -225,7 +225,7 @@ async function post_chirp(chirp_json) {
                 user_name: chirp_json.user_name,
                 chirp_text: chirp_json.chirp_text,
                 shared_song: chirp_json.shared_song,
-                like_count: chirp_json.like_count,
+                like_count: 0,
                 share_count: chirp_json.share_count,
                 user_id: chirp_json.user_id
             };
