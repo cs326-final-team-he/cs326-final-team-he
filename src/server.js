@@ -227,23 +227,23 @@ app.get('/register', (req, res) => {
 
 app.post('/register', async (req, res) => { // For CREATE PROFILE
     try {
-    //     let body = '';
-    //     req.on('data', data => body += data);
-    //     req.on('end', async () =>{
-    //         const post = JSON.parse(body);
-    //         const client = await pool.connect();
-    //         const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
-    //                         VALUES (
-    //                             '${cleanText(post.user_name)}', 
-    //                             '${cleanText(post.user_id)}',
-    //                             '${cleanText(post.spotify_account)}', 
-    //                             '${cleanText(post.playlist)}',
-    //                             '${cleanText(post.favorite_song)}', 
-    //                             '${cleanText(post.favorite_genre)}',
-    //                             '${cleanText(post.favorite_artist)}')
-    //                             ON CONFLICT (user_id) DO NOTHING;`);
-    //         client.release();
-    //     });
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () =>{
+            const post = JSON.parse(body);
+            const client = await pool.connect();
+            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
+                            VALUES (
+                                '${cleanText(post.user_name)}', 
+                                '${cleanText(post.user_id)}',
+                                '${cleanText(post.spotify_account)}', 
+                                '${cleanText(post.playlist)}',
+                                '${cleanText(post.favorite_song)}', 
+                                '${cleanText(post.favorite_genre)}',
+                                '${cleanText(post.favorite_artist)}')
+                                ON CONFLICT (user_id) DO NOTHING;`);
+            client.release();
+        });
 
         return res.redirect('/login');
     } catch(err) {

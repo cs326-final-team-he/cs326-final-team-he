@@ -30,15 +30,14 @@
             alert('An account with this user ID already exists! please choose a different one.');
             return;
         }
-        // embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
-        // embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
         //create profile
         const response = await fetch('https://music-matcher-326.herokuapp.com/register', {method: 'POST', body: JSON.stringify(profile)});
-        console.log(response.status);
+        if (response.ok && response.status !== 404) {
+            window.location.href = '/login';
+        }
     } else {
         //error server-side
         const err = await check.text();
-        console.log(err);
         alert('Error talking with server, please try again later.');
     }
 }
