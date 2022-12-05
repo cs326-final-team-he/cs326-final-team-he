@@ -56,10 +56,10 @@ async function set_profile(profile_json) {
         embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
     
         // commenting out for now
-        // const friends = profile_json.friends;
+         const friends = await fetch()
         //todo: make this less ugly
         // if (friends.length > 0) {
-        //     document.getElementById('f1_user_name').innerHTML = profileJson.friends[0].user_name;
+        document.getElementById('f1_user_name').innerHTML = 'HAHAHA'
         //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
         //     document.getElementById('f1_song').innerHTML = profileJson.friends[0].favorite_song;        
         // } if (friends.length > 1) {
