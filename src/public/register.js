@@ -21,7 +21,9 @@
     profile.favorite_song = document.getElementById('fsongInput').value;
     profile.favorite_artist = document.getElementById('fartistInput').value;
     profile.favorite_genre = document.getElementById('fgenreInput').value;
-
+    if (Object.values(profile).some(e => e === '')) {
+        alert('A field is unfilled! Please fill them all in');
+    }
     //check if profile w user id alr exists
     const check = await fetch(`https://music-matcher-326.herokuapp.com/profiles/${profile.user_id}`);
     if (check.ok && check.status !== 404) {
@@ -33,7 +35,7 @@
         //create profile
         const response = await fetch('https://music-matcher-326.herokuapp.com/register', {method: 'POST', body: JSON.stringify(profile)});
         if (response.ok && response.status !== 404) {
-            // window.location.href = '/login';
+            window.location.href = '/login';
         }
     } else {
         //error server-side
