@@ -54,7 +54,8 @@ async function set_profile(profile_json) {
         embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
         document.getElementById('song').value = profile_json.favorite_song;
         embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
-        const friends = await fetch(`https://music-matcher-326.herokuapp.com/Friends/${profile_json.user_id}`).then(value => value);
+        const response = await fetch(`https://music-matcher-326.herokuapp.com/Friends/${profile_json.user_id}`);
+        const friends = response.then(value => value);
         // commenting out for now
         //todo: make this less ugly
         // if (friends.length > 0) {
