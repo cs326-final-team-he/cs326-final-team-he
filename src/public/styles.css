@@ -218,7 +218,7 @@ body {
   font-size: 50px;
 }
 
-#sharebox_shareButton {
+.btn {
   background-color: var(--musicmatcher-color);
   border: none;
   color: white;
@@ -230,7 +230,7 @@ body {
   margin-left: auto;
 }
 
-#sharebox_shareButton:hover {
+.btn:hover {
     background-color: var(--musicmatcher-background);
     border-radius: 30px;
     color: var(--musicmatcher-color);
@@ -473,7 +473,7 @@ body {
   text-align: center;
 }
 .form_header {
-    font-size: xx-large;
+    font-size: large;
 }
 .form {
   flex: 0.5;
@@ -507,7 +507,6 @@ body {
 
 .form-search {
   display: flex;
-  align-items: center;
   background-color: var(--musicmatcher-background);
   padding: 10px;
   border-radius: 20px;
@@ -523,4 +522,36 @@ body {
 
 .rec_add_music span {
   font-size: 30px;
+}
+#register_btn {
+  width: 135px;
+  height: 40px;
+}
+
+a.button {
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  appearance: button;
+  text-decoration: none;
+  color: initial;
+}
+.abtn {
+  float: right;
+  background-color: var(--musicmatcher-color);
+  border: none;
+  color: white;
+  font-weight: 900;
+  border-radius: 30px;
+  padding: 5px;
+  width: auto;
+  height: auto;
+  margin-top: 20px;
+  margin-left: auto;
+}
+
+.abtn:hover {
+    background-color: var(--musicmatcher-background);
+    border-radius: 30px;
+    color: var(--musicmatcher-color);
+    transition: color 100ms ease-out;
 }
