@@ -6,7 +6,7 @@
     /**
      * @TODO :set up password creation, and adding friends
      */
-    //check if passwords are the same
+    // check if passwords are the same
     const pwd = document.getElementById('passwordInput').value;
     if (pwd !== document.getElementById('passwordInput2').value) {
         alert("Passwords don't match. Please make sure the passwords are the same.");
