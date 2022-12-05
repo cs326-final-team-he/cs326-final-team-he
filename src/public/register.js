@@ -23,6 +23,7 @@
     profile.favorite_genre = document.getElementById('fgenreInput').value;
     if (Object.values(profile).some(e => e === '')) {
         alert('A field is unfilled! Please fill them all in');
+        return;
     }
     //check if profile w user id alr exists
     const check = await fetch(`https://music-matcher-326.herokuapp.com/profiles/${profile.user_id}`);
