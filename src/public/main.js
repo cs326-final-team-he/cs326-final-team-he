@@ -171,7 +171,7 @@ async function post_chirp(chirp_json) {
             }
         });
         const likes = document.createElement('span');
-        likes.innerHTML = '0';
+        likes.innerHTML = chirp_json.like_count;
         favorite.addEventListener('click', async () => {
             if (favorite.style.color != 'red') {
                 favorite.style.color = 'red';
@@ -199,7 +199,7 @@ async function post_chirp(chirp_json) {
             };
             await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: JSON.stringify(chirpEdit)});
         });
-        const publish = document.createElement('div');
+        const publish = document.createElement('span');
         publish.classList.add('material-icons');
         publish.innerText = 'publish';
 
