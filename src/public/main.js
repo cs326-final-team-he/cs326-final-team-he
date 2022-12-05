@@ -199,7 +199,7 @@ async function post_chirp(chirp_json) {
             };
             await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: JSON.stringify(chirpEdit)});
         });
-        const publish = document.createElement('span');
+        const publish = document.createElement('div');
         publish.classList.add('material-icons');
         publish.innerText = 'publish';
 
