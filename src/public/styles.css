@@ -147,8 +147,8 @@ body {
   transform: scale(0.9, 0.9);
 }
 
-.like_button::after{
-  float: right;
+.likes{
+  margin-left: -15px;
 }
 
 /* TO ENLARGE ACCOUNT PROFILE */
