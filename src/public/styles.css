@@ -148,7 +148,7 @@ body {
 }
 
 .like_button::after{
-  text-align: "0";
+  float: right;
 }
 
 /* TO ENLARGE ACCOUNT PROFILE */
