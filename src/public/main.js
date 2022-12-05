@@ -260,7 +260,33 @@ async function post_chirp(chirp_json) {
     }
 }
 
-async function add_friend(profile_json, friend_json) {
+async function add_friends() { //Adds 3 friends from database
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/Friends/${profile_json.user_id}`);
+    const current_friends = response.json();
+    current_friends.then(async friendsList => {
+        if(friendsList.length != 3) {
+            const responseProfiles = await fetch(`https://music-matcher-326.herokuapp.com/Profiles`);
+            const all_Profiles = responseProfiles.json();
+            all_Profiles.then(async profileList => {
+                let i = 0;
+                let k = 0;
+                while(i < 3 && k < profileList.length) {
+                    if (profile_json.user_id != profileList[i].user_id) {
+                        let friendConnection = 
+                        {
+                            user_id: profile_json.user_id,
+                            friend_id: profileList[i].user_id
+                        }
+                        await update_friends_db(friendConnection);
+                        i++;
+                    }
+                    k++;
+                }
+
+            });
+        }    
+
+    })
     const friendConnection =             
     {
         user_id: profile_json.user_id,
@@ -354,7 +380,8 @@ function embed_link(spotify_url, divElem) {
 
 const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
-    add_friend(profile_json, friendJson);
+
+    add_friends();
     console.log(profile_json.friends);
 }); 
 // Basic app functionalities
