@@ -181,11 +181,13 @@ async function post_chirp(chirp_json) {
                 };
                 await fetch(`https://music-matcher-326.herokuapp.com/createLike`, {method: 'POST', body: JSON.stringify(like)});
                 chirp_json.like_count+=1;
+                likes.innerHTML = chirp_json.like_count;
             }
             else {
                 favorite.style.color = 'black';
                 chirp_json.like_count-=1;
                 await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${profile_json.user_id}/${chirp_json.chirp_id}`, {method: 'DELETE'});
+                likes.innerHTML = chirp_json.like_count;
             }
             const chirpEdit = {
                 chirp_id: chirp_json.chirp_id,
