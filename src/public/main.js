@@ -63,7 +63,7 @@ async function set_profile(profile_json) {
                 const friend_1 = response.json();
                 friend_1.then(friendInfo => {
                     document.getElementById('f1_user_name').innerHTML = friendInfo[0].user_name;
-                    document.getElementById('f1_song').innerHTML = friendInfo[0].favorite_song; 
+                    embed_link(friendInfo[0].favorite_song, document.getElementById('f1_song')); 
                 });
             }
             if (value.length > 1) {
@@ -71,7 +71,7 @@ async function set_profile(profile_json) {
                 const friend_2 = response.json();
                 friend_2.then(friendInfo => {
                     document.getElementById('f2_user_name').innerHTML = friendInfo[0].user_name;
-                    document.getElementById('f2_song').innerHTML = friendInfo[0].favorite_song;                     
+                    embed_link(friendInfo[0].favorite_song, document.getElementById('f2_song'));                     
                 });
             }
             if (value.length > 2) {
@@ -79,8 +79,7 @@ async function set_profile(profile_json) {
                 const friend_3 = response.json();
                 friend_3.then(friendInfo => {
                     document.getElementById('f3_user_name').innerHTML = friendInfo[0].user_name;
-                    document.getElementById('f3_uid').innerHTML = friendInfo[0].user_id;
-                    document.getElementById('f3_song').innerHTML = friendInfo[0].favorite_song;                           
+                    embed_link(friendInfo[0].favorite_song, document.getElementById('f3_song'));                         
                 });
             }
         });
