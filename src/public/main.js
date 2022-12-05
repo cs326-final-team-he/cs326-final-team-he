@@ -165,12 +165,13 @@ async function post_chirp(chirp_json) {
         favorite.innerText = 'favorite_border';
         const response = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${profile_json.user_id}/${chirp_json.chirp_id}`);
         const likedPost = response.json();
-        favorite.innerHTML = 1;
         likedPost.then(value => {
             if(value == true) {
                 favorite.style.color = 'red';
             }
         });
+        const likes = document.createElement('span');
+        likes.innerHTML = '0';
         favorite.addEventListener('click', async () => {
             if (favorite.style.color != 'red') {
                 favorite.style.color = 'red';
@@ -204,6 +205,7 @@ async function post_chirp(chirp_json) {
 
         footer.appendChild(repeat);
         footer.appendChild(favorite);
+        footer.appendChild(likes);
         footer.appendChild(publish);
 
         post_body.appendChild(post_header);
