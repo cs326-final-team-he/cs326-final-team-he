@@ -56,7 +56,6 @@ async function set_profile(profile_json) {
         embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
     
         // commenting out for now
-         const friends = await fetch()
         //todo: make this less ugly
         // if (friends.length > 0) {
         document.getElementById('f1_user_name').innerHTML = 'HAHAHA'
