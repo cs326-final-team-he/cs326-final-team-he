@@ -33,7 +33,7 @@
         //create profile
         const response = await fetch('https://music-matcher-326.herokuapp.com/register', {method: 'POST', body: JSON.stringify(profile)});
         if (response.ok && response.status !== 404) {
-            window.location.href = '/login';
+            // window.location.href = '/login';
         }
     } else {
         //error server-side
