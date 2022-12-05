@@ -231,7 +231,7 @@ app.get('/Chirps/:chirp_id', async (req, res) => { //Gets specific chirp
 
 app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
     try{
-        const client = await pool.client();
+        const client = await pool.connect();
         const result = await client.query(`SELECT * from friends where user_id=${req.params.user_id};`);
         client.release();
         res.status(200).send(result.rows);
