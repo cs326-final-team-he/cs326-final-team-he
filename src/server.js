@@ -245,7 +245,7 @@ app.post('/register', async (req, res) => { // For CREATE PROFILE
     //         client.release();
     //     });
 
-        res.redirect('/login');
+        return res.redirect('/login');
     } catch(err) {
         res.status(404).send(`Error: ${err}`);
     }
