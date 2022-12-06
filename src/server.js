@@ -154,10 +154,10 @@ async function addUser(user_id, password) {
     const [salt, hash] = mc.hash(password);
     try {
         const client = await pool.connect();
-        await client.query(`INSERT INTO user_secrets(user_id, salt, hash) VALUES (
+        await client.query(`INSERT INTO user_secrets (user_id, salt, hash) VALUES (
             '${cleanText(user_id)}', 
-            '${cleanText(salt)}',
-            '${cleanText(hash)}', )
+            '${salt}',
+            '${hash}')
             ON CONFLICT (user_id) DO NOTHING;`);
         client.release();
         return 1;
