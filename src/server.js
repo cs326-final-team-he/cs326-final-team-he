@@ -320,6 +320,8 @@ app.post('/register', async (req, res) => { // For CREATE PROFILE
             await client.query(`CREATE TABLE IF NOT EXISTS user_secrets 
             (user_id VARCHAR(50) PRIMARY KEY, salt VARCHAR(100), hash VARCHAR(300));`);
 
+            await addUser(post.user_id, post.password);
+
             client.release();
         });
 

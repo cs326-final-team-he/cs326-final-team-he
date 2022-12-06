@@ -21,6 +21,7 @@
     profile.favorite_song = document.getElementById('fsongInput').value;
     profile.favorite_artist = document.getElementById('fartistInput').value;
     profile.favorite_genre = document.getElementById('fgenreInput').value;
+    profile.password = document.getElementById('passwordInput').value;
     if (Object.values(profile).some(e => e === '')) {
         alert('A field is unfilled! Please fill them all in');
         return;
