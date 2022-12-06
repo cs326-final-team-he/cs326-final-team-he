@@ -25,13 +25,13 @@ const session = {
 // Passport configuration
 
 const strategy = new LocalStrategy(
-    async (username, password, done) => {
-	if (!findUser(username)) {
+    async (user_id, password, done) => {
+	if (!findUser(user_id)) {
 	    // no such user
 	    await new Promise((r) => setTimeout(r, 2000)); // two second delay
-	    return done(null, false, { 'message' : 'Wrong username' });
+	    return done(null, false, { 'message' : 'Wrong user_id' });
 	}
-	if (!validatePassword(username, password)) {
+	if (!validatePassword(user_id, password)) {
 	    // invalid password
 	    // should disable logins after N messages
 	    // delay return to rate-limit brute-force attacks
@@ -40,7 +40,7 @@ const strategy = new LocalStrategy(
 	}
 	// success!
 	// should create a user object here, associated with a unique identifier
-	return done(null, username);
+	return done(null, user_id);
     });
 
 let port = process.env.PORT;
@@ -98,7 +98,7 @@ function cleanText(str) {
  * @param {string} user_id user_id key of the table
  * @returns {[string, string]} returns an array of string, in form of [salt, hash]
  */
-async function findUser(user_id) {
+async function findUser(user_id) { // TODO: RETURN BOOL
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
