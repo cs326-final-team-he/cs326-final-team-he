@@ -96,7 +96,7 @@ function cleanText(str) {
 /**
  * Queries user id database to see if there is an existing entry with the provided user id
  * @param {string} user_id user_id key of the table
- * @returns {[string, string]} returns an array of string, in form of [salt, hash]
+ * @returns {bool} returns bool
  */
 async function findUser(user_id) { // TODO: RETURN BOOL
     try {
@@ -106,7 +106,7 @@ async function findUser(user_id) { // TODO: RETURN BOOL
         return result.rows[0].length > 0; // the [salt, hash]
     }
     catch (err) {
-        return err; // Not sure if this is exactly good coding practice
+        return false; // Not sure if this is exactly good coding practice
     }
 }
 
@@ -119,15 +119,20 @@ async function findUser(user_id) { // TODO: RETURN BOOL
 async function validatePassword(user_id, password) {
     try {
         const result = await findUser(user_id);
-
-        if (result.length == 0) {
-            // empty query, couldn't find matching result 
+        if (!result) {
             return false;
         }
 
-        const salt = result[0];
-        const hash = result[1];
+        // if (result.length == 0) {
+        //     // empty query, couldn't find matching result 
+        //     return false;
+        // }
+        const client = await pool.connect();
+        const res = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
         
+        const [salt, hash] = res.rows[0];
+        client.release();
+
         return mc.check(password, salt, hash); // Checks provided password against salt + hash, returns true iff matching else false
     }
     catch (err) {
@@ -142,8 +147,8 @@ async function validatePassword(user_id, password) {
  * @returns {int} returns 1 if successful, else it failed and should return an error message
  */
 async function addUser(user_id, password) {
-    const result = findUser(user_id);
-    if (result.length > 0) {
+    const result = await findUser(user_id);
+    if (!result) {
         // User already exists, no need to add that user again
     }
     const [salt, hash] = mc.hash(password);
