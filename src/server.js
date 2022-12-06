@@ -103,7 +103,7 @@ async function findUser(user_id) { // TODO: RETURN BOOL
         const client = await pool.connect();
         const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
         client.release();
-        return result.rows[0]; // the [salt, hash]
+        return result.rows[0].length > 0; // the [salt, hash]
     }
     catch (err) {
         return err; // Not sure if this is exactly good coding practice
