@@ -93,7 +93,74 @@ function cleanText(str) {
  * We will be adding APIs on server side here
  */
 
+/**
+ * Queries user id database to see if there is an existing entry with the provided user id
+ * @param {string} user_id user_id key of the table
+ * @returns {[string, string]} returns an array of string, in form of [salt, hash]
+ */
+async function findUser(user_id) {
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
+        client.release();
+        return result.rows[0]; // the [salt, hash]
+    }
+    catch (err) {
+        return err; // Not sure if this is exactly good coding practice
+    }
+}
 
+/**
+ * returns true iff the password is matching
+ * @param {string} user_id user_id key of the table
+ * @param {string} password password input for the given user
+ * @returns {bool} 
+ */
+async function validatePassword(user_id, password) {
+    try {
+        const result = await findUser(user_id);
+
+        if (result.length == 0) {
+            // empty query, couldn't find matching result 
+            return false;
+        }
+
+        const salt = result[0];
+        const hash = result[1];
+        
+        return mc.check(password, salt, hash); // Checks provided password against salt + hash, returns true iff matching else false
+    }
+    catch (err) {
+        return false; // Not sure if this is exactly good coding practice
+    }
+}
+
+/**
+ * Adds a user to the user_secrets database
+ * @param {string} user_id user_id column of the database
+ * @param {string} password user's password that will be hashed
+ * @returns {int} returns 1 if successful, else it failed and should return an error message
+ */
+async function addUser(user_id, password) {
+    const result = findUser(user_id);
+    if (result.length > 0) {
+        // User already exists, no need to add that user again
+    }
+    const [salt, hash] = mc.hash(password);
+    try {
+        const client = await pool.connect();
+        await client.query(`INSERT INTO user_secrets(user_id, salt, hash) VALUES (
+            '${cleanText(user_id)}', 
+            '${cleanText(salt)}',
+            '${cleanText(hash)}', )
+            ON CONFLICT (user_id) DO NOTHING;`);
+        client.release();
+        return 1;
+    }
+    catch (err) {
+        return err;
+    }
+}
 
 /**
  * DELETE ENDPOINT
@@ -242,8 +309,16 @@ app.post('/register', async (req, res) => { // For CREATE PROFILE
                                 '${cleanText(post.favorite_genre)}',
                                 '${cleanText(post.favorite_artist)}')
                                 ON CONFLICT (user_id) DO NOTHING;`);
+
+            // Might need to create user secrets table here too
+
+            await client.query(`CREATE TABLE IF NOT EXISTS user_secrets 
+            (user_id VARCHAR(50) PRIMARY KEY, salt VARCHAR(100), hash VARCHAR(300));`);
+
             client.release();
         });
+
+        
 
         return res.redirect('/login');
     } catch(err) {
