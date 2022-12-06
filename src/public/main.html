@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv=""X-UA-Compatible" content=""IE=edge">
+    <meta http-equiv="" X-UA-Compatible" content="" IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MusicMatcher</title>
 
     <script type="module" src="/main.js" defer></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" 
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" 
-    integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" 
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <script src="https://open.spotify.com/embed-podcast/iframe-api/v1" async></script> 
+    <script src="https://open.spotify.com/embed-podcast/iframe-api/v1" async></script>
     <!-- sidebar starts-->
     <div class="sidebar">
         <div class="accountProfileIcon">
-            <span class="material-icons" id = "account_circle_option">
+            <span class="material-icons" id="account_circle_option">
                 account_circle
             </span>
         </div>
@@ -34,7 +35,7 @@
             </span>
         </div>
         <div class="user_id">
-            <h2>User ID</h2>    
+            <h2>User ID</h2>
             <input type="text" placeholder="user ID" id="uid">
         </div>
 
@@ -93,7 +94,7 @@
                     <span class="material-icons" id="userProfileShare">
                         account_circle
                     </span>
-                    <input type="text" id="sharebox_text" placeholder="Share a song or playlist!">
+                    <textarea id="sharebox_text" cols="500" rows="10" placeholder="Share a song or playlist!"></textarea>
                 </div>
                 <div class="sharebox_play_button">
                     <!-- <span class="material-icons">
@@ -102,7 +103,7 @@
                     <input type="text" id="shared_spotify_url" placeholder="Enter a song or playlist url!">
                     <button type="button" id="embed_button">Embed song/playlist!</button>
                     <div id="embed-iframe"></div>
-                    
+
                 </div>
                 <button id="sharebox_shareButton" class="btn">share!</button>
             </form>
@@ -111,8 +112,26 @@
 
         <!-- post starts here -->
         <div class="post">
+            <div class="post_avatar"><span id="userProfileShare" class="material-icons">account_circle</span></div>
+            <div class="post_body">
+                <div class="post_header">
+                    <div class="post_headerText">
+                        <h3 id="u1_user_name">Stanley</h3>
+                    </div>
+                    <div class="post_headerDescription">
+                        <p id="u1_chirp"> fadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfa sfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfas</p>
+                    </div>
+                </div>
+                <iframe src="https://open.spotify.com/embed?uri=spotify:track:6BV77pE4JyUQUtaqnXeKa5" allow="encrypted-media"></iframe>
+                <div class="post_add_music"></div><span class="post_footer"><span
+                        class="material-icons">repeat</span><span class="material-icons">favorite_border</span><span
+                        class="material-icons">publish</span></span>
+            </div>
+
+        </div>
+        <div class="post">
             <div class="post_avatar">
-                <span class="material-icons" id="userProfileShare" >
+                <span class="material-icons" id="userProfileShare">
                     account_circle
                 </span>
             </div>
@@ -130,7 +149,7 @@
                         </p>
                     </div>
                 </div>
-                
+
                 <div class="post_add_music">
                     <span class="material-icons">
                         play_circle_filled
@@ -143,7 +162,7 @@
                     <span class="material-icons"> publish </span>
                 </div>
             </div>
-            
+
         </div>
 
         <!-- <div class="post">
@@ -303,7 +322,7 @@
         </div>
 
         <div class="widgets_widgetContainer">
-            <h2>Friends & Favorite Songs</h2> 
+            <h2>Friends & Favorite Songs</h2>
             <div class="friend">
                 <div class="friend_avatar">
                     <span class="material-icons" id="userProfileShare">
@@ -358,4 +377,5 @@
     <!-- widget ends here -->
 
 </body>
+
 </html>

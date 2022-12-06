@@ -239,7 +239,7 @@ app.get('/main', checkLoggedIn, (req, res) => {
     return res.redirect(`/main/:${req.user}`)
 });
 app.get('/main/:user_id', checkLoggedIn, (req, res) => {
-    return res.sendFile('public/main.html', { 'root' : __dirname })
+    return res.sendFile('public/main.html', { 'root' : __dirname });
 });
 app.get('/loadFeed', checkLoggedIn, async (req, res) => {
     try {
@@ -267,7 +267,7 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         client.release();
 
         //retrieve userId
-        const user_id = req.params.userId;
+        const user_id = req.user;
         //retrieve profile
         const profile = await client.query('SELECT * FROM profiles WHERE user_id = $1;', [user_id]);
         // Now try loading feed
@@ -350,12 +350,15 @@ app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based o
         const client = await pool.connect();
         const result = await client.query(`SELECT * FROM profiles WHERE user_id='${req.params.user_id}';`);
         client.release();
-        res.status(200).send(result.rows);
+        res.status(200).json(result.rows[0]);
     } catch (err) {
-        res.status(404).send(`Error: ${err}`);
+        res.status(404).json({'error': `Error: ${err}`});
     }
 });
 
+app.get('/sessionProfile', checkLoggedIn, (req, res) => {
+    return res.redirect(`/profiles/:${req.user}`);
+})
 app.get('/chirps', async (req, res) => { //Will get all chirps in DB
     try {
         const client = await pool.connect();

@@ -62,23 +62,29 @@ async function set_profile(profile_json) {
     }
 }
 
+function OnInput() {
+  this.style.height = 0;
+  this.style.height = (this.scrollHeight) + "px";
+}
+
 /**
  * Adds a profile to the database given the populated fields in the sidebar
  */
-async function add_profile() {
-    const profile = {};
-    profile.user_name = document.getElementById('username').value;
-    profile.user_id = document.getElementById('uid').value;
-    profile.spotify_account = document.getElementById('spotify_id').value;
-    profile.playlist = document.getElementById('list').value;
-    profile.favorite_song = document.getElementById('song').value;
-    profile.favorite_artist = document.getElementById('artist').value;
-    profile.favorite_genre = document.getElementById('genre').value;
-
-    embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
-    embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
-
-    const response = await fetch('https://music-matcher-326.herokuapp.com/createProfile', {method: 'POST', body: JSON.stringify(profile)})
+async function load_profile() {
+    const response = await fetch('https://music-matcher-326.herokuapp.com/sessionProfile');
+    if (response.ok && response.status == 404) {
+        const profile = response.json();
+        document.getElementById('username').value;
+        document.getElementById('uid').value;
+        document.getElementById('spotify_id').value;
+        document.getElementById('list').value;
+        document.getElementById('song').value;
+        document.getElementById('artist').value;
+        document.getElementById('genre').value;
+        embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
+        embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
+    
+    }
 }
 /**
  * @param {JSON} chirp_json JSON object containing chirp information to update chirps table with 
@@ -297,6 +303,9 @@ document.getElementById('embed_button').addEventListener("click", () => {
     embed_link(shared_spotify_url, shareBoxDiv);
 });
 
+const box = document.getElementById("sharebox_text");
+box.setAttribute("style", "height:" + (tx.scrollHeight) + "px;overflow-y:hidden;");
+box.addEventListener("input", OnInput, false);
 //On load
 
 // Test onload table creation
