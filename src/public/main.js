@@ -31,7 +31,7 @@ async function get_feed() {
 async function load_profile() {
     const response = await fetch('https://music-matcher-326.herokuapp.com/sessionProfile');
     if (response.ok && response.status !== 404) {
-        const profile = await response.json();
+        const profile = await response.json()[0];
         document.getElementById('username').innerText = profile.user_name;
         document.getElementById('uid').innerText = profile.user_id;
         document.getElementById('spotify_id').innerText = profile.spotify_account;
