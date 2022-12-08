@@ -100,7 +100,7 @@ async function post_chirp(chirp_json) {
     
         post_header.appendChild(post_headerText);
         post_header.appendChild(post_headerDesc);
-    
+
         const song = document.createElement('div');
         //unsure
         song.classList.add('post_add_music');
@@ -165,8 +165,8 @@ async function update_friends_db(friendConnection) {
 
 async function post_chirp_wrapper() {
     console.log("In post_chirp_wrapper");
-    const chirp = { user_name: document.getElementById("username").value, 
-                    user_id: document.getElementById('uid').value,
+    const chirp = { user_name: document.getElementById("username").innerText, 
+                    user_id: document.getElementById('uid').innerText,
                     chirp_text: document.getElementById("sharebox_text").value, 
                     shared_song: document.getElementById("shared_spotify_url").value, 
                     like_count: 0, 
