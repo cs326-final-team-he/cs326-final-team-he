@@ -15,7 +15,7 @@
     //build profile
     const profile = {};
     profile.user_name = document.getElementById('username').value;
-    profile.user_id = document.getElementById('userID').value;
+    profile.user_id = document.getElementById('user_id').value;
     profile.spotify_account = document.getElementById('spotify').value;
     profile.playlist = document.getElementById('playlist').value;
     profile.favorite_song = document.getElementById('song').value;
