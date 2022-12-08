@@ -26,7 +26,8 @@ const session = {
 
 const strategy = new LocalStrategy(
     {
-        usernameField: 'user_id'
+        usernameField: 'user_id',
+        passwordField: 'password'
     },
     async (user_id, password, done) => {
 	if (!findUser(user_id)) {
@@ -294,14 +295,13 @@ app.post('/register', async (req, res) => {
 });
 
  app.get('/main/', checkLoggedIn, (req, res) => {
-    res.redirect('/main/' + req.user);
+    return res.sendFile('public/main.html', { 'root' : __dirname });
 });
 
-app.get('/main/:userID', checkLoggedIn, (req, res) => {
-    if (req.params.userID === req.user) {
-        return res.sendFile('public/main.html', { 'root' : __dirname });
-    }
-})
+// app.get('/main/:userID', checkLoggedIn, (req, res) => {
+//     if (req.params.userID === req.user) {
+//     }
+// })
 
 app.get('/loadFeed', checkLoggedIn, async (req, res) => {
     try {
