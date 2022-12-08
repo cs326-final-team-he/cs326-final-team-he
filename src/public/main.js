@@ -35,18 +35,8 @@ function OnInput() {
  */
 async function load_profile() {
     const response = await fetch('https://music-matcher-326.herokuapp.com/sessionProfile');
-    const profile = {
-        user_name: 'test',
-        user_id: 'test',
-        spotify_account: 'test',
-        playlist: 'https://open.spotify.com/playlist/4o6RvmzrySryO4r0vyM0tX?si=fb8222ebeabf4278',
-        favorite_song: 'https://open.spotify.com/track/2ddLkt4HDW2iatdDMzL6pV?si=093cabff362a4994',
-        favorite_artist: 'https://open.spotify.com/artist/1Bl6wpkWCQ4KVgnASpvzzA?si=e129b1f9e8714bbf',
-        favorite_genre: 'pop'
-    };
-    if (response.ok && response.status == 404) {
+    if (response.ok && response.status !== 404) {
         const profile = await response.json();
-        alert('here');
         document.getElementById('username').innerText = profile.user_name;
         document.getElementById('uid').innerText = profile.user_id;
         document.getElementById('spotify_id').innerText = profile.spotify_account;

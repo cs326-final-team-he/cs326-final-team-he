@@ -324,8 +324,6 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
 
 
-        client.release();
-
         //retrieve userId
         const user_id = req.user;
         //retrieve profile
