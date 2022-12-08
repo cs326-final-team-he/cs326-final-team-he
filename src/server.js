@@ -122,11 +122,6 @@ async function validatePassword(user_id, password) {
         if (!result) {
             return false;
         }
-
-        // if (result.length == 0) {
-        //     // empty query, couldn't find matching result 
-        //     return false;
-        // }
         const client = await pool.connect();
         const res = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
         
@@ -148,7 +143,8 @@ async function validatePassword(user_id, password) {
  */
 async function addUser(user_id, password) {
     const result = await findUser(user_id);
-    if (!result) {
+    if (result) {
+        return 0;
         // User already exists, no need to add that user again
     }
     const [salt, hash] = mc.hash(password);
@@ -167,6 +163,15 @@ async function addUser(user_id, password) {
     }
 }
 
+function checkLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+	// If we are authenticated, run the next route.
+	    next();
+    } else {
+	// Otherwise, redirect to the login page.
+	    res.redirect('/login');
+    }
+}
 /**
  * DELETE ENDPOINT
  */
@@ -218,29 +223,80 @@ async function deleteFriend(user_id, friend_id) {
  * Server calls
  */
 
-function checkLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-	// If we are authenticated, run the next route.
-        console.log(req);
-	    next();
-    } else {
-	// Otherwise, redirect to the login page.
-	    res.redirect('/login');
-    }
-}
 app.get('/', checkLoggedIn, async (req, res) => {
     res.redirect('/main');
 });
 
+app.get('/login', (req, res) => {
+    return res.sendFile('public/login.html', { 'root' : __dirname })
+});
+
 /**
- * I don't get how we get user but ok
+ * I dont know how this works TODO
  */
-app.get('/main', checkLoggedIn, (req, res) => {
+// Handle post data from the login.html form.
+app.post('/login',
+	 passport.authenticate('local' , {     // use username/password authentication
+	     'successRedirect' : '/main',   // when we login, go to /private 
+	     'failureRedirect' : '/login'      // otherwise, back to login
+	 }));
+
+app.get('/register', (req, res) => {
+    return res.sendFile('public/register.html', { 'root' : __dirname });
+});
+
+app.post('/register', async (req, res) => {
+    // const username = req.body.username;
+    // const user_id = req.body.user_id;
+    // const spotify = req.body.spotify;
+    // const playlist = req.body.playlist;
+    // const song = req.body.song;
+    // const genre = req.body.genre;
+    // const artist = req.body.artist;
+
+    // const password = req.body.password;
+    // const verify = req.body.verify;
+    try {
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () =>{
+            const post = JSON.parse(body);
+            const client = await pool.connect();
+            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
+                            VALUES (
+                                '${cleanText(post.user_name)}', 
+                                '${cleanText(post.user_id)}',
+                                '${cleanText(post.spotify_account)}', 
+                                '${cleanText(post.playlist)}',
+                                '${cleanText(post.favorite_song)}', 
+                                '${cleanText(post.favorite_genre)}',
+                                '${cleanText(post.favorite_artist)}')
+                                ON CONFLICT (user_id) DO NOTHING;`);
+
+            // Might need to create user secrets table here too
+
+            await client.query(`CREATE TABLE IF NOT EXISTS user_secrets 
+            (user_id VARCHAR(50) PRIMARY KEY, salt VARCHAR(100), hash VARCHAR(300));`);
+
+            await addUser(post.user_id, post.password);
+
+            client.release();
+        });
+
+        return res.status(200).send();
+    } catch(err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+ app.get('/main', checkLoggedIn, (req, res) => {
     return res.redirect(`/main/:${req.user}`)
 });
+
 app.get('/main/:user_id', checkLoggedIn, (req, res) => {
     return res.sendFile('public/main.html', { 'root' : __dirname });
 });
+
 app.get('/loadFeed', checkLoggedIn, async (req, res) => {
     try {
         const client = await pool.connect();
@@ -278,60 +334,6 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         res.status(404).json({"Error": `Error: ${err}`});
     }
 })
-
-app.get('/login', (req, res) => {
-    return res.sendFile('public/login.html', { 'root' : __dirname })
-});
-
-/**
- * I dont know how this works TODO
- */
-// Handle post data from the login.html form.
-app.post('/login',
-	 passport.authenticate('local' , {     // use username/password authentication
-	     'successRedirect' : '/main',   // when we login, go to /private 
-	     'failureRedirect' : '/login'      // otherwise, back to login
-	 }));
-
-app.get('/register', (req, res) => {
-    return res.sendFile('public/register.html', { 'root' : __dirname });
-});
-
-app.post('/register', async (req, res) => { // For CREATE PROFILE
-    try {
-        let body = '';
-        req.on('data', data => body += data);
-        req.on('end', async () =>{
-            const post = JSON.parse(body);
-            const client = await pool.connect();
-            const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
-                            VALUES (
-                                '${cleanText(post.user_name)}', 
-                                '${cleanText(post.user_id)}',
-                                '${cleanText(post.spotify_account)}', 
-                                '${cleanText(post.playlist)}',
-                                '${cleanText(post.favorite_song)}', 
-                                '${cleanText(post.favorite_genre)}',
-                                '${cleanText(post.favorite_artist)}')
-                                ON CONFLICT (user_id) DO NOTHING;`);
-
-            // Might need to create user secrets table here too
-
-            await client.query(`CREATE TABLE IF NOT EXISTS user_secrets 
-            (user_id VARCHAR(50) PRIMARY KEY, salt VARCHAR(100), hash VARCHAR(300));`);
-
-            await addUser(post.user_id, post.password);
-
-            client.release();
-        });
-
-        
-
-        return res.redirect('/login');
-    } catch(err) {
-        res.status(404).send(`Error: ${err}`);
-    }
-});
 // Test loading all tables beforehand on startup
 
 app.get('/profiles', async (req, res) => { //Will get all profiles in DB

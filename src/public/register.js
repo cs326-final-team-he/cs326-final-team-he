@@ -7,21 +7,21 @@
      * @TODO :set up password creation, and adding friends
      */
     // check if passwords are the same
-    const pwd = document.getElementById('passwordInput').value;
-    if (pwd !== document.getElementById('passwordInput2').value) {
+    const pwd = document.getElementById('password').value;
+    if (pwd !== document.getElementById('password2').value) {
         alert("Passwords don't match. Please make sure the passwords are the same.");
         return;
     }
     //build profile
     const profile = {};
-    profile.user_name = document.getElementById('usernameInput').value;
-    profile.user_id = document.getElementById('userIDInput').value;
-    profile.spotify_account = document.getElementById('spotifyInput').value;
-    profile.playlist = document.getElementById('playlistInput').value;
-    profile.favorite_song = document.getElementById('fsongInput').value;
-    profile.favorite_artist = document.getElementById('fartistInput').value;
-    profile.favorite_genre = document.getElementById('fgenreInput').value;
-    profile.password = document.getElementById('passwordInput').value;
+    profile.user_name = document.getElementById('username').value;
+    profile.user_id = document.getElementById('userID').value;
+    profile.spotify_account = document.getElementById('spotify').value;
+    profile.playlist = document.getElementById('playlist').value;
+    profile.favorite_song = document.getElementById('song').value;
+    profile.favorite_artist = document.getElementById('artist').value;
+    profile.favorite_genre = document.getElementById('genre').value;
+    profile.password = document.getElementById('password').value;
     if (Object.values(profile).some(e => e === '')) {
         alert('A field is unfilled! Please fill them all in');
         return;

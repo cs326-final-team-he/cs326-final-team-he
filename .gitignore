@@ -73,3 +73,5 @@ npm-debug.log
 
 #it's a secret!
 /src/secrets.json
+
+/tst
