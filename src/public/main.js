@@ -284,10 +284,6 @@ document.getElementById('embed_button').addEventListener("click", () => {
     const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
     embed_link(shared_spotify_url, shareBoxDiv);
 });
-
-const box = document.getElementById("sharebox_text");
-box.setAttribute("style", "height:" + (tx.scrollHeight) + "px;overflow-y:hidden;");
-box.addEventListener("input", OnInput, false);
 //On load
 
 // Try setting profile
