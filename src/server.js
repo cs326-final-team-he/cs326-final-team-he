@@ -318,7 +318,7 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
 
         await client.query(`CREATE TABLE IF NOT EXISTS profiles 
             (user_name VARCHAR(50), user_id VARCHAR(50) PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
-            favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
+            favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(100));`);
         
         //adding friends table as well...
         await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
