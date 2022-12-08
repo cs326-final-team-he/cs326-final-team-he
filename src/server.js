@@ -308,9 +308,9 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         const client = await pool.connect();
 
         // Start off with creating chirps table
-        await client.query(`CREATE TABLE IF NOT EXISTS chirps 
-            (chirp_id SERIAL PRIMARY KEY, timestamp BIGINT, user_name VARCHAR(50), user_id VARCHAR(50), 
-            chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
+        // await client.query(`CREATE TABLE IF NOT EXISTS chirps 
+        //     (chirp_id SERIAL PRIMARY KEY, timestamp BIGINT, user_name VARCHAR(50), user_id VARCHAR(50), 
+        //     chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
 
         // await client.query('DROP TABLE profiles;'); // DO NOT RUN UNLESS WANT TO DROP PROFILES TABLE
 
@@ -318,15 +318,15 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         //     (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
         //     favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
 
-        await client.query(`CREATE TABLE IF NOT EXISTS profiles 
-            (user_name VARCHAR(50), user_id VARCHAR(50) PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
-            favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(100));`);
+        // await client.query(`CREATE TABLE IF NOT EXISTS profiles 
+        //     (user_name VARCHAR(50), user_id VARCHAR(50) PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
+        //     favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(100));`);
         
         //adding friends table as well...
-        await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
+        // await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
 
         // Now try loading feed
-        const result = await client.query(`SELECT * from chirps;`);
+        const result = await client.query(`SELECT * from chirps ORDER BY timestamp;`);
         client.release();
         res.status(200).json(result.rows);
     } catch (err) {
