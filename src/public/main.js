@@ -172,7 +172,9 @@ async function post_chirp_wrapper() {
                     like_count: 0, 
                     share_count: 0 };
     const response = await update_chirp_db(chirp); // Separating out updating chirp and posting chirp
-    await post_chirp(response); 
+    if (response.ok && response.status !== 404) {
+        await post_chirp(chirp); 
+    }
     alert("Posting chirp");
 }
 
