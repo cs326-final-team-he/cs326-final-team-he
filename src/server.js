@@ -25,6 +25,9 @@ const session = {
 // Passport configuration
 
 const strategy = new LocalStrategy(
+    {
+        usernameField: 'user_id'
+    },
     async (user_id, password, done) => {
 	if (!findUser(user_id)) {
 	    // no such user
@@ -50,6 +53,7 @@ if (port == null || port == "") {
 // App configuration
 const app = express();
 
+app.use(express.urlencoded({'extended' : true})); // allow URLencoded data
 app.use(express.json()); // Middleware allows us to use JSON
 app.use(express.static(path.join(__dirname, "/public")));
 
