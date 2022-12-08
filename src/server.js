@@ -107,7 +107,7 @@ async function findUser(user_id) { // TODO: RETURN BOOL
         const client = await pool.connect();
         const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
         client.release();
-        return result.rows[0].length > 0; // the [salt, hash]
+        return result.rows.length > 0; // the [salt, hash]
     }
     catch (err) {
         return false; // Not sure if this is exactly good coding practice
@@ -293,13 +293,15 @@ app.post('/register', async (req, res) => {
     }
 });
 
- app.get('/main', checkLoggedIn, (req, res) => {
-    return res.redirect(`/main/${req.user}`);
+ app.get('/main/', checkLoggedIn, (req, res) => {
+    res.redirect('/main/' + req.user);
 });
 
-app.get('/main/:user_id', checkLoggedIn, (req, res) => {
-    return res.sendFile('public/main.html', { 'root' : __dirname });
-});
+app.get('/main:userID', checkLoggedIn, (req, res) => {
+    if (req.params.userID === req.user) {
+        return res.sendFile('public/main.html', { 'root' : __dirname });
+    }
+})
 
 app.get('/loadFeed', checkLoggedIn, async (req, res) => {
     try {
@@ -323,15 +325,10 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         //adding friends table as well...
         await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
 
-
-        //retrieve userId
-        const user_id = req.user;
-        //retrieve profile
-        const profile = await client.query('SELECT * FROM profiles WHERE user_id = $1;', [user_id]);
         // Now try loading feed
         const result = await client.query(`SELECT * from chirps;`);
         client.release();
-        res.status(200).json({"profile": profile.rows[0], "chirps": result.rows});
+        res.status(200).json(result.rows);
     } catch (err) {
         res.status(404).json({"Error": `Error: ${err}`});
     }
