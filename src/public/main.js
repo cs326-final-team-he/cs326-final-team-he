@@ -130,7 +130,7 @@ async function post_chirp(chirp_json) {
 
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
-        embed_link(chirp_json.shared_song, newPost); // Embed spotify song/track to post
+        embed_link(chirp_json.shared_song, song); // Embed spotify song/track to post
 
         // Check if feed child Node list length > 3(basically contains an existing chirp). If so, use insertBefore(), else, use appendCHild()
         if (feed.children.length < 3) {

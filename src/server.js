@@ -106,7 +106,7 @@ function cleanText(str) {
 async function findUser(user_id) { // TODO: RETURN BOOL
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
+        const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = '${user_id}';`);
         client.release();
         return result.rows.length > 0; // the [salt, hash]
     }
@@ -128,7 +128,7 @@ async function validatePassword(user_id, password) {
             return false;
         }
         const client = await pool.connect();
-        const res = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
+        const res = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = '${user_id}';`);
         
         const [salt, hash] = res.rows[0];
         client.release();
