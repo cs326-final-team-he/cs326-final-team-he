@@ -352,7 +352,7 @@ app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based o
         const client = await pool.connect();
         const result = await client.query(`SELECT * FROM profiles WHERE user_id='${req.params.user_id}';`);
         client.release();
-        res.status(200).json(result.rows[0]);
+        res.status(200).json(result.rows);
     } catch (err) {
         res.status(404).json({'error': `Error: ${err}`});
     }
