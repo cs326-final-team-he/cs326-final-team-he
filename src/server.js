@@ -236,6 +236,14 @@ app.get('/login', (req, res) => {
     return res.sendFile('public/login.html', { 'root' : __dirname })
 });
 
+// Handle logging out (takes us back to the login page).
+app.get('/logout', (req, res) => {
+	req.logout(function(err) {
+		if (err) { return next(err); }
+		res.redirect('/login');
+	  });
+});
+
 /**
  * I dont know how this works TODO
  */
