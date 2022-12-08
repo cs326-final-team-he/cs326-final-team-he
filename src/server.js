@@ -294,7 +294,7 @@ app.post('/register', async (req, res) => {
 });
 
  app.get('/main', checkLoggedIn, (req, res) => {
-    return res.redirect(`/main/:${req.user}`)
+    return res.redirect(`/main/${req.user}`);
 });
 
 app.get('/main/:user_id', checkLoggedIn, (req, res) => {
@@ -363,8 +363,9 @@ app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based o
 });
 
 app.get('/sessionProfile', checkLoggedIn, (req, res) => {
-    return res.redirect(`/profiles/:${req.user}`);
-})
+    return res.redirect(`/profiles/${req.user}`);
+});
+
 app.get('/chirps', async (req, res) => { //Will get all chirps in DB
     try {
         const client = await pool.connect();

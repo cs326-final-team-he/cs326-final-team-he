@@ -25,65 +25,38 @@ async function get_feed() {
     }
 }
 
-/**
- * Sets the profile using the profile JSON given
- * @param {JSON} profile_json Input Profile JSON
- */
-async function set_profile(profile_json) {
-    // Update User in DB
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, {method: 'PUT', body: JSON.stringify(profile_json)});
-    if (response.ok) {
-        //if went thru, update in front end
-
-        document.getElementById('username').value = profile_json.user_name;
-        document.getElementById('uid').value = profile_json.user_id;
-        document.getElementById('spotify_id').value = profile_json.spotify_account;
-        document.getElementById('list').value = profile_json.playlist;
-        embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
-        document.getElementById('song').value = profile_json.favorite_song;
-        embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
-    
-        // commenting out for now
-        // const friends = profile_json.friends;
-        //todo: make this less ugly
-        // if (friends.length > 0) {
-        //     document.getElementById('f1_user_name').innerHTML = profileJson.friends[0].user_name;
-        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-        //     document.getElementById('f1_song').innerHTML = profileJson.friends[0].favorite_song;        
-        // } if (friends.length > 1) {
-        //     document.getElementById('f2_user_name').innerHTML = profileJson.friends[1].user_name;
-        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-        //     document.getElementById('f2_song').innerHTML = profileJson.friends[1].favorite_song;
-        // } if (friends.length > 2) {
-        //     document.getElementById('f3_user_name').innerHTML = profileJson.friends[2].user_name;
-        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-        //     document.getElementById('f3_song').innerHTML = profileJson.friends[2].favorite_song;
-        // }
-    }
-}
-
 function OnInput() {
   this.style.height = 0;
   this.style.height = (this.scrollHeight) + "px";
 }
 
 /**
- * Adds a profile to the database given the populated fields in the sidebar
+ * Loads the current session profile
  */
 async function load_profile() {
     const response = await fetch('https://music-matcher-326.herokuapp.com/sessionProfile');
+    const profile = {
+        user_name: 'test',
+        user_id: 'test',
+        spotify_account: 'test',
+        playlist: 'https://open.spotify.com/playlist/4o6RvmzrySryO4r0vyM0tX?si=fb8222ebeabf4278',
+        favorite_song: 'https://open.spotify.com/track/2ddLkt4HDW2iatdDMzL6pV?si=093cabff362a4994',
+        favorite_artist: 'https://open.spotify.com/artist/1Bl6wpkWCQ4KVgnASpvzzA?si=e129b1f9e8714bbf',
+        favorite_genre: 'pop'
+    };
     if (response.ok && response.status == 404) {
-        const profile = response.json();
-        document.getElementById('username').value;
-        document.getElementById('uid').value;
-        document.getElementById('spotify_id').value;
-        document.getElementById('list').value;
-        document.getElementById('song').value;
-        document.getElementById('artist').value;
-        document.getElementById('genre').value;
-        embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
-        embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
-    
+        const profile = await response.json();
+        alert('here');
+        document.getElementById('username').innerText = profile.user_name;
+        document.getElementById('uid').innerText = profile.user_id;
+        document.getElementById('spotify_id').innerText = profile.spotify_account;
+        embed_link(profile.playlist, document.getElementById("list"));
+        embed_link(profile.favorite_song, document.getElementsByClassName("song"));
+        embed_link(profile.favorite_artist, document.getElementsByClassName("artist"));
+        document.getElementById('genre').innerText = profile.favorite_genre;
+    }
+    else {
+        alert('error talking with server, please try again later')
     }
 }
 /**
@@ -268,6 +241,19 @@ function embed_link(spotify_url, divElem) {
 
         divElem.appendChild(iframe);
     }
+    else if (/https:\/\/open.spotify.com\/artist\/.*/.test(spotify_url)) {
+        const iframe = document.createElement("iframe"); 
+
+        console.log("Setting up iframe styling");
+
+        iframe.src = "https://open.spotify.com/embed?uri=spotify:artist:" + spotify_url.split("/")[4].split("?")[0];
+        iframe.width = "300";
+        iframe.height = "200";
+        iframe.allowTransparency = "true";
+        iframe.allow = "encrypted-media";
+
+        divElem.appendChild(iframe);
+    }
     else if (spotify_url.length === 0) {
         // Do nothing
     }
@@ -287,12 +273,8 @@ addButton.addEventListener('click', () => {
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
-document.getElementById("sharebox_shareButton").addEventListener('click', () => {
-    console.log("TEST");
-})
-document.getElementById("sharebox_shareButton").addEventListener('click', (post_chirp_wrapper));
 
-document.getElementById("sharebox_shareButton").addEventListener('click', add_profile);
+document.getElementById("sharebox_shareButton").addEventListener('click', (post_chirp_wrapper));
 
 // Automatically converts to embedded spotify playable when spotify url put in
 document.getElementById('embed_button').addEventListener("click", () => {
@@ -308,6 +290,9 @@ box.setAttribute("style", "height:" + (tx.scrollHeight) + "px;overflow-y:hidden;
 box.addEventListener("input", OnInput, false);
 //On load
 
+// Try setting profile
+await load_profile();
+
 // Test onload table creation
 const response = await fetch(`https://music-matcher-326.herokuapp.com/loadFeed`);
 
@@ -319,22 +304,5 @@ if (response.ok) {
         await post_chirp(chirpsJsonArr[i]);
     }
 }
-
-// Try setting profile
-const profile = await get_profile();
-// console.log(profile);
-const profile_json = {
-    user_name: "Stanley",
-    user_id: "saraki0820",
-    spotify_account: "stanleya0820",
-    playlist: "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=uvsN2ufRTnK37ho8upGvWQ",
-    favorite_genre: "J-POP",
-    favorite_artist: "ZUTOMAYO",
-    favorite_song: "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=40743dee036c46c0"
-}; // Removing friends field for now
-
-// console.log(profile_json);
-
-const result = await set_profile(profile_json);
 
 console.log("FINISHED LOADING");
