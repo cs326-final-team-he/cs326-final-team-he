@@ -25,11 +25,6 @@ async function get_feed() {
     }
 }
 
-function OnInput() {
-  this.style.height = 0;
-  this.style.height = (this.scrollHeight) + "px";
-}
-
 /**
  * Loads the current session profile
  */
@@ -41,8 +36,8 @@ async function load_profile() {
         document.getElementById('uid').innerText = profile.user_id;
         document.getElementById('spotify_id').innerText = profile.spotify_account;
         embed_link(profile.playlist, document.getElementById("list"));
-        embed_link(profile.favorite_song, document.getElementsByClassName("song"));
-        embed_link(profile.favorite_artist, document.getElementsByClassName("artist"));
+        embed_link(profile.favorite_song, document.getElementById("song"));
+        embed_link(profile.favorite_artist, document.getElementById("artist"));
         document.getElementById('genre').innerText = profile.favorite_genre;
     }
     else {
