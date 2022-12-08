@@ -297,7 +297,7 @@ app.post('/register', async (req, res) => {
     res.redirect('/main/' + req.user);
 });
 
-app.get('/main:userID', checkLoggedIn, (req, res) => {
+app.get('/main/:userID', checkLoggedIn, (req, res) => {
     if (req.params.userID === req.user) {
         return res.sendFile('public/main.html', { 'root' : __dirname });
     }
