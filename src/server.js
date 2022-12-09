@@ -376,7 +376,7 @@ app.get('/search', async (req, res) => {
             const result = await client.query(`SELECT user_id, favorite_song FROM profiles 
                 WHERE user_id LIKE '%${search}%' OR username LIKE '%${search}%;`);
                 client.release();
-                res.status(200).json(result.rows)
+                res.status(200).json(result.rows);
         });
     }
     catch (err) {
