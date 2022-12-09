@@ -152,7 +152,7 @@ async function search() {
     if (response.ok && response.status !== 404) {
         const rows = await response.json();
         const results = document.getElementById('results');
-        results.innerHTML = '';
+        results.innerHTML = '<h2>Search Results:</h2>';
         rows.forEach(obj => {
             const div = document.createElement('div');
             div.classList.add('result')
@@ -169,6 +169,7 @@ async function search() {
                     <div class="result_favorite_song" id="result_song${obj.user_id}">
                     </div>
                 </div>`;
+            results.appendChild(div);
             embed_link(obj.favorite_song, document.getElementById(`result_song${obj.user_id}`));
             const closure = function () {
                 const friend_id = obj.user_id;
@@ -177,7 +178,6 @@ async function search() {
                 }
             }
             div.addEventListener('click', closure());
-            results.appendChild(div);
         });
     }
 }
