@@ -144,6 +144,14 @@ body {
   padding: 10px;
 }
 
+.like_button:active{
+  transform: scale(0.9, 0.9);
+}
+
+.likes{
+  margin-left: -150px;
+}
+
 /* TO ENLARGE ACCOUNT PROFILE */
 
 /* .fa-twitter {
