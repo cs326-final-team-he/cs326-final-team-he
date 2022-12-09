@@ -334,7 +334,7 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         
         //adding friends table as well...
         // await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
-
+	await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id INT);`);
         // Now try loading feed
         const result = await client.query(`SELECT * from chirps ORDER BY timestamp;`);
         client.release();
@@ -383,6 +383,35 @@ app.get('/search', async (req, res) => {
 app.get('/sessionProfile', checkLoggedIn, (req, res) => {
     return res.redirect(`/profiles/${req.user}`);
 });
+
+app.get('/likedChirps', async(req, res) => {
+    try{
+        const client = await pool.connect();
+        const result = await client.query('SELECT * from likedChirps;');
+        client.release();
+        res.status(200).send(result.rows);
+    }catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+app.get('/likedChirps/:user_id/:chirp_id', async (req, res) => {
+    try{
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from likedChirps WHERE user_id='${req.params.user_id}' AND chirp_id='${req.params.chirp_id}';`);
+        client.release();
+        if (result.rowCount == 0){
+            res.status(200).send(false);
+        }
+        else{
+            res.status(200).send(true);
+        } 
+    }catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+
 
 app.get('/chirps', async (req, res) => { //Will get all chirps in DB
     try {
@@ -466,6 +495,24 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
     }
 
 });
+
+app.post('/createLike', async(req, res) => {
+    try{
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () => {
+            const post = JSON.parse(body);
+            const client = await pool.connect();
+            const result = await client.query(`INSERT INTO likedChirps (user_id, chirp_id)
+                VALUES ('${post.user_id}', '${post.chirp_id}');`);
+        });
+        res.status(200).send();
+    }
+    catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
 
 app.post('/createFriend/:friend_id', checkLoggedIn, async (req, res) => {
     try {
@@ -557,6 +604,18 @@ app.delete('/deleteFriend/:user_id/:friend_id', (req, res) => {
     const {user_id, friend_id} = req.params;
     const status = deleteFriend(user_id, friend_id);
     res.status(status).send("Got a DELETE request for friend");
+});
+
+app.delete('/deleteLike/:user_id/:chirp_id', async (req, res) => {
+    const {user_id, chirp_id} = req.params;
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`DELETE FROM likedChirps WHERE user_id = '${user_id}' AND chirp_id = '${chirp_id}';`);
+        client.release();
+        return res.status(200).send();
+    } catch (err) {
+        return res.status(404).send();
+    }
 });
 
 app.listen(port, () => {
