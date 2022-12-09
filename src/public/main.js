@@ -294,6 +294,7 @@ document.getElementById('embed_button').addEventListener("click", () => {
     const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
     embed_link(shared_spotify_url, shareBoxDiv);
 });
+document.getElementById('searchButton').addEventListener('click', search);
 //On load
 
 // Try setting profile
