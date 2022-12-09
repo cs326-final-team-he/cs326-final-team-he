@@ -115,6 +115,45 @@ async function post_chirp(chirp_json) {
         const favorite = document.createElement('span');
         favorite.classList.add('material-icons');
         favorite.innerText = 'favorite_border';
+        const response = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${profile_json.user_id}/${chirp_json.chirp_id}`);
+        const likedPost = response.json();
+        likedPost.then(value => {
+            if(value == true) {
+                favorite.style.color = 'red';
+            }
+        });
+        const likes = document.createElement('div');
+        likes.innerHTML = chirp_json.like_count;
+        likes.classList.add('likes');
+        favorite.addEventListener('click', async () => {
+            if (favorite.style.color != 'red') {
+                favorite.style.color = 'red';
+                const like = {
+                    user_id: profile_json.user_id,
+                    chirp_id: chirp_json.chirp_id
+                };
+                await fetch(`https://music-matcher-326.herokuapp.com/createLike`, {method: 'POST', body: JSON.stringify(like)});
+                chirp_json.like_count+=1;
+                likes.innerHTML = chirp_json.like_count;
+            }
+            else {
+                favorite.style.color = 'black';
+                chirp_json.like_count-=1;
+                await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${profile_json.user_id}/${chirp_json.chirp_id}`, {method: 'DELETE'});
+                likes.innerHTML = chirp_json.like_count;
+            }
+            const chirpEdit = {
+                chirp_id: chirp_json.chirp_id,
+                timestamp: chirp_json.timestamp,
+                user_name: chirp_json.user_name,
+                chirp_text: chirp_json.chirp_text,
+                shared_song: chirp_json.shared_song,
+                like_count: chirp_json.like_count,
+                share_count: chirp_json.share_count,
+                user_id: chirp_json.user_id
+            };
+            await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: JSON.stringify(chirpEdit)});
+        });
 
         const publish = document.createElement('span');
         publish.classList.add('material-icons');
