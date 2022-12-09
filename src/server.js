@@ -398,7 +398,7 @@ app.get('/likedChirps', async(req, res) => {
 app.get('/likedChirps/:user_id/:chirp_id', async (req, res) => {
     try{
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from likedChirps WHERE user_id='${req.params.user_id}' AND chirp_id='${req.params.chirp_id}';`);
+        const result = await client.query(`SELECT * from likedChirps WHERE user_id='${req.user}' AND chirp_id='${req.params.chirp_id}';`);
         client.release();
         if (result.rowCount == 0){
             res.status(200).send(false);
