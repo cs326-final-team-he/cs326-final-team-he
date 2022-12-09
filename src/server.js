@@ -372,14 +372,14 @@ app.get('/search', async (req, res) => {
         const search = req.query.search;
         const client = await pool.connect();
         const result = await client.query(`SELECT user_id, favorite_song FROM profiles 
-            WHERE user_id LIKE '%${search}%' OR username LIKE '%${search}%;`);
+            WHERE user_id LIKE '%${search}%' OR user_name LIKE '%${search}%';`);
             client.release();
             res.status(200).json(result.rows);
     }
     catch (err) {
         res.status(404).json({'Error': err});
     }
-})
+});
 app.get('/sessionProfile', checkLoggedIn, (req, res) => {
     return res.redirect(`/profiles/${req.user}`);
 });
@@ -467,17 +467,13 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
 
 });
 
-app.post('/createFriend', checkLoggedIn, async (req, res) => {
+app.post('/createFriend/:friend_id', checkLoggedIn, async (req, res) => {
     try {
-        let body = '';
-        req.on('data', data => body += data);
-        req.on('end', async () => {
-            const friend_id = JSON.parse(body);
-            const client = await pool.connect();
-            const result = await client.query(`INSERT INTO friends (user_id, friend_id)
-                VALUES ('${req.user}', '${friend_id}');`);
-            client.release();
-        });
+        const friend_id = req.params.friend_id;
+        const client = await pool.connect();
+        const result = await client.query(`INSERT INTO friends (user_id, friend_id)
+            VALUES ('${req.user}', '${friend_id}');`);
+        client.release();
         res.status(200).send();
     }
     catch (err) {
