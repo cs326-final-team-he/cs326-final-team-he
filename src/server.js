@@ -395,7 +395,7 @@ app.get('/likedChirps', async(req, res) => {
     }
 });
 
-app.get('/likedChirps/:user_id/:chirp_id', async (req, res) => {
+app.get('/likedChirps/:chirp_id', async (req, res) => {
     try{
         const client = await pool.connect();
         const result = await client.query(`SELECT * from likedChirps WHERE user_id='${req.user}' AND chirp_id='${req.params.chirp_id}';`);
@@ -606,11 +606,11 @@ app.delete('/deleteFriend/:user_id/:friend_id', (req, res) => {
     res.status(status).send("Got a DELETE request for friend");
 });
 
-app.delete('/deleteLike/:user_id/:chirp_id', async (req, res) => {
-    const {user_id, chirp_id} = req.params;
+app.delete('/deleteLike/:chirp_id', async (req, res) => {
+    const {chirp_id} = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM likedChirps WHERE user_id = '${user_id}' AND chirp_id = '${chirp_id}';`);
+        const result = await client.query(`DELETE FROM likedChirps WHERE user_id = '${req.user}' AND chirp_id = '${chirp_id}';`);
         client.release();
         return res.status(200).send();
     } catch (err) {
