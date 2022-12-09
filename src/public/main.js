@@ -111,6 +111,8 @@ async function post_chirp(chirp_json) {
         const repeat = document.createElement('span');
         repeat.classList.add('material-icons');
         repeat.innerText = 'repeat';
+        
+        print(chirp.json.user_name);
 
         const favorite = document.createElement('span');
         favorite.classList.add('material-icons');
