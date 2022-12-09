@@ -30,7 +30,8 @@ const strategy = new LocalStrategy(
 	},
 
     async (user_id, password, done) => {
-        const userExists = await findUser(user_id);
+        // const userExists = await findUser(user_id);
+        const userExists = true;
         if (!userExists) {
             // no such user
             await new Promise((r) => setTimeout(r, 2000)); // two second delay
