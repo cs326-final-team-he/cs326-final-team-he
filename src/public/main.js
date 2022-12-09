@@ -138,7 +138,7 @@ async function post_chirp(chirp_json) {
             else {
                 favorite.style.color = 'black';
                 chirp_json.like_count-=1;
-                await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${profile_json.user_id}/${chirp_json.chirp_id}`, {method: 'DELETE'});
+                await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${chirp_json.chirp_id}`, {method: 'DELETE'});
                 likes.innerHTML = chirp_json.like_count;
             }
             const chirpEdit = {
