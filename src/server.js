@@ -369,15 +369,12 @@ app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based o
 
 app.get('/search', async (req, res) => {
     try {
-        let search = '';
-        req.on('data', data => search += data);
-        req.on('end', async () => {
-            const client = await pool.connect();
-            const result = await client.query(`SELECT user_id, favorite_song FROM profiles 
-                WHERE user_id LIKE '%${search}%' OR username LIKE '%${search}%;`);
-                client.release();
-                res.status(200).json(result.rows);
-        });
+        const search = req.query.search;
+        const client = await pool.connect();
+        const result = await client.query(`SELECT user_id, favorite_song FROM profiles 
+            WHERE user_id LIKE '%${search}%' OR username LIKE '%${search}%;`);
+            client.release();
+            res.status(200).json(result.rows);
     }
     catch (err) {
         res.status(404).json({'Error': err});

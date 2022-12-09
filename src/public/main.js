@@ -148,7 +148,7 @@ async function post_chirp(chirp_json) {
 
 async function search() {
     const search = document.getElementById('search').value;
-    const response = await fetch('https://music-matcher-326.herokuapp.com/search', { method: 'GET', query: search });
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/search/?search=${search}`);
     if (response.ok && response.status !== 404) {
         const rows = await response.json();
         const results = document.getElementById('results');
@@ -276,10 +276,6 @@ function embed_link(spotify_url, divElem) {
     }
 }
 
-const addButton = document.getElementById('addButton');
-addButton.addEventListener('click', () => {
-    add_friend(profileJson, friendJson);
-});
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
