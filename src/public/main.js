@@ -115,7 +115,7 @@ async function post_chirp(chirp_json) {
         const favorite = document.createElement('span');
         favorite.classList.add('material-icons');
         favorite.innerText = 'favorite_border';
-        const response = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${profile_json.user_id}/${chirp_json.chirp_id}`);
+        const response = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${chirp_json.chirp_id}`);
         const likedPost = response.json();
         likedPost.then(value => {
             if(value == true) {
