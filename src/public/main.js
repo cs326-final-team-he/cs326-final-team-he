@@ -112,7 +112,7 @@ async function post_chirp(chirp_json) {
         repeat.classList.add('material-icons');
         repeat.innerText = 'repeat';
         
-        print(chirp.json.user_name);
+        console.log(chirp_json.user_name);
 
         const favorite = document.createElement('span');
         favorite.classList.add('material-icons');
