@@ -152,6 +152,7 @@ async function search() {
     if (response.ok && response.status !== 404) {
         const rows = await response.json();
         const results = document.getElementById('results');
+        results.innerHTML = '';
         rows.forEach(obj => {
             const div = document.createElement('div');
             div.classList.add('result')
@@ -165,9 +166,10 @@ async function search() {
                     <h3 id="user_name">
                         ${obj.user_id}
                     </h3>
-                    <div class="result_favorite_song">
-                        <p id="result_song">${obj.favorite_song}</p>
-                    </div>`;
+                    <div class="result_favorite_song" id="result_song${obj.user_id}">
+                    </div>
+                </div>`;
+            embed_link(obj.favorite_song, document.getElementById(`result_song${obj.user_id}`));
             const closure = function () {
                 const friend_id = obj.user_id;
                 return async () => {

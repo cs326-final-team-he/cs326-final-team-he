@@ -271,11 +271,22 @@ textarea {
   object-fit: contain;
   border-radius: 20px;
 }
-iframe {
+.sidebar iframe {
   border: 0px;
   width: auto;
   min-width: 375px;
   min-height: 200px;
+}
+.feed iframe {
+  border: 0px;
+  width: auto;
+  min-width: 375px;
+  min-height: 200px;
+}
+.widgets iframe {
+  border: 0px;
+  height: 100px;
+  width: 175px;
 }
 .post_footer {
   display: flex;
@@ -462,8 +473,8 @@ iframe {
 }
 
 .result_favorite_song {
-  margin-top: 5px;
-  font-size: 12px;
+  width: 100px;
+  height: 100px;
 }
 
 .friend_headerSpecial {
@@ -503,8 +514,8 @@ iframe {
 }
 
 .friend_favorite_song {
-  margin-top: 5px;
-  font-size: 12px;
+  width: 100px;
+  height: 100px;
 }
 /* account registration styling */
 .form_header {
