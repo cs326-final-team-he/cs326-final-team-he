@@ -2,7 +2,7 @@
  * Gets profile asynchronously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
  */
- async function get_profile() {
+async function get_profile() {
     const response = await fetch(`https://music-matcher-326.herokuapp.com/profiles`);
     if (response.ok) {
         const profileJson = await response.json();
@@ -47,10 +47,10 @@ async function load_profile() {
 }
 /**
  * @param {JSON} chirp_json JSON object containing chirp information to update chirps table with 
- */ 
+ */
 async function update_chirp_db(chirp_json) {
     //timestamp done serverside
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, { method: 'POST', body: JSON.stringify(chirp_json) });
     return response;
 }
 
@@ -63,7 +63,7 @@ async function post_chirp(chirp_json) {
     // Need to set up the feed
     // Right now we update using the ids of specific fields but that really isn't scalable for chirps and friends list. 
     // Need to figure out a way to efficiently update the fields
-    
+
     if (response.ok && response.status !== 404) {
         const feed = document.getElementById('feed');
         //post_avatar portion
@@ -72,32 +72,32 @@ async function post_chirp(chirp_json) {
         const avatar = document.createElement('div');
         avatar.classList.add('post_avatar');
         const icon = document.createElement('span');
-        icon.id =  'userProfileShare';
+        icon.id = 'userProfileShare';
         icon.classList.add('material-icons');
         //unsure about this
         icon.innerHTML = 'account_circle';
         avatar.appendChild(icon);
-    
+
         //post_body portion
         const post_body = document.createElement('div');
         post_body.classList.add('post_body');
-    
+
         const post_header = document.createElement('div');
         post_header.classList.add('post_header');
-    
+
         const post_headerText = document.createElement('div');
         post_headerText.classList.add('post_headerText');
-    
+
         const user = document.createElement('h3');
         user.id = 'u1_user_name';
         //are we doing verification?
         user.innerText = chirp_json.user_name;
         post_headerText.appendChild(user);
-    
+
         const post_headerDesc = document.createElement('div');
         post_headerDesc.classList.add('post_headerDescription');
         post_headerDesc.innerHTML = `<p id="u1_chirp"> ${chirp_json.chirp_text}</p>`;
-    
+
         post_header.appendChild(post_headerText);
         post_header.appendChild(post_headerDesc);
 
@@ -146,34 +146,57 @@ async function post_chirp(chirp_json) {
     }
 }
 
-async function add_friend(profile_json, friend_json) {
-    const friendConnection =             
-    {
-        user_id: profile_json.user_id,
-        friend_json: friend_json.user_id
+async function search() {
+    const search = document.getElementById('search').value;
+    const response = await fetch('https://music-matcher-326.herokuapp.com/search', { method: 'GET', body: search });
+    if (response.ok && response.status !== 404) {
+        const rows = await response.json();
+        const results = document.getElementById('results');
+        rows.forEach(obj => {
+            const div = document.createElement('div');
+            div.classList.add('result')
+            div.innerHTML =
+                `<div class="result_avatar">
+                    <button" class="material-icons addButton" id="addUser">
+                        add_circle
+                    </button>
+                </div>
+                <div class="result_profile">
+                    <h3 id="user_name">
+                        ${obj.user_id}
+                    </h3>
+                    <div class="result_favorite_song">
+                        <p id="result_song">${obj.favorite_song}</p>
+                    </div>`;
+            const closure = function () {
+                const friend_id = obj.user_id;
+                return async () => {
+                    await add_friend(friend_id);
+                }
+            }
+            div.addEventListener('click', closure());
+            results.appendChild(div);
+        });
     }
-    await update_friends_db(friendConnection);
 }
-
-/**
- * Will add new friend to database
- */
-async function update_friends_db(friendConnection) {
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend`, {method: 'POST', body: JSON.stringify(friendConnection)});
+async function add_friend(friend_id) {
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend`, { method: 'POST', body: friend_id });
     return response;
 }
 
 async function post_chirp_wrapper() {
     console.log("In post_chirp_wrapper");
-    const chirp = { user_name: document.getElementById("username").innerText, 
-                    user_id: document.getElementById('uid').innerText,
-                    chirp_text: document.getElementById("sharebox_text").value, 
-                    shared_song: document.getElementById("shared_spotify_url").value, 
-                    like_count: 0, 
-                    share_count: 0 };
+    const chirp = {
+        user_name: document.getElementById("username").innerText,
+        user_id: document.getElementById('uid').innerText,
+        chirp_text: document.getElementById("sharebox_text").value,
+        shared_song: document.getElementById("shared_spotify_url").value,
+        like_count: 0,
+        share_count: 0
+    };
     const response = await update_chirp_db(chirp); // Separating out updating chirp and posting chirp
     if (response.ok && response.status !== 404) {
-        await post_chirp(chirp); 
+        await post_chirp(chirp);
     }
     alert("Posting chirp");
 }
@@ -187,9 +210,9 @@ function embed_link(spotify_url, divElem) {
     if (/https:\/\/open.spotify.com\/track\/.*/.test(spotify_url)) {
         // matches track/playlist spotify link 'structure'
         // const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
-        
 
-        const iframe = document.createElement("iframe"); 
+
+        const iframe = document.createElement("iframe");
 
         console.log("Setting up iframe styling");
 
@@ -204,7 +227,7 @@ function embed_link(spotify_url, divElem) {
     else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(spotify_url)) {
         // const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
 
-        const iframe = document.createElement("iframe"); 
+        const iframe = document.createElement("iframe");
 
         console.log("Setting up iframe styling");
 
@@ -217,7 +240,7 @@ function embed_link(spotify_url, divElem) {
         divElem.appendChild(iframe);
     }
     else if (/https:\/\/open.spotify.com\/album\/.*/.test(spotify_url)) {
-        const iframe = document.createElement("iframe"); 
+        const iframe = document.createElement("iframe");
 
         console.log("Setting up iframe styling");
 
@@ -230,7 +253,7 @@ function embed_link(spotify_url, divElem) {
         divElem.appendChild(iframe);
     }
     else if (/https:\/\/open.spotify.com\/artist\/.*/.test(spotify_url)) {
-        const iframe = document.createElement("iframe"); 
+        const iframe = document.createElement("iframe");
 
         console.log("Setting up iframe styling");
 
@@ -256,8 +279,7 @@ function embed_link(spotify_url, divElem) {
 const addButton = document.getElementById('addButton');
 addButton.addEventListener('click', () => {
     add_friend(profileJson, friendJson);
-    console.log(profileJson.friends);
-}); 
+});
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
@@ -283,7 +305,7 @@ const response = await fetch(`https://music-matcher-326.herokuapp.com/loadFeed`)
 if (response.ok) {
     const chirpsJsonArr = await response.json();
     console.log(chirpsJsonArr);
-    
+
     for (let i = 0; i < chirpsJsonArr.length; i++) {
         await post_chirp(chirpsJsonArr[i]);
     }

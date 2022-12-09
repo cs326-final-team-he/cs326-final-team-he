@@ -332,17 +332,6 @@ iframe {
   padding: 10px;
 }
 
-.addButton {
-  /* Used for shared music formatting */
-  width: 500px;
-  object-fit: contain;
-  border-radius: 20px;
-  padding: 10px;
-  color: white;
-  border-color: var(--musicmatcher-background);
-  background-color: var(--musicmatcher-color);
-}
-
 .rec_footer {
   display: flex;
   justify-content: space-between;
@@ -428,6 +417,7 @@ iframe {
 }
 
 .widgets_searchIcon {
+  margin-left: auto;
   color: gray;
 }
 
@@ -442,6 +432,38 @@ iframe {
 .widgets_widgetContainer h2 {
   font-size: 18px;
   font-weight: 800;
+}
+
+.result {
+  display: flex;
+  align-items: flex-start;
+  padding-bottom: 10px;
+  font-size: 10px;
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
+
+.result_avatar {
+  border-radius: 50%;
+  height: 40px;
+  padding: 10px;
+  margin-top: 10px;
+}
+.addButton {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+}
+.result_profile h3 {
+  margin-top: 10px;
+}
+
+.result_favorite_song {
+  margin-top: 5px;
+  font-size: 12px;
 }
 
 .friend_headerSpecial {
