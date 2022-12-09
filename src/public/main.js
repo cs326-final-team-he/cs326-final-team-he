@@ -122,7 +122,7 @@ async function post_chirp(chirp_json) {
                 favorite.style.color = 'red';
             }
         });
-        const likes = document.createElement('div');
+        const likes = document.createElement('span');
         likes.innerHTML = chirp_json.like_count;
         likes.classList.add('likes');
         favorite.addEventListener('click', async () => {
