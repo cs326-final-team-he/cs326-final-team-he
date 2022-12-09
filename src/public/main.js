@@ -182,7 +182,7 @@ async function search() {
     }
 }
 async function add_friend(friend_id) {
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend/${friend_id}`);
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend/${friend_id}`, {method: 'POST'});
     return response;
 }
 
