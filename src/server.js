@@ -25,10 +25,6 @@ const session = {
 // Passport configuration
 
 const strategy = new LocalStrategy(
-    {
-        usernameField: 'user_id',
-        passwordField: 'password'
-    },
     async (user_id, password, done) => {
 	if (!findUser(user_id)) {
 	    // no such user
