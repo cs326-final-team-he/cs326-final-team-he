@@ -148,7 +148,7 @@ async function post_chirp(chirp_json) {
 
 async function search() {
     const search = document.getElementById('search').value;
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/search/?search=${search}`);
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/search?search=${search}`);
     if (response.ok && response.status !== 404) {
         const rows = await response.json();
         const results = document.getElementById('results');
