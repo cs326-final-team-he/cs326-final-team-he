@@ -25,22 +25,28 @@ const session = {
 // Passport configuration
 
 const strategy = new LocalStrategy(
+	{
+		usernameField: 'user_id'
+	},
+
     async (user_id, password, done) => {
-	if (!findUser(user_id)) {
-	    // no such user
-	    await new Promise((r) => setTimeout(r, 2000)); // two second delay
-	    return done(null, false, { 'message' : 'Wrong user_id' });
-	}
-	if (!validatePassword(user_id, password)) {
-	    // invalid password
-	    // should disable logins after N messages
-	    // delay return to rate-limit brute-force attacks
-	    await new Promise((r) => setTimeout(r, 2000)); // two second delay
-	    return done(null, false, { 'message' : 'Wrong password' });
-	}
-	// success!
-	// should create a user object here, associated with a unique identifier
-	return done(null, user_id);
+        const userExists = await findUser(user_id);
+        if (!userExists) {
+            // no such user
+            await new Promise((r) => setTimeout(r, 2000)); // two second delay
+            return done(null, false, { 'message' : 'Wrong user_id' });
+        }
+        const validPassword = await validatePassword(user_id, password);
+        if (!validPassword) {
+            // invalid password
+            // should disable logins after N messages
+            // delay return to rate-limit brute-force attacks
+            await new Promise((r) => setTimeout(r, 2000)); // two second delay
+            return done(null, false, { 'message' : 'Wrong password' });
+        }
+        // success!
+        // should create a user object here, associated with a unique identifier
+        return done(null, user_id);
     });
 
 let port = process.env.PORT;
