@@ -504,7 +504,7 @@ app.post('/createLike', async(req, res) => {
             const post = JSON.parse(body);
             const client = await pool.connect();
             const result = await client.query(`INSERT INTO likedChirps (user_id, chirp_id)
-                VALUES ('${post.user_id}', '${post.chirp_id}');`);
+                VALUES ('${req.user}', '${post.chirp_id}');`);
         });
         res.status(200).send();
     }
