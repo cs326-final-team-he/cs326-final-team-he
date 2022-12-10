@@ -237,7 +237,7 @@ async function add_friend(friend_id) {
     const result = await fetch(`https://music-matcher-326.herokuapp.com/friends/${friend_id}`);
     const findFriend = result.json()
     findFriend.then(async value => {
-        if (value.length() != 0){
+        if (value == true){
             alert("You already added this friend!");
         }
         else {

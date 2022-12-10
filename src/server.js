@@ -463,7 +463,12 @@ app.get('/friends/:friend_id', async (req, res) => { //Will get a specific frien
         const client = await pool.connect();
         const result = await client.query(`SELECT * from friends where user_id='${req.user}' AND friend_id='${req.params.friend_id}';`);
         client.release();
-        res.status(200).send(result.rows);
+        if (result.rowCount == 0) {
+            res.status(200).send(false);
+        }
+        else {
+            res.status(200).send(true);
+        }
     } catch (err){
         res.status(404).send(`Error: ${err}`)
     }
