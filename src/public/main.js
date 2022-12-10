@@ -112,7 +112,6 @@ async function post_chirp(chirp_json) {
         repeat.classList.add('material-icons');
         repeat.innerText = 'repeat';
         
-        console.log(chirp_json.user_name);
 
         const favorite = document.createElement('span');
         favorite.classList.add('material-icons');
@@ -143,7 +142,6 @@ async function post_chirp(chirp_json) {
                 await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${chirp_json.chirp_id}`, {method: 'DELETE'});
                 likes.innerHTML = chirp_json.like_count;
             }
-            let user_name = chirp_json.user_name
             const chirpEdit = {
                 chirp_id: chirp_json.chirp_id,
                 timestamp: chirp_json.timestamp,
@@ -163,6 +161,7 @@ async function post_chirp(chirp_json) {
 
         footer.appendChild(repeat);
         footer.appendChild(favorite);
+        footer.appendChild(likes);
         footer.appendChild(publish);
 
         post_body.appendChild(post_header);
