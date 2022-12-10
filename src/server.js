@@ -462,14 +462,17 @@ app.get('/friends/:friend_id', async (req, res) => { //Will get a specific frien
     }
 });
 
-app.get('/userFriends', async (req, res) => { //Will get all friend connections for signed in user
+//Will get all friend connections for signed in user and corresponding favorite songs
+app.get('/userFriends', async (req, res) => { 
     try{
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from friends where user_id='${req.user}';`);
+        const result = await client.query(
+            `SELECT DISTINCT friends.friend_id, profiles.favorite_song FROM friends, profiles 
+            WHERE friends.user_id='${req.user}' AND friends.user_id=profiles.user_id;`);
         client.release();
-        res.status(200).send(result.rows);
+        res.status(200).json(result.rows);
     } catch (err){
-        res.status(404).send(`Error: ${err}`)
+        res.status(404).json({'Error': err});
     }
 });
 
@@ -616,8 +619,9 @@ app.delete('/deleteChirp/:chirp_id', (req, res) => { // For DELETE
 });
 
 //DELETE request for friends (delete friend)
-app.delete('/deleteFriend/:user_id/:friend_id', (req, res) => {
-    const {user_id, friend_id} = req.params;
+app.delete('/deleteFriend/:friend_id', checkLoggedIn, (req, res) => {
+    const user_id = req.user;
+    const friend_id = req.params;
     const status = deleteFriend(user_id, friend_id);
     res.status(status).send("Got a DELETE request for friend");
 });

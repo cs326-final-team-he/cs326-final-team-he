@@ -12,7 +12,7 @@ async function get_profile() {
 }
 
 /**
- * Gets chirps from friends within relatively recent timespan and displays it
+ * Gets chirps and displays it
  * @return {JSON} Returns Chirp JSON
  */
 async function get_feed() {
@@ -43,6 +43,41 @@ async function load_profile() {
     }
     else {
         alert('error talking with server, please try again later')
+    }
+}
+
+async function load_friends() {
+    const response = await fetch('https://music-matcher-326.herokuapp.com/userFriends');
+    if (response.ok && response.status !== 404) {
+        const friends = await response.json();
+        const friendsDiv = document.getElementById('friends');
+        friendsDiv.innerHTML = "<h2>Friends</h2>";
+        friends.forEach(friend => {
+            const div = document.createElement('div');
+            div.classList.add('friend')
+            div.innerHTML =
+                `<div class="friend_avatar">
+                    <button" class="material-icons unfriend">
+                        do_not_disturb_on
+                    </button>
+                </div>
+                <div class="friend_profile">
+                    <h3 id="user_name">
+                        ${friend.friend_id}
+                    </h3>
+                    <div class="friend_favorite_song" id="friend_song${friend.favorite_song}">
+                    </div>
+                </div>`;
+            results.appendChild(div);
+            embed_link(friend.favorite_song, document.getElementById(`result_song${friend.friend_id}`));
+            const closure = function () {
+                const friend_id = friend.friend_id;
+                return async () => {
+                    const response = await fetch(`https://music-matcher-326.herokuapp.com/deleteFriend/${friend_id}`, {method: 'DELETE'});
+                }
+            }
+            div.addEventListener('click', closure());
+        })
     }
 }
 /**
