@@ -334,7 +334,6 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         
         //adding friends table as well...
         // await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
-	await client.query(`DROP TABLE likedChirps;`);
 	await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id INT);`);
         // Now try loading feed
         const result = await client.query(`SELECT * from chirps ORDER BY timestamp;`);
