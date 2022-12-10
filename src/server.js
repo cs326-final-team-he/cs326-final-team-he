@@ -559,6 +559,7 @@ app.put('/putProfile', async (req, res) => {
 //PUT request for chirp (editing a post)
 app.put('/putChirp', async (req, res) => {
     try {
+	console.log('I got here!');
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
