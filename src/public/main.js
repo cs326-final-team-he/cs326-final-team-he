@@ -1,3 +1,15 @@
+// Try setting profile
+const profile = await get_profile();
+// console.log(profile);
+const profile_json = {
+    user_name: "Stanley",
+    user_id: "saraki0820",
+    spotify_account: "stanleya0820",
+    playlist: "https://open.spotify.com/album/4b9nOSXSf1LROzgfYFxdxI?si=uvsN2ufRTnK37ho8upGvWQ",
+    favorite_genre: "J-POP",
+    favorite_artist: "ZUTOMAYO",
+    favorite_song: "https://open.spotify.com/track/6BV77pE4JyUQUtaqnXeKa5?si=40743dee036c46c0"
+}; // Removing friends field for now
 /**
  * Gets profile asynchronously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
@@ -6,7 +18,6 @@ async function get_profile() {
     const response = await fetch(`https://music-matcher-326.herokuapp.com/profiles`);
     if (response.ok) {
         const profileJson = await response.json();
-        console.log(profileJson);
         return profileJson;
     }
 }
@@ -25,6 +36,40 @@ async function get_feed() {
     }
 }
 
+async function setUpFriends() {
+    const response = await fetch('https://music-matcher-326.herokuapp.com/userFriends');
+    const friends = response.json();
+    friends.then(async value => {
+        if (value.length > 0) {
+            const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[0].friend_id}`);
+            const friend_1 = response.json()
+            friend_1.then(friendInfo => {
+                document.getElementById('f1_user_name').innerHTML = friendInfo[0].user_name;
+                document.getElementById('f1_song').innerHTML = '';
+                embed_link(friendInfo[0].favorite_song, document.getElementById('f1_song'));
+            });
+        }
+        if (value.length > 1) {
+            const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[1].friend_id}`);
+            const friend_2 = response.json();
+            friend_2.then(friendInfo => {
+                document.getElementById('f2_user_name').innerHTML = friendInfo[0].user_name;
+                document.getElementById('f2_song').innerHTML = '';                    
+                embed_link(friendInfo[0].favorite_song, document.getElementById('f2_song'));
+            });
+        }
+        if (value.length > 2) {
+            const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[2].friend_id}`);
+            const friend_3 = response.json();
+            friend_3.then(friendInfo => {
+                document.getElementById('f3_user_name').innerHTML = friendInfo[0].user_name;
+                document.getElementById('f3_song').innerHTML = '';                       
+                embed_link(friendInfo[0].favorite_song, document.getElementById('f3_song'));                         
+            });
+        }
+    });
+}
+
 /**
  * Loads the current session profile
  */
@@ -40,6 +85,7 @@ async function load_profile() {
         embed_link(profile.favorite_song, document.getElementById("song"));
         embed_link(profile.favorite_artist, document.getElementById("artist"));
         document.getElementById('genre').innerText = profile.favorite_genre;
+        await setUpFriends()
     }
     else {
         alert('error talking with server, please try again later')
@@ -182,6 +228,7 @@ async function post_chirp(chirp_json) {
 
         const favorite = document.createElement('span');
         favorite.classList.add('material-icons');
+        favorite.classList.add('like_button');
         favorite.innerText = 'favorite_border';
         const response = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${chirp_json.chirp_id}`);
         const likedPost = response.json();
@@ -283,6 +330,7 @@ async function search() {
                 const friend_id = obj.user_id;
                 return async () => {
                     await add_friend(friend_id);
+                    await setUpFriends()
                 }
             }
             div.addEventListener('click', closure());
@@ -297,7 +345,8 @@ async function add_friend(friend_id) {
             alert("You already added this friend!");
         }
         else {
-            const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend/${friend_id}`, { method: 'POST' });
+            const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend/${friend_id}`, {method: 'POST'});
+            alert("Friend Added!");
             return response;
         }
     });
