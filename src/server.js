@@ -455,7 +455,7 @@ app.get('/chirps/:chirp_id', async (req, res) => { //Gets specific chirp
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
-})
+});
 
 app.get('/friends/:friend_id', async (req, res) => { //Will get a specific friend connection
     try{
