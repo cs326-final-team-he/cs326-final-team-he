@@ -122,6 +122,7 @@ async function post_chirp(chirp_json) {
         const repeat = document.createElement('span');
         repeat.classList.add('material-icons');
         repeat.innerText = 'repeat';
+        
 
         const favorite = document.createElement('span');
         favorite.classList.add('material-icons');
@@ -156,8 +157,8 @@ async function post_chirp(chirp_json) {
             const chirpEdit = {
                 chirp_id: chirp_json.chirp_id,
                 timestamp: chirp_json.timestamp,
-                user_name: chirp_json.user_name,
                 chirp_text: chirp_json.chirp_text,
+                user_name: chirp_json.user_name,
                 shared_song: chirp_json.shared_song,
                 like_count: chirp_json.like_count,
                 share_count: chirp_json.share_count,

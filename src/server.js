@@ -571,6 +571,7 @@ app.put('/putProfile', async (req, res) => {
 //PUT request for chirp (editing a post)
 app.put('/putChirp', async (req, res) => {
     try {
+	console.log('I got here!');
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
@@ -579,7 +580,6 @@ app.put('/putChirp', async (req, res) => {
             const result = await client.query(`UPDATE chirps SET 
                     chirp_id = '${updatedChirp.chirp_id}',
                     timestamp = '${updatedChirp.timestamp}',
-                    user_name = '${cleanText(updatedChirp.user_name)}',
                     chirp_text = '${cleanText(updatedChirp.chirp_text)}',
                     shared_song = '${cleanText(updatedChirp.shared_song)}',
                     like_count = '${updatedChirp.like_count}', 
