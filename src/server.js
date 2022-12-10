@@ -444,12 +444,28 @@ app.get('/chirps/:chirp_id', async (req, res) => { //Gets specific chirp
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
-})
+});
 
-app.get('/friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
+app.get('/friends/:friend_id', async (req, res) => { //Will get a specific friend connection
     try{
-        const client = await pool.client();
-        const result = await client.query(`SELECT * from friends where user_id='${req.params.user_id}';`);
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from friends where user_id='${req.user}' AND friend_id='${req.params.friend_id}';`);
+        client.release();
+        if (result.rowCount == 0) {
+            res.status(200).send(false);
+        }
+        else {
+            res.status(200).send(true);
+        }
+    } catch (err){
+        res.status(404).send(`Error: ${err}`)
+    }
+});
+
+app.get('/userFriends', async (req, res) => { //Will get all friend connections for signed in user
+    try{
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from friends where user_id='${req.user}';`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err){
