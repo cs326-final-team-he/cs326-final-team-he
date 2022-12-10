@@ -45,6 +45,7 @@ async function setUpFriends() {
             const friend_1 = response.json()
             friend_1.then(friendInfo => {
                 document.getElementById('f1_user_name').innerHTML = friendInfo[0].user_name;
+                document.getElementById('f1_uid').innerHTML = friendInfo[0].user_id;
                 embed_link(friendInfo[0].favorite_song, document.getElementById('f1_song'));
             });
         }
@@ -52,7 +53,8 @@ async function setUpFriends() {
             const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[1].friend_id}`);
             const friend_2 = response.json();
             friend_2.then(friendInfo => {
-                document.getElementById('f2_user_name').innerHTML = friendInfo[0].user_name;                     
+                document.getElementById('f2_user_name').innerHTML = friendInfo[0].user_name;
+                document.getElementById('f2_uid').innerHTML = friendInfo[0].user_id;                     
                 embed_link(friendInfo[0].favorite_song, document.getElementById('f2_song'));
             });
         }
@@ -60,7 +62,8 @@ async function setUpFriends() {
             const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[2].friend_id}`);
             const friend_3 = response.json();
             friend_3.then(friendInfo => {
-                document.getElementById('f3_user_name').innerHTML = friendInfo[0].user_name;                          
+                document.getElementById('f3_user_name').innerHTML = friendInfo[0].user_name;
+                document.getElementById('f3_uid').innerHTML = friendInfo[0].user_id;                        
                 embed_link(friendInfo[0].favorite_song, document.getElementById('f3_song'));                         
             });
         }
@@ -275,6 +278,7 @@ async function add_friend(friend_id) {
         }
         else {
             const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend/${friend_id}`, {method: 'POST'});
+            alert("Friend Added!");
             return response;
         }
     });
