@@ -143,6 +143,7 @@ async function post_chirp(chirp_json) {
                 await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${chirp_json.chirp_id}`, {method: 'DELETE'});
                 likes.innerHTML = chirp_json.like_count;
             }
+            let user_name = chirp_json.user_name
             const chirpEdit = {
                 chirp_id: chirp_json.chirp_id,
                 timestamp: chirp_json.timestamp,
