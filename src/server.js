@@ -461,7 +461,7 @@ app.get('/chirps/:chirp_id', async (req, res) => { //Gets specific chirp
 app.get('/friends/:friend_id', async (req, res) => { //Will get a specific friend connection
     try{
         const client = await pool.connect();
-        const result = await client.query(`SELECT * from friends where user_id='${req.user}' AND friend_id='${reg.params.friend_id}';`);
+        const result = await client.query(`SELECT * from friends where user_id='${req.user}' AND friend_id='${req.params.friend_id}';`);
         client.release();
         res.status(200).send(result.rows);
     } catch (err){
