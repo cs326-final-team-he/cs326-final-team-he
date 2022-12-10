@@ -259,6 +259,7 @@ async function search() {
                 const friend_id = obj.user_id;
                 return async () => {
                     await add_friend(friend_id);
+                    await setUpFriends()
                 }
             }
             div.addEventListener('click', closure());
