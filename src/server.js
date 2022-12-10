@@ -9,6 +9,7 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 
 //Postgres DB stuff
 const {Pool} = require('pg');
+const { stat } = require('fs');
 
 //encryption
 const { MiniCrypt } = require('./miniCrypt');
@@ -191,7 +192,7 @@ function checkLoggedIn(req, res, next) {
 async function deleteProfile(id) {
     try {
         const client = await pool.connect();
-        const result = await cient.query(`DELETE FROM profiles WHERE user_id = ${id};`)
+        const result = await client.query(`DELETE FROM profiles WHERE user_id = ${id};`)
         client.release();
         return 200;
     } catch (err) {
@@ -226,6 +227,16 @@ async function deleteFriend(user_id, friend_id) {
     }
 }
 
+async function deleteLike(user_id, chirp_id) {
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`DELETE FROM likedChirps WHERE user_id = '${user_id}' AND chirp_id = '${chirp_id}';`);
+        client.release();
+        return 200;
+    } catch (err) {
+        return 404;
+    }
+}
 /**
  * Server calls
  */
@@ -333,7 +344,7 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         //     favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(100));`);
         
         //adding friends table as well...
-        // await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
+    await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
 	await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id INT);`);
         // Now try loading feed
         const result = await client.query(`SELECT * from chirps ORDER BY timestamp;`);
@@ -575,7 +586,6 @@ app.put('/putProfile', async (req, res) => {
 //PUT request for chirp (editing a post)
 app.put('/putChirp', async (req, res) => {
     try {
-	console.log('I got here!');
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{
@@ -587,7 +597,8 @@ app.put('/putChirp', async (req, res) => {
                     chirp_text = '${cleanText(updatedChirp.chirp_text)}',
                     shared_song = '${cleanText(updatedChirp.shared_song)}',
                     like_count = '${updatedChirp.like_count}', 
-                    share_count = '${updatedChirp.share_count}'
+                    share_count = '${updatedChirp.share_count}',
+                    user_id = '${updatedChirp.user_id}'
                     WHERE chirp_id = '${updatedChirp.chirp_id}';`);
             client.release();
             //nothing was updated bc no chirp matched the requirements
