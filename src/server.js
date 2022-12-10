@@ -12,6 +12,7 @@ const {Pool} = require('pg');
 
 //encryption
 const { MiniCrypt } = require('./miniCrypt');
+const { ChildProcess } = require('child_process');
 const mc = new MiniCrypt();
 
 // Session configuration
@@ -334,11 +335,19 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
         
         //adding friends table as well...
         // await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
-	await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id INT);`);
+	    // await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id INT);`);
         // Now try loading feed
         const result = await client.query(`SELECT * from chirps ORDER BY timestamp;`);
+        const out = result.rows.map(obj => {
+            if (obj.user_id === req.user) {
+                obj.isUser = true;
+            } else {
+                obj.isUser = false;
+            }
+            return obj;
+        })
         client.release();
-        res.status(200).json(result.rows);
+        res.status(200).json(out);
     } catch (err) {
         res.status(404).json({"Error": `Error: ${err}`});
     }
@@ -505,10 +514,11 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
                 '${cleanText(post.chirp_text)}',
                 '${cleanText(post.shared_song)}',
                 '${post.like_count}',
-                '${post.share_count}');`);
+                '${post.share_count}')
+                RETURNING chirp_id;`);
             client.release();
+            res.status(200).json({'id': result.rows[0]});
         });
-        res.status(200).send();
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
@@ -576,7 +586,7 @@ app.put('/putProfile', async (req, res) => {
 });
 
 //PUT request for chirp (editing a post)
-app.put('/putChirp', async (req, res) => {
+app.put('/putChirp/:text/:song/:chirp_id', async (req, res) => {
     try {
 	console.log('I got here!');
         let body = '';

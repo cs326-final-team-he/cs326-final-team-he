@@ -73,7 +73,7 @@ async function load_friends() {
             const closure = function () {
                 const friend_id = friend.friend_id;
                 return async () => {
-                    const response = await fetch(`https://music-matcher-326.herokuapp.com/deleteFriend/${friend_id}`, {method: 'DELETE'});
+                    const response = await fetch(`https://music-matcher-326.herokuapp.com/deleteFriend/${friend_id}`, { method: 'DELETE' });
                 }
             }
             div.addEventListener('click', closure());
@@ -89,6 +89,32 @@ async function update_chirp_db(chirp_json) {
     return response;
 }
 
+function edit_chirp(post_headerDesc, song_div, chirp_id) {
+    return () => {
+        //allow edits
+        post_headerDesc.innerHTML = `
+        <textarea id="editBox_text" cols="500" rows="10"
+        placeholder="Share a song or playlist!">${post_headerDesc.innerText}</textarea>
+        `;
+        song_div.innerHTML = `
+        <input type="text" id="edit_url" placeholder="Enter a song or playlist url!">
+        <button type="button" id="embed_button">Embed song/playlist!</button>
+        <div id="embed-iframe"></div>`
+
+        //change button onclick to finish edits
+        edit_btn.innerText = 'Finish Edits';
+        edit_btn.onclick = async () => {
+            const text = document.getElementById('editBox_text').value;
+            const song = document.getElementById('edit_url').value;
+            const response = await fetch(`https://music-matcher-326.herokuapp.com/putChirp/${text}/${song}/${chirp_id}`, {method: 'PUT'});
+            post_headerDesc.innerHTML = `<p id="u1_chirp"> ${text}</p>`
+            song_div.innerHTML = '';
+            embed_link(song, song_div)
+            edit_btn.innerText = 'Edit';
+            edit_btn.onclick = edit_chirp(post_headerDesc, song_div, chirp_id);
+        }
+    }
+}
 /**
  * Programatically creates a new chirp based off the given chirp_json
  * @TODO : need to integrate with spotify api for playing music
@@ -124,9 +150,15 @@ async function post_chirp(chirp_json) {
         post_headerText.classList.add('post_headerText');
 
         const user = document.createElement('h3');
-        user.id = 'u1_user_name';
-        //are we doing verification?
-        user.innerText = chirp_json.user_name;
+        if (chirp_json.isUser) {
+            user.innerHTML = `
+            <h3 id="u1_user_name">${chirp_json.user_name}</h3>
+            <button class="editBtn" div id="${chirp_json.chirp_id}Edit">Edit</button>`;    
+        } else {
+            user.id = 'u1_user_name';
+            user.innerText = chirp_json.user_name;    
+        }
+
         post_headerText.appendChild(user);
 
         const post_headerDesc = document.createElement('div');
@@ -146,7 +178,7 @@ async function post_chirp(chirp_json) {
         const repeat = document.createElement('span');
         repeat.classList.add('material-icons');
         repeat.innerText = 'repeat';
-        
+
 
         const favorite = document.createElement('span');
         favorite.classList.add('material-icons');
@@ -154,7 +186,7 @@ async function post_chirp(chirp_json) {
         const response = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${chirp_json.chirp_id}`);
         const likedPost = response.json();
         likedPost.then(value => {
-            if(value == true) {
+            if (value == true) {
                 favorite.style.color = 'red';
             }
         });
@@ -167,14 +199,14 @@ async function post_chirp(chirp_json) {
                 const like = {
                     chirp_id: chirp_json.chirp_id
                 };
-                await fetch(`https://music-matcher-326.herokuapp.com/createLike`, {method: 'POST', body: JSON.stringify(like)});
-                chirp_json.like_count+=1;
+                await fetch(`https://music-matcher-326.herokuapp.com/createLike`, { method: 'POST', body: JSON.stringify(like) });
+                chirp_json.like_count += 1;
                 likes.innerHTML = chirp_json.like_count;
             }
             else {
                 favorite.style.color = 'black';
-                chirp_json.like_count-=1;
-                await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${chirp_json.chirp_id}`, {method: 'DELETE'});
+                chirp_json.like_count -= 1;
+                await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${chirp_json.chirp_id}`, { method: 'DELETE' });
                 likes.innerHTML = chirp_json.like_count;
             }
             const chirpEdit = {
@@ -187,7 +219,7 @@ async function post_chirp(chirp_json) {
                 share_count: chirp_json.share_count,
                 user_id: chirp_json.user_id
             };
-            await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: JSON.stringify(chirpEdit)});
+            await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, { method: 'PUT', body: JSON.stringify(chirpEdit) });
         });
 
         const publish = document.createElement('span');
@@ -215,6 +247,7 @@ async function post_chirp(chirp_json) {
         else {
             feed.insertBefore(newPost, feed.children[2]);
         }
+        const edit_btn = document.getElementById(`${chirp_json.chirp_id}Edit`).addEventListener('click', edit_chirp(post_headerDesc, song, chirp_json.chirp_id));
     } else {
         const err = await response.text();
         console.log(err)
@@ -260,11 +293,11 @@ async function add_friend(friend_id) {
     const result = await fetch(`https://music-matcher-326.herokuapp.com/friends/${friend_id}`);
     const findFriend = result.json()
     findFriend.then(async value => {
-        if (value == true){
+        if (value == true) {
             alert("You already added this friend!");
         }
         else {
-            const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend/${friend_id}`, {method: 'POST'});
+            const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend/${friend_id}`, { method: 'POST' });
             return response;
         }
     });
@@ -282,6 +315,9 @@ async function post_chirp_wrapper() {
     };
     const response = await update_chirp_db(chirp); // Separating out updating chirp and posting chirp
     if (response.ok && response.status !== 404) {
+        const json = await response.json();
+        chirp.isUser = true;
+        chirp.chirp_id = json.id;
         await post_chirp(chirp);
     }
     alert("Posting chirp");
