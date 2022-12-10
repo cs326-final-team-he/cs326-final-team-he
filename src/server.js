@@ -3,10 +3,78 @@
 // const CLIENT_SECRET = secrets.CLIENT_SECRET
 const path = require('path');
 const express = require('express');
+const expressSession = require('express-session');  // for managing session state
+const passport = require('passport');               // handles authentication
+const LocalStrategy = require('passport-local').Strategy; // username/password strategy
 
 //Postgres DB stuff
 const {Pool} = require('pg');
 const { stat } = require('fs');
+
+//encryption
+const { MiniCrypt } = require('./miniCrypt');
+const mc = new MiniCrypt();
+
+// Session configuration
+
+const session = {
+    secret : process.env.SECRET || 'SECRET', // set this encryption key in Heroku config (never in GitHub)!
+    resave : false,
+    saveUninitialized: false
+};
+
+// Passport configuration
+
+const strategy = new LocalStrategy(
+	{
+		usernameField: 'user_id'
+	},
+
+    async (user_id, password, done) => {
+        const userExists = await findUser(user_id);
+        if (!userExists) {
+            // no such user
+            await new Promise((r) => setTimeout(r, 2000)); // two second delay
+            return done(null, false, { 'message' : 'Wrong user_id' });
+        }
+        const validPassword = await validatePassword(user_id, password);
+        if (!validPassword) {
+            // invalid password
+            // should disable logins after N messages
+            // delay return to rate-limit brute-force attacks
+            await new Promise((r) => setTimeout(r, 2000)); // two second delay
+            return done(null, false, { 'message' : 'Wrong password' });
+        }
+        // success!
+        // should create a user object here, associated with a unique identifier
+        return done(null, user_id);
+    });
+
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
+// App configuration
+const app = express();
+
+app.use(express.urlencoded({'extended' : true})); // allow URLencoded data
+app.use(express.json()); // Middleware allows us to use JSON
+app.use(express.static(path.join(__dirname, "/public")));
+
+app.use(expressSession(session));
+passport.use(strategy);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Convert user object to a unique identifier.
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+// Convert a unique identifier to a user object.
+passport.deserializeUser((uid, done) => {
+    done(null, uid);
+});
+
 const pool = new Pool( {
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -33,8 +101,85 @@ function cleanText(str) {
  * We will be adding APIs on server side here
  */
 
+/**
+ * Queries user id database to see if there is an existing entry with the provided user id
+ * @param {string} user_id user_id key of the table
+ * @returns {bool} returns bool
+ */
+async function findUser(user_id) { // TODO: RETURN BOOL
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = '${user_id}';`);
+        client.release();
+        return result.rows.length > 0; // the [salt, hash]
+    }
+    catch (err) {
+        return false; // Not sure if this is exactly good coding practice
+    }
+}
 
+/**
+ * returns true iff the password is matching
+ * @param {string} user_id user_id key of the table
+ * @param {string} password password input for the given user
+ * @returns {bool} 
+ */
+async function validatePassword(user_id, password) {
+    try {
+        const result = await findUser(user_id);
+        if (!result) {
+            return false;
+        }
+        const client = await pool.connect();
+        const res = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = '${user_id}';`);
+        
+        const {salt, hash} = res.rows[0];
+        client.release();
 
+        return mc.check(password, salt, hash); // Checks provided password against salt + hash, returns true iff matching else false
+    }
+    catch (err) {
+        return false; // Not sure if this is exactly good coding practice
+    }
+}
+
+/**
+ * Adds a user to the user_secrets database
+ * @param {string} user_id user_id column of the database
+ * @param {string} password user's password that will be hashed
+ * @returns {int} returns 1 if successful, else it failed and should return an error message
+ */
+async function addUser(user_id, password) {
+    const result = await findUser(user_id);
+    if (result) {
+        return 0;
+        // User already exists, no need to add that user again
+    }
+    const [salt, hash] = mc.hash(password);
+    try {
+        const client = await pool.connect();
+        await client.query(`INSERT INTO user_secrets (user_id, salt, hash) VALUES (
+            '${cleanText(user_id)}', 
+            '${salt}',
+            '${hash}')
+            ON CONFLICT (user_id) DO NOTHING;`);
+        client.release();
+        return 1;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+function checkLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+	// If we are authenticated, run the next route.
+	    next();
+    } else {
+	// Otherwise, redirect to the login page.
+	    res.redirect('/login');
+    }
+}
 /**
  * DELETE ENDPOINT
  */
@@ -96,172 +241,47 @@ async function deleteLike(user_id, chirp_id) {
  * Server calls
  */
 
- const app = express();
- let port = process.env.PORT;
- if (port == null || port == "") {
-   port = 8000;
- }
-app.use(express.json()); // Middleware allows us to use JSON
-app.use(express.static(path.join(__dirname, "/public")));
-
-//on server startup
-// app.get('/', async (req, res) => {
-//     const authParams = {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/x-www-form-urlencoded'
-//         },
-//         body: 'grand_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET 
-//     }
-//     const result = await fetch('https://acounts.spotify.com/api/token', authParams);
-//     const json = result.json();
-//     res.status(200).send(json);
-// });
-
-// Test loading all tables beforehand on startup
-app.get('/loadFeed', async (req, res) => {
-    try {
-        const client = await pool.connect();
-
-        // Start off with creating chirps table
-        await client.query(`CREATE TABLE IF NOT EXISTS chirps 
-            (chirp_id SERIAL PRIMARY KEY, timestamp BIGINT, user_name VARCHAR(50), user_id VARCHAR(50), 
-            chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
-
-        // await client.query('DROP TABLE profiles;'); // DO NOT RUN UNLESS WANT TO DROP PROFILES TABLE
-
-        // await client.query(`CREATE TABLE IF NOT EXISTS profiles 
-        //     (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
-        //     favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
-
-        await client.query(`CREATE TABLE IF NOT EXISTS profiles 
-            (user_name VARCHAR(50), user_id VARCHAR(50) PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
-            favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
-        
-        //adding friends table as well...
-        await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
-
-        //adding likedChirps table...
-        await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id INT);`);
-
-
-        client.release();
-
-        // Now try loading feed
-        const client_2 = await pool.connect();
-        const result = await client.query(`SELECT * from chirps ORDER BY timestamp;`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
-})
-
-app.get('/Profiles', async (req, res) => { //Will get all profiles in DB
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from profiles;`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
+app.get('/', checkLoggedIn, async (req, res) => {
+    res.redirect('/main');
 });
 
-app.get('/Profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from profiles where user_id='${req.params.user_id}';`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
+app.get('/login', (req, res) => {
+    return res.sendFile('public/login.html', { 'root' : __dirname })
 });
 
-app.get('/likedChirps', async(req, res) => {
-    try{
-        const client = await pool.connect();
-        const result = await client.query('SELECT * from likedChirps;');
-        client.release();
-        res.status(200).send(result.rows);
-    }catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
+// Handle logging out (takes us back to the login page).
+app.get('/logout', (req, res) => {
+	req.logout(function(err) {
+		if (err) { return next(err); }
+		res.redirect('/login');
+	  });
 });
 
-app.get('/likedChirps/:user_id/:chirp_id', async (req, res) => {
-    try{
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from likedChirps WHERE user_id='${req.params.user_id}' AND chirp_id='${req.params.chirp_id}';`);
-        client.release();
-        if (result.rowCount == 0){
-            res.status(200).send(false);
-        }
-        else{
-            res.status(200).send(true);
-        } 
-    }catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
+/**
+ * I dont know how this works TODO
+ */
+// Handle post data from the login.html form.
+app.post('/login',
+	 passport.authenticate('local' , {     // use username/password authentication
+	     'successRedirect' : '/main',   // when we login, go to /private 
+	     'failureRedirect' : '/login'      // otherwise, back to login
+	 }));
+
+app.get('/register', (req, res) => {
+    return res.sendFile('public/register.html', { 'root' : __dirname });
 });
 
-app.get('/Chirps/:user_id', async (req, res) => { //Will get all chirps posted by user
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from chirps where user_id=${req.params.user_id};`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
-});
+app.post('/register', async (req, res) => {
+    // const username = req.body.username;
+    // const user_id = req.body.user_id;
+    // const spotify = req.body.spotify;
+    // const playlist = req.body.playlist;
+    // const song = req.body.song;
+    // const genre = req.body.genre;
+    // const artist = req.body.artist;
 
-app.get('/Chirps/:chirp_id', async (req, res) => { //Gets specific chirp
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from chirps where chirp_id=${req.params.chirp_id};`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
-})
-
-
-app.get('/Friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
-    try{
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from friends WHERE user_id='${req.params.user_id}';`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err){
-        res.status(404).send(`Error: ${err}`)
-    }
-});
-app.get('/Chirps', async (req, res) => { //Will get all chirps in DB
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from chirps;`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
-});
-
-app.get('/Friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from friends;`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`)
-    }
-});
-
-app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
+    // const password = req.body.password;
+    // const verify = req.body.verify;
     try {
         let body = '';
         req.on('data', data => body += data);
@@ -278,12 +298,184 @@ app.post('/createProfile', async (req, res) => { // For CREATE PROFILE
                                 '${cleanText(post.favorite_genre)}',
                                 '${cleanText(post.favorite_artist)}')
                                 ON CONFLICT (user_id) DO NOTHING;`);
+
+            // Might need to create user secrets table here too
+
+            await client.query(`CREATE TABLE IF NOT EXISTS user_secrets 
+            (user_id VARCHAR(50) PRIMARY KEY, salt VARCHAR(100), hash VARCHAR(300));`);
+
+            await addUser(post.user_id, post.password);
+
             client.release();
         });
 
-        res.status(200).send();
+        return res.status(200).send();
     } catch(err) {
         res.status(404).send(`Error: ${err}`);
+    }
+});
+
+ app.get('/main/', checkLoggedIn, (req, res) => {
+    return res.sendFile('public/main.html', { 'root' : __dirname });
+});
+
+// app.get('/main/:userID', checkLoggedIn, (req, res) => {
+//     if (req.params.userID === req.user) {
+//     }
+// })
+
+app.get('/loadFeed', checkLoggedIn, async (req, res) => {
+    try {
+        const client = await pool.connect();
+
+        // Start off with creating chirps table
+        // await client.query(`CREATE TABLE IF NOT EXISTS chirps 
+        //     (chirp_id SERIAL PRIMARY KEY, timestamp BIGINT, user_name VARCHAR(50), user_id VARCHAR(50), 
+        //     chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
+
+        // await client.query('DROP TABLE profiles;'); // DO NOT RUN UNLESS WANT TO DROP PROFILES TABLE
+
+        // await client.query(`CREATE TABLE IF NOT EXISTS profiles 
+        //     (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
+        //     favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
+
+        // await client.query(`CREATE TABLE IF NOT EXISTS profiles 
+        //     (user_name VARCHAR(50), user_id VARCHAR(50) PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
+        //     favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(100));`);
+        
+        //adding friends table as well...
+        // await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
+	await client.query(`CREATE TABLE IF NOT EXISTS likedChirps (user_id VARCHAR(50), chirp_id INT);`);
+        // Now try loading feed
+        const result = await client.query(`SELECT * from chirps ORDER BY timestamp;`);
+        client.release();
+        res.status(200).json(result.rows);
+    } catch (err) {
+        res.status(404).json({"Error": `Error: ${err}`});
+    }
+})
+// Test loading all tables beforehand on startup
+
+app.get('/profiles', async (req, res) => { //Will get all profiles in DB
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from profiles;`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * FROM profiles WHERE user_id='${req.params.user_id}';`);
+        client.release();
+        res.status(200).json(result.rows);
+    } catch (err) {
+        res.status(404).json({'error': `Error: ${err}`});
+    }
+});
+
+app.get('/search', async (req, res) => {
+    try {
+        const search = req.query.search;
+        const client = await pool.connect();
+        const result = await client.query(`SELECT user_id, favorite_song FROM profiles 
+            WHERE user_id LIKE '%${search}%' OR user_name LIKE '%${search}%';`);
+            client.release();
+            res.status(200).json(result.rows);
+    }
+    catch (err) {
+        res.status(404).json({'Error': err});
+    }
+});
+app.get('/sessionProfile', checkLoggedIn, (req, res) => {
+    return res.redirect(`/profiles/${req.user}`);
+});
+
+app.get('/likedChirps', async(req, res) => {
+    try{
+        const client = await pool.connect();
+        const result = await client.query('SELECT * from likedChirps;');
+        client.release();
+        res.status(200).send(result.rows);
+    }catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+app.get('/likedChirps/:chirp_id', async (req, res) => {
+    try{
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from likedChirps WHERE user_id='${req.user}' AND chirp_id='${req.params.chirp_id}';`);
+        client.release();
+        if (result.rowCount == 0){
+            res.status(200).send(false);
+        }
+        else{
+            res.status(200).send(true);
+        } 
+    }catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+
+
+app.get('/chirps', async (req, res) => { //Will get all chirps in DB
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from chirps;`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+app.get('/chirps/:user_id', async (req, res) => { //Will get all chirps posted by user
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from chirps where user_id='${req.params.user_id}';`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+app.get('/chirps/:chirp_id', async (req, res) => { //Gets specific chirp
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from chirps where chirp_id='${req.params.chirp_id}';`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+})
+
+app.get('/friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
+    try{
+        const client = await pool.client();
+        const result = await client.query(`SELECT * from friends where user_id='${req.params.user_id}';`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err){
+        res.status(404).send(`Error: ${err}`)
+    }
+});
+
+app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from friends;`);
+        client.release();
+        res.status(200).send(result.rows);
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`)
     }
 });
 
@@ -323,7 +515,7 @@ app.post('/createLike', async(req, res) => {
             const post = JSON.parse(body);
             const client = await pool.connect();
             const result = await client.query(`INSERT INTO likedChirps (user_id, chirp_id)
-                VALUES ('${post.user_id}', '${post.chirp_id}');`);
+                VALUES ('${req.user}', '${post.chirp_id}');`);
         });
         res.status(200).send();
     }
@@ -332,20 +524,18 @@ app.post('/createLike', async(req, res) => {
     }
 });
 
-app.post('/createFriend', async (req, res) => {
+
+app.post('/createFriend/:friend_id', checkLoggedIn, async (req, res) => {
     try {
-        let body = '';
-        req.on('data', data => body += data);
-        req.on('end', async () => {
-            const post = JSON.parse(body);
-            const client = await pool.connect();
-            const result = await client.query(`INSERT INTO friends (user_id, friend_id)
-                VALUES ('${post.user_id}', '${post.friend_id}');`);
-        });
+        const friend_id = req.params.friend_id;
+        const client = await pool.connect();
+        const result = await client.query(`INSERT INTO friends (user_id, friend_id)
+            VALUES ('${req.user}', '${friend_id}');`);
+        client.release();
         res.status(200).send();
     }
     catch (err) {
-        res.status(404).send(`Error: ${err}`);
+        res.status(404).send(`Error: ${err}`)
     }
 });
 
@@ -428,11 +618,11 @@ app.delete('/deleteFriend/:user_id/:friend_id', (req, res) => {
     res.status(status).send("Got a DELETE request for friend");
 });
 
-app.delete('/deleteLike/:user_id/:chirp_id', async (req, res) => {
-    const {user_id, chirp_id} = req.params;
+app.delete('/deleteLike/:chirp_id', async (req, res) => {
+    const {chirp_id} = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM likedChirps WHERE user_id = '${user_id}' AND chirp_id = '${chirp_id}';`);
+        const result = await client.query(`DELETE FROM likedChirps WHERE user_id = '${req.user}' AND chirp_id = '${chirp_id}';`);
         client.release();
         return res.status(200).send();
     } catch (err) {

@@ -5,6 +5,8 @@
 }
 
 body {
+  font-family:monospace;
+  /* font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
   --musicmatcher-color: #e5a2e7;
   --musicmatcher-background: #f3f2f5;
 }
@@ -78,7 +80,6 @@ body {
 body {
   display: flex;
   height: 100vh;
-  max-width: 1300px;
   margin-left: auto;
   margin-right: auto;
   padding: 10px;
@@ -161,7 +162,7 @@ body {
 .feed {
   flex: 0.5;
   border-right: 1px solid var(--musicmatcher-background);
-  min-width: fit-content;
+  max-width: fit-content;
   overflow-y: scroll;
 }
 
@@ -218,15 +219,26 @@ body {
   outline: none;
 }
 
+textarea {
+  border-color: #f3f2f5;
+  border-radius: 30px;
+  padding: 30px;
+  overflow: auto;
+  outline: #e5a2e7;
+  resize: none;
+  font-size: medium;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
 .sharebox_play_button {
-  margin-left: 500px;
+  margin-left: auto;
 }
 
 .sharebox_play_button span {
   font-size: 50px;
 }
 
-#sharebox_shareButton {
+.btn {
   background-color: var(--musicmatcher-color);
   border: none;
   color: white;
@@ -236,9 +248,10 @@ body {
   height: 40px;
   margin-top: 20px;
   margin-left: auto;
+  cursor: pointer;
 }
 
-#sharebox_shareButton:hover {
+.btn:hover {
     background-color: var(--musicmatcher-background);
     border-radius: 30px;
     color: var(--musicmatcher-color);
@@ -266,7 +279,23 @@ body {
   object-fit: contain;
   border-radius: 20px;
 }
-
+.sidebar iframe {
+  border: 0px;
+  width: auto;
+  min-width: 375px;
+  min-height: 200px;
+}
+.feed iframe {
+  border: 0px;
+  width: auto;
+  min-width: 375px;
+  min-height: 200px;
+}
+.widgets iframe {
+  border: 0px;
+  height: 100px;
+  width: 175px;
+}
 .post_footer {
   display: flex;
   justify-content: space-between;
@@ -286,11 +315,14 @@ body {
 }
 
 .post_headerText h3 {
+  overflow-wrap: break-word;
   font-size: 15px;
   margin-bottom: 5px;
 }
 
 .post_headerDescription {
+  overflow-wrap: break-word;
+  max-width: 500px;
   margin-bottom: 10px;
   font-size: 15px;
 }
@@ -317,17 +349,6 @@ body {
   padding-bottom: 10px;
   flex: 1;
   padding: 10px;
-}
-
-.addButton {
-  /* Used for shared music formatting */
-  width: 500px;
-  object-fit: contain;
-  border-radius: 20px;
-  padding: 10px;
-  color: white;
-  border-color: var(--musicmatcher-background);
-  background-color: var(--musicmatcher-color);
 }
 
 .rec_footer {
@@ -395,6 +416,7 @@ body {
 /* widgets */
 .widgets {
   flex: 0.3;
+  max-width: 275px;
 }
 
 .widgets_input {
@@ -414,6 +436,7 @@ body {
 }
 
 .widgets_searchIcon {
+  margin-left: auto;
   color: gray;
 }
 
@@ -428,6 +451,38 @@ body {
 .widgets_widgetContainer h2 {
   font-size: 18px;
   font-weight: 800;
+}
+
+.result {
+  display: flex;
+  align-items: flex-start;
+  padding-bottom: 10px;
+  font-size: 10px;
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
+
+.result_avatar {
+  border-radius: 50%;
+  height: 40px;
+  padding: 10px;
+  margin-top: 10px;
+}
+.addButton {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+}
+.result_profile h3 {
+  margin-top: 10px;
+}
+
+.result_favorite_song {
+  width: 100px;
+  height: 100px;
 }
 
 .friend_headerSpecial {
@@ -467,8 +522,8 @@ body {
 }
 
 .friend_favorite_song {
-  margin-top: 5px;
-  font-size: 12px;
+  width: 100px;
+  height: 100px;
 }
 /* account registration styling */
 .form_header {
@@ -481,10 +536,14 @@ body {
   text-align: center;
 }
 .form_header {
-    font-size: xx-large;
+    font-size: large;
 }
 .form {
+  margin-left: 30%;
+  text-align: center;
+  border-radius: 10px;
   flex: 0.5;
+  background-color: var(--musicmatcher-background);
   border-right: 1px solid var(--musicmatcher-background);
   min-width: fit-content;
   overflow-y: scroll;
@@ -493,17 +552,16 @@ body {
   display: none;
 }
 .form-group {
+  text-align: center;
   padding: 10px;
 }
 .form-group label {
-  display: flex;
+  /* display: flex; */
   font-size: 20px;
   font-weight: 800;
   margin-left: 25px;
-  /* background-color: var(--musicmatcher-background); */
 }
 .form-group input {
-  align-items: center;
   padding: 5px;
   border-radius: 20px;
   border-color: white;
@@ -515,7 +573,6 @@ body {
 
 .form-search {
   display: flex;
-  align-items: center;
   background-color: var(--musicmatcher-background);
   padding: 10px;
   border-radius: 20px;
@@ -531,4 +588,37 @@ body {
 
 .rec_add_music span {
   font-size: 30px;
+}
+#register_btn {
+  width: 135px;
+  height: 40px;
+}
+
+a.button {
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  appearance: button;
+  text-decoration: none;
+  color: initial;
+}
+.abtn {
+  float: right;
+  background-color: var(--musicmatcher-color);
+  border: none;
+  color: white;
+  font-weight: 900;
+  border-radius: 30px;
+  padding: 5px;
+  width: auto;
+  height: auto;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: 10%;
+}
+
+.abtn:hover {
+    background-color: var(--musicmatcher-background);
+    border-radius: 30px;
+    color: var(--musicmatcher-color);
+    transition: color 100ms ease-out;
 }

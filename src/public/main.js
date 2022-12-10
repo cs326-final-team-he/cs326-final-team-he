@@ -14,7 +14,7 @@ const profile_json = {
  * Gets profile asynchronously for a given user (no params for now)
  * @return {JSON} Returns Profile JSON
  */
- async function get_profile() {
+async function get_profile() {
     const response = await fetch(`https://music-matcher-326.herokuapp.com/profiles`);
     if (response.ok) {
         const profileJson = await response.json();
@@ -37,94 +37,31 @@ async function get_feed() {
 }
 
 /**
- * Sets the profile using the profile JSON given
- * @param {JSON} profile_json Input Profile JSON
+ * Loads the current session profile
  */
-async function set_profile(profile_json) {
-    // Update User in DB
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/putProfile`, {method: 'PUT', body: JSON.stringify(profile_json)});
-    if (response.ok) {
-        //if went thru, update in front end
-
-        document.getElementById('username').value = profile_json.user_name;
-        document.getElementById('uid').value = profile_json.user_id;
-        document.getElementById('spotify_id').value = profile_json.spotify_account;
-        document.getElementById('list').value = profile_json.playlist;
-        embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
-        document.getElementById('song').value = profile_json.favorite_song;
-        embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
-        const response = await fetch(`https://music-matcher-326.herokuapp.com/Friends/${profile_json.user_id}`);
-        const friends = response.json();
-        friends.then(async value => {
-            if (value.length > 0) {
-                const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[0].friend_id}`);
-                const friend_1 = response.json();
-                friend_1.then(friendInfo => {
-                    document.getElementById('f1_user_name').innerHTML = friendInfo[0].user_name;
-                    document.getElementById('f1_song').innerHTML = '';
-                    embed_link(friendInfo[0].favorite_song, document.getElementById('f1_song')); 
-                });
-            }
-            if (value.length > 1) {
-                const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[1].friend_id}`);
-                const friend_2 = response.json();
-                friend_2.then(friendInfo => {
-                    document.getElementById('f2_user_name').innerHTML = friendInfo[0].user_name;
-                    document.getElementById('f2_song').innerHTML = '';
-                    embed_link(friendInfo[0].favorite_song, document.getElementById('f2_song'));                     
-                });
-            }
-            if (value.length > 2) {
-                const response = await fetch(`https://music-matcher-326.herokuapp.com/Profiles/${value[2].friend_id}`);
-                const friend_3 = response.json();
-                friend_3.then(friendInfo => {
-                    document.getElementById('f3_user_name').innerHTML = friendInfo[0].user_name;
-                    document.getElementById('f3_song').innerHTML = '';
-                    embed_link(friendInfo[0].favorite_song, document.getElementById('f3_song'));                         
-                });
-            }
-        });
-        // commenting out for now
-        //todo: make this less ugly
-        // if (friends.length > 0) {
-        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-        //     document.getElementById('f1_song').innerHTML = profileJson.friends[0].favorite_song;        
-        // } if (friends.length > 1) {
-        //     document.getElementById('f2_user_name').innerHTML = profileJson.friends[1].user_name;
-        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-        //     document.getElementById('f2_song').innerHTML = profileJson.friends[1].favorite_song;
-        // } if (friends.length > 2) {
-        //     document.getElementById('f3_user_name').innerHTML = profileJson.friends[2].user_name;
-        //     // document.getElementById('f1_uid').innerHTML = profileJson.friends[0].user_id; // TODO: Update USERID too
-        //     document.getElementById('f3_song').innerHTML = profileJson.friends[2].favorite_song;
-        // }
+async function load_profile() {
+    const response = await fetch('https://music-matcher-326.herokuapp.com/sessionProfile');
+    if (response.ok && response.status !== 404) {
+        const json = await response.json();
+        const profile = json[0]
+        document.getElementById('username').innerText = profile.user_name;
+        document.getElementById('uid').innerText = profile.user_id;
+        document.getElementById('spotify_id').innerText = profile.spotify_account;
+        embed_link(profile.playlist, document.getElementById("list"));
+        embed_link(profile.favorite_song, document.getElementById("song"));
+        embed_link(profile.favorite_artist, document.getElementById("artist"));
+        document.getElementById('genre').innerText = profile.favorite_genre;
     }
-}
-
-/**
- * Adds a profile to the database given the populated fields in the sidebar
- */
-async function add_profile() {
-    const profile = {};
-    profile.user_name = document.getElementById('username').value;
-    profile.user_id = document.getElementById('uid').value;
-    profile.spotify_account = document.getElementById('spotify_id').value;
-    profile.playlist = document.getElementById('list').value;
-    profile.favorite_song = document.getElementById('song').value;
-    profile.favorite_artist = document.getElementById('artist').value;
-    profile.favorite_genre = document.getElementById('genre').value;
-
-    embed_link(profile_json.playlist, document.getElementsByClassName("playlist")[0]);
-    embed_link(profile_json.favorite_song, document.getElementsByClassName("favorite_song")[0]);
-
-    const response = await fetch('https://music-matcher-326.herokuapp.com/createProfile', {method: 'POST', body: JSON.stringify(profile)})
+    else {
+        alert('error talking with server, please try again later')
+    }
 }
 /**
  * @param {JSON} chirp_json JSON object containing chirp information to update chirps table with 
- */ 
+ */
 async function update_chirp_db(chirp_json) {
     //timestamp done serverside
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, {method: 'POST', body: JSON.stringify(chirp_json)});
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/createChirp`, { method: 'POST', body: JSON.stringify(chirp_json) });
     return response;
 }
 
@@ -137,7 +74,7 @@ async function post_chirp(chirp_json) {
     // Need to set up the feed
     // Right now we update using the ids of specific fields but that really isn't scalable for chirps and friends list. 
     // Need to figure out a way to efficiently update the fields
-    
+
     if (response.ok && response.status !== 404) {
         const feed = document.getElementById('feed');
         //post_avatar portion
@@ -146,35 +83,35 @@ async function post_chirp(chirp_json) {
         const avatar = document.createElement('div');
         avatar.classList.add('post_avatar');
         const icon = document.createElement('span');
-        icon.id =  'userProfileShare';
+        icon.id = 'userProfileShare';
         icon.classList.add('material-icons');
         //unsure about this
         icon.innerHTML = 'account_circle';
         avatar.appendChild(icon);
-    
+
         //post_body portion
         const post_body = document.createElement('div');
         post_body.classList.add('post_body');
-    
+
         const post_header = document.createElement('div');
         post_header.classList.add('post_header');
-    
+
         const post_headerText = document.createElement('div');
         post_headerText.classList.add('post_headerText');
-    
+
         const user = document.createElement('h3');
         user.id = 'u1_user_name';
         //are we doing verification?
         user.innerText = chirp_json.user_name;
         post_headerText.appendChild(user);
-    
+
         const post_headerDesc = document.createElement('div');
         post_headerDesc.classList.add('post_headerDescription');
         post_headerDesc.innerHTML = `<p id="u1_chirp"> ${chirp_json.chirp_text}</p>`;
-    
+
         post_header.appendChild(post_headerText);
         post_header.appendChild(post_headerDesc);
-    
+
         const song = document.createElement('div');
         //unsure
         song.classList.add('post_add_music');
@@ -190,21 +127,20 @@ async function post_chirp(chirp_json) {
         favorite.classList.add('material-icons');
         favorite.classList.add('like_button');
         favorite.innerText = 'favorite_border';
-        const response = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${profile_json.user_id}/${chirp_json.chirp_id}`);
+        const response = await fetch(`https://music-matcher-326.herokuapp.com/likedChirps/${chirp_json.chirp_id}`);
         const likedPost = response.json();
         likedPost.then(value => {
             if(value == true) {
                 favorite.style.color = 'red';
             }
         });
-        const likes = document.createElement('div');
+        const likes = document.createElement('span');
         likes.innerHTML = chirp_json.like_count;
         likes.classList.add('likes');
         favorite.addEventListener('click', async () => {
             if (favorite.style.color != 'red') {
                 favorite.style.color = 'red';
                 const like = {
-                    user_id: profile_json.user_id,
                     chirp_id: chirp_json.chirp_id
                 };
                 await fetch(`https://music-matcher-326.herokuapp.com/createLike`, {method: 'POST', body: JSON.stringify(like)});
@@ -214,7 +150,7 @@ async function post_chirp(chirp_json) {
             else {
                 favorite.style.color = 'black';
                 chirp_json.like_count-=1;
-                await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${profile_json.user_id}/${chirp_json.chirp_id}`, {method: 'DELETE'});
+                await fetch(`https://music-matcher-326.herokuapp.com/deleteLike/${chirp_json.chirp_id}`, {method: 'DELETE'});
                 likes.innerHTML = chirp_json.like_count;
             }
             const chirpEdit = {
@@ -229,6 +165,7 @@ async function post_chirp(chirp_json) {
             };
             await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: JSON.stringify(chirpEdit)});
         });
+
         const publish = document.createElement('span');
         publish.classList.add('material-icons');
         publish.innerText = 'publish';
@@ -244,7 +181,8 @@ async function post_chirp(chirp_json) {
 
         newPost.appendChild(avatar);
         newPost.appendChild(post_body);
-        embed_link(chirp_json.shared_song, newPost); // Embed spotify song/track to post
+        embed_link(chirp_json.shared_song, song); // Embed spotify song/track to post
+
         // Check if feed child Node list length > 3(basically contains an existing chirp). If so, use insertBefore(), else, use appendCHild()
         if (feed.children.length < 3) {
             // Only contains header and sharebox
@@ -259,59 +197,60 @@ async function post_chirp(chirp_json) {
     }
 }
 
-async function add_friends() { //Adds 3 friends from database
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/Friends/${profile_json.user_id}`);
-    const current_friends = response.json();
-    current_friends.then(async friendsList => {
-        if(friendsList.length != 3) {
-            const responseProfiles = await fetch(`https://music-matcher-326.herokuapp.com/Profiles`);
-            const all_Profiles = responseProfiles.json();
-            all_Profiles.then(async profileList => {
-                let i = 0;
-                let k = 0;
-                while(i < 3 && k < profileList.length) {
-                    if (profile_json.user_id != profileList[i].user_id) {
-                        let friendConnection = 
-                        {
-                            user_id: profile_json.user_id,
-                            friend_id: profileList[i].user_id
-                        }
-                        await update_friends_db(friendConnection);
-                        i++;
-                    }
-                    k++;
+async function search() {
+    const search = document.getElementById('search').value;
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/search?search=${search}`);
+    if (response.ok && response.status !== 404) {
+        const rows = await response.json();
+        const results = document.getElementById('results');
+        results.innerHTML = '<h2>Search Results:</h2>';
+        rows.forEach(obj => {
+            const div = document.createElement('div');
+            div.classList.add('result')
+            div.innerHTML =
+                `<div class="result_avatar">
+                    <button" class="material-icons addButton" id="addUser">
+                        add_circle
+                    </button>
+                </div>
+                <div class="result_profile">
+                    <h3 id="user_name">
+                        ${obj.user_id}
+                    </h3>
+                    <div class="result_favorite_song" id="result_song${obj.user_id}">
+                    </div>
+                </div>`;
+            results.appendChild(div);
+            embed_link(obj.favorite_song, document.getElementById(`result_song${obj.user_id}`));
+            const closure = function () {
+                const friend_id = obj.user_id;
+                return async () => {
+                    await add_friend(friend_id);
                 }
-
-            });
-        }    
-
-    })
-    const friendConnection =             
-    {
-        user_id: profile_json.user_id,
-        friend_json: friend_json.user_id
+            }
+            div.addEventListener('click', closure());
+        });
     }
-    await update_friends_db(friendConnection);
 }
-
-/**
- * Will add new friend to database
- */
-async function update_friends_db(friendConnection) {
-    const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend`, {method: 'POST', body: JSON.stringify(friendConnection)});
+async function add_friend(friend_id) {
+    const response = await fetch(`https://music-matcher-326.herokuapp.com/createFriend/${friend_id}`, {method: 'POST'});
     return response;
 }
 
 async function post_chirp_wrapper() {
     console.log("In post_chirp_wrapper");
-    const chirp = { user_name: document.getElementById("username").value, 
-                    user_id: document.getElementById('uid').value,
-                    chirp_text: document.getElementById("sharebox_text").value, 
-                    shared_song: document.getElementById("shared_spotify_url").value, 
-                    like_count: 0, 
-                    share_count: 0 };
+    const chirp = {
+        user_name: document.getElementById("username").innerText,
+        user_id: document.getElementById('uid').innerText,
+        chirp_text: document.getElementById("sharebox_text").value,
+        shared_song: document.getElementById("shared_spotify_url").value,
+        like_count: 0,
+        share_count: 0
+    };
     const response = await update_chirp_db(chirp); // Separating out updating chirp and posting chirp
-    await post_chirp(response); 
+    if (response.ok && response.status !== 404) {
+        await post_chirp(chirp);
+    }
     alert("Posting chirp");
 }
 
@@ -324,9 +263,9 @@ function embed_link(spotify_url, divElem) {
     if (/https:\/\/open.spotify.com\/track\/.*/.test(spotify_url)) {
         // matches track/playlist spotify link 'structure'
         // const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
-        
 
-        const iframe = document.createElement("iframe"); 
+
+        const iframe = document.createElement("iframe");
 
         console.log("Setting up iframe styling");
 
@@ -341,7 +280,7 @@ function embed_link(spotify_url, divElem) {
     else if (/https:\/\/open.spotify.com\/playlist\/.*/.test(spotify_url)) {
         // const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
 
-        const iframe = document.createElement("iframe"); 
+        const iframe = document.createElement("iframe");
 
         console.log("Setting up iframe styling");
 
@@ -354,11 +293,24 @@ function embed_link(spotify_url, divElem) {
         divElem.appendChild(iframe);
     }
     else if (/https:\/\/open.spotify.com\/album\/.*/.test(spotify_url)) {
-        const iframe = document.createElement("iframe"); 
+        const iframe = document.createElement("iframe");
 
         console.log("Setting up iframe styling");
 
         iframe.src = "https://open.spotify.com/embed?uri=spotify:album:" + spotify_url.split("/")[4].split("?")[0];
+        iframe.width = "300";
+        iframe.height = "200";
+        iframe.allowTransparency = "true";
+        iframe.allow = "encrypted-media";
+
+        divElem.appendChild(iframe);
+    }
+    else if (/https:\/\/open.spotify.com\/artist\/.*/.test(spotify_url)) {
+        const iframe = document.createElement("iframe");
+
+        console.log("Setting up iframe styling");
+
+        iframe.src = "https://open.spotify.com/embed?uri=spotify:artist:" + spotify_url.split("/")[4].split("?")[0];
         iframe.width = "300";
         iframe.height = "200";
         iframe.allowTransparency = "true";
@@ -377,21 +329,11 @@ function embed_link(spotify_url, divElem) {
     }
 }
 
-const addButton = document.getElementById('addButton');
-addButton.addEventListener('click', () => {
-
-    add_friends();
-    console.log(profile_json.friends);
-}); 
 // Basic app functionalities
 
 // When 'share!' button is clicked the chirp should be posted on feed
-document.getElementById("sharebox_shareButton").addEventListener('click', () => {
-    console.log("TEST");
-})
-document.getElementById("sharebox_shareButton").addEventListener('click', (post_chirp_wrapper));
 
-document.getElementById("sharebox_shareButton").addEventListener('click', add_profile);
+document.getElementById("sharebox_shareButton").addEventListener('click', (post_chirp_wrapper));
 
 // Automatically converts to embedded spotify playable when spotify url put in
 document.getElementById('embed_button').addEventListener("click", () => {
@@ -401,22 +343,22 @@ document.getElementById('embed_button').addEventListener("click", () => {
     const shareBoxDiv = document.getElementsByClassName("shareBox")[0];
     embed_link(shared_spotify_url, shareBoxDiv);
 });
-
+document.getElementById('searchButton').addEventListener('click', search);
 //On load
+
+// Try setting profile
+await load_profile();
 
 // Test onload table creation
 const response = await fetch(`https://music-matcher-326.herokuapp.com/loadFeed`);
 
 if (response.ok) {
     const chirpsJsonArr = await response.json();
-    
+    console.log(chirpsJsonArr);
+
     for (let i = 0; i < chirpsJsonArr.length; i++) {
         await post_chirp(chirpsJsonArr[i]);
     }
 }
-
-// console.log(profile_json);
-
-const result = await set_profile(profile_json);
 
 console.log("FINISHED LOADING");

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="" X-UA-Compatible" content="" IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicMatcher</title>
+
+    <script type="module" src="/main.js" defer></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <script src="https://open.spotify.com/embed-podcast/iframe-api/v1" async></script>
+    <!-- sidebar starts-->
+    <div class="sidebar">
+        <div class="accountProfileIcon">
+            <span class="material-icons" id="account_circle_option">
+                account_circle
+            </span>
+        </div>
+        <div class="profile">
+            <h2>Profile</h2>
+            <p id="username"></p>
+        </div>
+
+        <div class="sidebarOption">
+            <span class="material-icons">
+                remember_me
+            </span>
+        </div>
+        <div class="user_id">
+            <h2>User ID</h2>
+            <p id="uid"></p>
+        </div>
+
+        <div class="sidebarOption">
+            <i class='fab fa-spotify'></i>
+        </div>
+        <div class="spotify">
+            <h2>Spotify</h2>
+            <p id="spotify_id"></p>
+        </div>
+
+        <div class="sidebarOption">
+            <span class="material-icons">
+                featured_play_list
+            </span>
+        </div>
+        <div class="playlist">
+            <h2>Playlist</h2>
+            <div id="list">
+
+            </div>
+        </div>
+
+        <div class="sidebarOption">
+            <span class="material-icons">
+                play_circle
+            </span>
+        </div>
+        <div class="favorite_song">
+            <h2>Favorite Song</h2>
+            <div id="song">
+
+            </div>
+        </div>
+
+        <div class="favorite_artist">
+            <h2>Favorite Artist</h2>
+            <div id="artist">
+
+            </div>
+        </div>
+
+        <div class="favorite_genre">
+            <h2>Favorite Genre</h2>
+            <p id="genre"></p>
+        </div>
+
+        <a href="/logout" class="abtn">Logout</a>
+        <button type="button" class="btn">Edit Profile</button>
+    </div>
+    <!--sidebar ends-->
+
+    <!--feed starts-->
+    <div class="feed" id="feed">
+        <div class="feed_header">
+            <h2>Home</h2>
+        </div>
+
+        <div class="shareBox">
+            <form>
+                <div class="sharebox_input">
+                    <span class="material-icons" id="userProfileShare">
+                        account_circle
+                    </span>
+                    <textarea id="sharebox_text" cols="500" rows="10"
+                        placeholder="Share a song or playlist!"></textarea>
+                </div>
+                <div class="sharebox_play_button">
+                    <!-- <span class="material-icons">
+                        play_circle
+                    </span> -->
+                    <input type="text" id="shared_spotify_url" placeholder="Enter a song or playlist url!">
+                    <button type="button" id="embed_button">Embed song/playlist!</button>
+                    <div id="embed-iframe"></div>
+
+                </div>
+                <button id="sharebox_shareButton" class="btn">share!</button>
+            </form>
+        </div>
+
+
+        <!-- post starts here -->
+        <div class="post">
+            <div class="post_avatar"><span id="userProfileShare" class="material-icons">account_circle</span></div>
+            <div class="post_body">
+                <div class="post_header">
+                    <div class="post_headerText">
+                        <h3 id="u1_user_name">Stanley</h3>
+                    </div>
+                    <div class="post_headerDescription">
+                        <p id="u1_chirp"> fadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfa
+                            sfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfasfadlfnasdfas
+                        </p>
+                    </div>
+                </div>
+                <iframe src="https://open.spotify.com/embed?uri=spotify:track:6BV77pE4JyUQUtaqnXeKa5"
+                    allow="encrypted-media"></iframe>
+                <div class="post_add_music"></div>
+                <span class="post_footer">
+                    <span class="material-icons">repeat</span>
+                    <span class="material-icons">favorite_border</span>
+                    <span class="material-icons">publish</span>
+            </div>
+
+        </div>
+        <div class="post">
+            <div class="post_avatar">
+                <span class="material-icons" id="userProfileShare">
+                    account_circle
+                </span>
+            </div>
+
+            <div class="post_body">
+                <div class="post_header">
+                    <div class="post_headerText">
+                        <h3 id="u1_user_name">
+                            USER
+                        </h3>
+                    </div>
+                    <div class="post_headerDescription">
+                        <p id="u1_chirp">
+                            Lorem ipsum dolor sit amet, consectetu adipisicing elit.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="post_add_music">
+                    <span class="material-icons">
+                        play_circle_filled
+                    </span>
+                </div>
+
+                <div class="post_footer">
+                    <span class="material-icons"> repeat </span>
+                    <span class="material-icons"><span style="color:red">favorite_border</span></span>
+                    <span class="material-icons"> publish </span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- rec based on profile starts here -->
+        <div class="rec">
+            <div class="rec_body">
+                <div class="rec_header">
+                    <div class="rec_headerText">
+                        <h3>
+                            Since you liked Lorem ipsum
+                        </h3>
+                    </div>
+                    <div class="rec_headerDescription">
+                        <p>
+                            We recommend dolor sit amet, consectetu adipisicing elit.
+                        </p>
+                    </div>
+                </div>
+                <!-- this could be music, artist, users (whatever we want and have tiem to do) -->
+                <div class="rec_add_music">
+                    <span class="material-icons">
+                        play_circle_filled
+                    </span>
+                </div>
+
+                <div class="rec_footer">
+                    <span class="material-icons"> repeat </span>
+                    <span class="material-icons"> favorite_border </span>
+                    <span class="material-icons"> publish </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--feed ends-->
+
+    <!-- widget starts here -->
+    <div class="widgets">
+        <div class="widgets_input">
+            <input type="text" placeholder="search!" id="search">
+            <button type="button" class="material-icons widgets_searchIcon" id="searchButton"> search </button>
+        </div>
+
+        <div class="widgets_widgetContainer" id="results">
+            <h2>Search Results:</h2>
+        </div>
+        
+        <div class="widgets_widgetContainer">
+            <h2>Friends & Favorite Songs</h2>
+            <div class="friend">
+                <div class="friend_avatar">
+                    <span class="material-icons" id="userProfileShare">
+                        account_circle
+                    </span>
+                </div>
+                <div class="friend_profile">
+                    <h3 id="f1_user_name">
+                        USER
+                    </h3>
+                    <div class="friend_favorite_song">
+                        <iframe src="https://open.spotify.com/embed?uri=spotify:track:6BV77pE4JyUQUtaqnXeKa5"
+                        allow="encrypted-media"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend">
+                <div class="friend_avatar">
+                    <span class="material-icons" id="userProfileShare">
+                        account_circle
+                    </span>
+                </div>
+                <div class="friend_profile">
+                    <h3 id="f2_user_name">
+                        USER
+                    </h3>
+                    <div class="friend_favorite_song">
+                        <p id="f2_song">lorem ipsum</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend">
+                <div class="friend_avatar">
+                    <span class="material-icons" id="userProfileShare">
+                        account_circle
+                    </span>
+                </div>
+                <div class="friend_profile">
+                    <h3 id="f3_user_name">
+                        USER
+                    </h3>
+                    <div class="friend_favorite_song">
+                        <p id="f3_song">lorem ipsum</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- widget ends here -->
+
+</body>
+
+</html>
