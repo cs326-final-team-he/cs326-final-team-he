@@ -1,5 +1,3 @@
-const { resolveInclude } = require("ejs");
-
 // Try setting profile
 const profile = await get_profile();
 // console.log(profile);
