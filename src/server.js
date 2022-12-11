@@ -193,7 +193,7 @@ function checkLoggedIn(req, res, next) {
 async function deleteProfile(id) {
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM profiles WHERE user_id = ${id};`)
+        const result = await client.query(`DELETE FROM profiles WHERE user_id = '${id}';`)
         client.release();
         return 200;
     } catch (err) {
