@@ -642,7 +642,7 @@ a.button {
   transition: color 100ms ease-out;
 
 }
-#shared_spotify_url {
+#shared_spotify_url, #edit_url {
   padding: 5px;
   border-radius: 20px;
   border-color: white;
