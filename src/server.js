@@ -1,6 +1,3 @@
-// const secrets = require('./secrets.json');
-// const CLIENT_ID = secrets.CLIENT_ID;
-// const CLIENT_SECRET = secrets.CLIENT_SECRET
 const path = require('path');
 const express = require('express');
 const expressSession = require('express-session');  // for managing session state
@@ -8,51 +5,65 @@ const passport = require('passport');               // handles authentication
 const LocalStrategy = require('passport-local').Strategy; // username/password strategy
 
 //Postgres DB stuff
-const {Pool} = require('pg');
+const { Pool } = require('pg');
 
 //encryption
 const { MiniCrypt } = require('./miniCrypt');
 const mc = new MiniCrypt();
 
 // Session configuration
-
 const session = {
-    secret : process.env.SECRET || 'SECRET', // set this encryption key in Heroku config (never in GitHub)!
-    resave : false,
+    secret: process.env.SECRET || 'SECRET', // set this encryption key in Heroku config (never in GitHub)!
+    resave: false,
     saveUninitialized: false
 };
 
-// Passport configuration
+// Database connection stuff
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
 
+// Passport configuration
 const strategy = new LocalStrategy(
+    {
+        usernameField: 'user_id'
+    },
+
     async (user_id, password, done) => {
-	if (!findUser(user_id)) {
-	    // no such user
-	    await new Promise((r) => setTimeout(r, 2000)); // two second delay
-	    return done(null, false, { 'message' : 'Wrong user_id' });
-	}
-	if (!validatePassword(user_id, password)) {
-	    // invalid password
-	    // should disable logins after N messages
-	    // delay return to rate-limit brute-force attacks
-	    await new Promise((r) => setTimeout(r, 2000)); // two second delay
-	    return done(null, false, { 'message' : 'Wrong password' });
-	}
-	// success!
-	// should create a user object here, associated with a unique identifier
-	return done(null, user_id);
+        const userExists = await findUser(user_id);
+        if (!userExists) {
+            // no such user
+            await new Promise((r) => setTimeout(r, 2000)); // two second delay
+            return done(null, false, { 'message': 'Wrong user_id' });
+        }
+        const validPassword = await validatePassword(user_id, password);
+        if (!validPassword) {
+            // invalid password
+            // should disable logins after N messages
+            // delay return to rate-limit brute-force attacks
+            await new Promise((r) => setTimeout(r, 2000)); // two second delay
+            return done(null, false, { 'message': 'Wrong password' });
+        }
+        // success!
+        // should create a user object here, associated with a unique identifier
+        return done(null, user_id);
     });
 
 let port = process.env.PORT;
 if (port == null || port == "") {
-  port = 8000;
+    port = 8000;
 }
+
 // App configuration
 const app = express();
 
+//Middleware
+app.use(express.urlencoded({ 'extended': true })); // allow URLencoded data
 app.use(express.json()); // Middleware allows us to use JSON
 app.use(express.static(path.join(__dirname, "/public")));
-
 app.use(expressSession(session));
 passport.use(strategy);
 app.use(passport.initialize());
@@ -62,23 +73,16 @@ app.use(passport.session());
 passport.serializeUser((user, done) => {
     done(null, user);
 });
+
 // Convert a unique identifier to a user object.
 passport.deserializeUser((uid, done) => {
     done(null, uid);
 });
 
-const pool = new Pool( {
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});
-
-//clean up text so no horribly bad things happen to databases
 /**
- * 
+ * Clean up text so no horribly bad things happen to databases
  * @param {string} str 
- * @returns string
+ * @returns string cleaned up string
  */
 function cleanText(str) {
     return str.split('').map(char => {
@@ -89,9 +93,7 @@ function cleanText(str) {
         }
     }).join('');
 }
-/**
- * We will be adding APIs on server side here
- */
+
 
 /**
  * Queries user id database to see if there is an existing entry with the provided user id
@@ -103,7 +105,7 @@ async function findUser(user_id) { // TODO: RETURN BOOL
         const client = await pool.connect();
         const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = '${user_id}';`);
         client.release();
-        return result.rows[0].length > 0; // the [salt, hash]
+        return result.rows.length > 0; // the [salt, hash]
     }
     catch (err) {
         return false; // Not sure if this is exactly good coding practice
@@ -122,13 +124,8 @@ async function validatePassword(user_id, password) {
         if (!result) {
             return false;
         }
-
-        // if (result.length == 0) {
-        //     // empty query, couldn't find matching result 
-        //     return false;
-        // }
         const client = await pool.connect();
-        const res = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = '${user_id}';`);
+        const res = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
         
         const [salt, hash] = res.rows[0];
         client.release();
@@ -148,7 +145,8 @@ async function validatePassword(user_id, password) {
  */
 async function addUser(user_id, password) {
     const result = await findUser(user_id);
-    if (!result) {
+    if (result) {
+        return 0;
         // User already exists, no need to add that user again
     }
     const [salt, hash] = mc.hash(password);
@@ -168,6 +166,18 @@ async function addUser(user_id, password) {
 }
 
 /**
+ * Intermediate server function to verify login when hitting endpoints
+ */
+function checkLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        // If we are authenticated, run the next route.
+        next();
+    } else {
+        // Otherwise, redirect to the login page.
+        res.redirect('/login');
+    }
+}
+/**
  * DELETE ENDPOINT
  */
 
@@ -179,7 +189,8 @@ async function addUser(user_id, password) {
 async function deleteProfile(id) {
     try {
         const client = await pool.connect();
-        const result = await cient.query(`DELETE FROM profiles WHERE user_id = ${id};`)
+        const result = await client.query(`DELETE FROM profiles WHERE user_id = '${id}';`);
+        await client.query(`DELETE FROM user_secrets WHERE user_id = '${id}';`);
         client.release();
         return 200;
     } catch (err) {
@@ -192,10 +203,10 @@ async function deleteProfile(id) {
  * @param {number} id: the id of the chirp 
  * @returns: corresponding response code
  */
- async function deleteChirp(id) {
+async function deleteChirp(id) {
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM chirps WHERE chirp_id = ${id};`);
+        const result = await client.query(`DELETE FROM chirps WHERE chirp_id = '${id}';`);
         client.release();
         return 200;
     } catch (err) {
@@ -203,13 +214,19 @@ async function deleteProfile(id) {
     }
 }
 
+/**
+ * Deletes a friend pair
+ * @param {string} user_id: the source user in the pair
+ * @param {string} friend_id: the friend the friend links to
+ * @returns status for whether the deletion worked or not
+ */
 async function deleteFriend(user_id, friend_id) {
-    try{
+    try {
         const client = await pool.connect();
         const result = await client.query(`DELETE FROM friends WHERE user_id = '${user_id}' AND friend_id = '${friend_id}';`);
         client.release();
         return 200;
-    }   catch (err){
+    } catch (err) {
         return 404;
     }
 }
@@ -217,91 +234,44 @@ async function deleteFriend(user_id, friend_id) {
 /**
  * Server calls
  */
-
-function checkLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-	// If we are authenticated, run the next route.
-        console.log(req);
-	    next();
-    } else {
-	// Otherwise, redirect to the login page.
-	    res.redirect('/login');
-    }
-}
 app.get('/', checkLoggedIn, async (req, res) => {
     res.redirect('/main');
 });
 
-/**
- * I don't get how we get user but ok
- */
-app.get('/main', checkLoggedIn, (req, res) => {
-    return res.redirect(`/main/:${req.user}`)
-});
-app.get('/main/:user_id', checkLoggedIn, (req, res) => {
-    return res.sendFile('public/main.html', { 'root' : __dirname })
-});
-app.get('/loadFeed', checkLoggedIn, async (req, res) => {
-    try {
-        const client = await pool.connect();
-
-        // Start off with creating chirps table
-        await client.query(`CREATE TABLE IF NOT EXISTS chirps 
-            (chirp_id SERIAL PRIMARY KEY, timestamp BIGINT, user_name VARCHAR(50), user_id VARCHAR(50), 
-            chirp_text VARCHAR(250), shared_song VARCHAR(100), like_count INT, share_count INT);`);
-
-        // await client.query('DROP TABLE profiles;'); // DO NOT RUN UNLESS WANT TO DROP PROFILES TABLE
-
-        // await client.query(`CREATE TABLE IF NOT EXISTS profiles 
-        //     (user_name VARCHAR(50), user_id SERIAL PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
-        //     favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
-
-        await client.query(`CREATE TABLE IF NOT EXISTS profiles 
-            (user_name VARCHAR(50), user_id VARCHAR(50) PRIMARY KEY, spotify_account VARCHAR(50), playlist VARCHAR(100), 
-            favorite_song VARCHAR(100), favorite_genre VARCHAR(50), favorite_artist VARCHAR(50));`);
-        
-        //adding friends table as well...
-        await client.query(`CREATE TABLE IF NOT EXISTS friends (user_id VARCHAR(50), friend_id VARCHAR(50));`);
-
-
-        client.release();
-
-        //retrieve userId
-        const user_id = req.params.userId;
-        //retrieve profile
-        const profile = await client.query('SELECT * FROM profiles WHERE user_id = $1;', [user_id]);
-        // Now try loading feed
-        const result = await client.query(`SELECT * from chirps;`);
-        client.release();
-        res.status(200).json({"profile": profile.rows[0], "chirps": result.rows});
-    } catch (err) {
-        res.status(404).json({"Error": `Error: ${err}`});
-    }
-})
-
 app.get('/login', (req, res) => {
-    return res.sendFile('public/login.html', { 'root' : __dirname })
+    return res.sendFile('public/login.html', { 'root': __dirname })
 });
 
-/**
- * I dont know how this works TODO
- */
+// Handle logging out (takes us back to the login page).
+app.get('/logout', (req, res) => {
+    req.logout(function (err) {
+        if (err) { return next(err); }
+        res.redirect('/login');
+    });
+});
+
 // Handle post data from the login.html form.
 app.post('/login',
-	 passport.authenticate('local' , {     // use username/password authentication
-	     'successRedirect' : '/main',   // when we login, go to /private 
-	     'failureRedirect' : '/login'      // otherwise, back to login
-	 }));
+    passport.authenticate('local', {     // use username/password authentication
+        'successRedirect': '/main',   // when we login, go to /private 
+        'failureRedirect': '/login'      // otherwise, back to login
+    }));
 
+/**
+ * Serves register page
+ */
 app.get('/register', (req, res) => {
-    return res.sendFile('public/register.html', { 'root' : __dirname });
+    return res.sendFile('public/register.html', { 'root': __dirname });
 });
 
-app.post('/register', async (req, res) => { // For CREATE PROFILE
+/**
+ * Handles registration
+ */
+app.post('/register', async (req, res) => {
     try {
         let body = '';
         req.on('data', data => body += data);
-        req.on('end', async () =>{
+        req.on('end', async () => {
             const post = JSON.parse(body);
             const client = await pool.connect();
             const result = await client.query(`INSERT INTO profiles (user_name, user_id, spotify_account, playlist, favorite_song, favorite_genre, favorite_artist)
@@ -325,16 +295,41 @@ app.post('/register', async (req, res) => { // For CREATE PROFILE
             client.release();
         });
 
-        
-
-        return res.redirect('/login');
-    } catch(err) {
+        return res.status(200).send();
+    } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
 });
-// Test loading all tables beforehand on startup
 
-app.get('/profiles', async (req, res) => { //Will get all profiles in DB
+app.get('/main', checkLoggedIn, (req, res) => {
+    return res.sendFile('public/main.html', { 'root': __dirname });
+});
+
+/**
+ * Loads feed (gets all chirps orderd by timestamp)
+ */
+app.get('/loadFeed', checkLoggedIn, async (req, res) => {
+    try {
+        const client = await pool.connect();
+        // Now try loading feed
+        const result = await client.query(`SELECT * from chirps ORDER BY timestamp;`);
+        const out = result.rows.map(obj => {
+            if (obj.user_id === req.user) {
+                obj.isUser = true;
+            } else {
+                obj.isUser = false;
+            }
+            return obj;
+        })
+        client.release();
+        res.status(200).json(out);
+    } catch (err) {
+        res.status(404).json({ "Error": `Error: ${err}` });
+    }
+})
+
+// Gets all profiles in DB
+app.get('/profiles', async (req, res) => {
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from profiles;`);
@@ -345,10 +340,43 @@ app.get('/profiles', async (req, res) => { //Will get all profiles in DB
     }
 });
 
-app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based on provided user_id
+// Gets profile with specific user_id
+app.get('/profiles/:user_id', async (req, res) => {
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * FROM profiles WHERE user_id='${req.params.user_id}';`);
+        client.release();
+        res.status(200).json(result.rows);
+    } catch (err) {
+        res.status(404).json({ 'error': `Error: ${err}` });
+    }
+});
+
+// Gets all profiles that contain the search query in their username or user_id
+app.get('/search', async (req, res) => {
+    try {
+        const search = req.query.search;
+        const client = await pool.connect();
+        const result = await client.query(`SELECT user_id, favorite_song FROM profiles 
+            WHERE user_id LIKE '%${search}%' OR user_name LIKE '%${search}%';`);
+        client.release();
+        res.status(200).json(result.rows);
+    }
+    catch (err) {
+        res.status(404).json({ 'Error': err });
+    }
+});
+
+//Gets session profile
+app.get('/sessionProfile', checkLoggedIn, (req, res) => {
+    return res.redirect(`/profiles/${req.user}`);
+});
+
+//Gets likedChirps
+app.get('/likedChirps', async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const result = await client.query('SELECT * from likedChirps;');
         client.release();
         res.status(200).send(result.rows);
     } catch (err) {
@@ -356,7 +384,26 @@ app.get('/profiles/:user_id', async (req, res) => { //Will get a profile based o
     }
 });
 
-app.get('/chirps', async (req, res) => { //Will get all chirps in DB
+// Sees if the authenticated user has liked a chirp given the chirp_id
+app.get('/likedChirps/:chirp_id', checkLoggedIn, async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from likedChirps WHERE user_id='${req.user}' AND chirp_id='${req.params.chirp_id}';`);
+        client.release();
+        if (result.rowCount == 0) {
+            res.status(200).send(false);
+        }
+        else {
+            res.status(200).send(true);
+        }
+    } catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+
+//Will get all chirps in DB
+app.get('/chirps', async (req, res) => {
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps;`);
@@ -367,7 +414,8 @@ app.get('/chirps', async (req, res) => { //Will get all chirps in DB
     }
 });
 
-app.get('/chirps/:user_id', async (req, res) => { //Will get all chirps posted by user
+// Gets all chirps from a certain user
+app.get('/chirps/:user_id', async (req, res) => {
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps where user_id='${req.params.user_id}';`);
@@ -378,7 +426,8 @@ app.get('/chirps/:user_id', async (req, res) => { //Will get all chirps posted b
     }
 });
 
-app.get('/chirps/:chirp_id', async (req, res) => { //Gets specific chirp
+//Gets a specific chirp
+app.get('/chirps/:chirp_id', async (req, res) => {
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from chirps where chirp_id='${req.params.chirp_id}';`);
@@ -387,20 +436,42 @@ app.get('/chirps/:chirp_id', async (req, res) => { //Gets specific chirp
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
-})
+});
 
-app.get('/friends/:user_id', async (req, res) => { //Will get all friends from specific user_id
-    try{
-        const client = await pool.client();
-        const result = await client.query(`SELECT * from friends where user_id='${req.params.user_id}';`);
+//Checks if the current user is friends with user defined by friend_id
+app.get('/friends/:friend_id', checkLoggedIn, async (req, res) => { //Will get a specific friend connection
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * from friends where user_id='${req.user}' AND friend_id='${req.params.friend_id}';`);
         client.release();
-        res.status(200).send(result.rows);
-    } catch (err){
+        if (result.rowCount == 0) {
+            res.status(200).send(false);
+        }
+        else {
+            res.status(200).send(true);
+        }
+    } catch (err) {
         res.status(404).send(`Error: ${err}`)
     }
 });
 
-app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBODY
+//Will get all friend connections for signed in user and corresponding favorite songs
+app.get('/userFriends', checkLoggedIn, async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const result = await client.query(
+            `SELECT friends.friend_id, profiles.favorite_song FROM friends
+             JOIN profiles ON profiles.user_id=friends.friend_id 
+             WHERE friends.user_id='${req.user}';`);
+        client.release();
+        res.status(200).json(result.rows);
+    } catch (err) {
+        res.status(404).json({ 'Error': err });
+    }
+});
+
+//Returns all user, friend pairs
+app.get('/friends', async (req, res) => {
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * from friends;`);
@@ -411,12 +482,13 @@ app.get('/friends', async (req, res) => { //GETS FRIEND CONNECTIONS FOR EVERYBOD
     }
 });
 
-app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
+//Creates a chirp
+app.post('/createChirp', checkLoggedIn, async (req, res) => { // For CREATE CHIRP
     try {
         let body = '';
         const timestamp = new Date().getTime();
         req.on('data', data => body += data);
-        req.on('end', async () =>{
+        req.on('end', async () => {
             const post = JSON.parse(body);
             const client = await pool.connect();
             const result = await client.query(`INSERT INTO chirps 
@@ -429,26 +501,43 @@ app.post('/createChirp', async (req, res) => { // For CREATE CHIRP
                 '${cleanText(post.chirp_text)}',
                 '${cleanText(post.shared_song)}',
                 '${post.like_count}',
-                '${post.share_count}');`);
+                '${post.share_count}')
+                RETURNING chirp_id;`);
             client.release();
+            res.status(200).json({ 'id': result.rows[0] });
         });
-        res.status(200).send();
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
 
 });
 
-app.post('/createFriend', async (req, res) => {
+//Creates a like for a given chirp and user
+app.post('/createLike', checkLoggedIn, async (req, res) => {
     try {
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () => {
             const post = JSON.parse(body);
             const client = await pool.connect();
-            const result = await client.query(`INSERT INTO friends (user_id, friend_id)
-                VALUES ('${post.user_id}', '${post.friend_id}');`);
+            const result = await client.query(`INSERT INTO likedChirps (user_id, chirp_id)
+                VALUES ('${req.user}', '${post.chirp_id}');`);
         });
+        res.status(200).send();
+    }
+    catch (err) {
+        res.status(404).send(`Error: ${err}`);
+    }
+});
+
+//Creates a friend link given a friend_id
+app.post('/createFriend/:friend_id', checkLoggedIn, async (req, res) => {
+    try {
+        const friend_id = req.params.friend_id;
+        const client = await pool.connect();
+        const result = await client.query(`INSERT INTO friends (user_id, friend_id)
+            VALUES ('${req.user}', '${friend_id}');`);
+        client.release();
         res.status(200).send();
     }
     catch (err) {
@@ -458,24 +547,28 @@ app.post('/createFriend', async (req, res) => {
 
 
 
-//PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER
-app.put('/putProfile', async (req, res) => {
+//Redirects to the edit profile page
+app.get('/editProfile', checkLoggedIn, (req, res) => {
+    return res.sendFile('public/edit.html', { 'root': __dirname })
+})
+
+//Updates a given profile using the data from body
+app.put('/putProfile', checkLoggedIn, async (req, res) => {
     try {
         let body = '';
         req.on('data', data => body += data);
-        req.on('end', async () =>{
+        req.on('end', async () => {
             const updatedProfile = JSON.parse(body);
             const client = await pool.connect();
             // Removing 'friends' field for now
             const result = await client.query(`UPDATE profiles SET
                     user_name = '${cleanText(updatedProfile.user_name)}',
-                    user_id = '${cleanText(updatedProfile.user_id)}',
                     spotify_account = '${cleanText(updatedProfile.spotify_account)}',
                     playlist = '${cleanText(updatedProfile.playlist)}',
                     favorite_song = '${cleanText(updatedProfile.favorite_song)}', 
                     favorite_genre = '${cleanText(updatedProfile.favorite_genre)}',
                     favorite_artist = '${cleanText(updatedProfile.favorite_artist)}' 
-                    WHERE user_id = '${updatedProfile.user_id}';`);
+                    WHERE user_id = '${req.user}';`);
             client.release();
         });
         res.status(200).send();
@@ -484,54 +577,78 @@ app.put('/putProfile', async (req, res) => {
     }
 });
 
-//PUT request for chirp (editing a post)
-app.put('/putChirp', async (req, res) => {
+//Edits a post
+app.put('/putChirp', checkLoggedIn, async (req, res) => {
     try {
         let body = '';
         req.on('data', data => body += data);
-        req.on('end', async () =>{
-            const updatedChirp = JSON.parse(body);
+        req.on('end', async () => {
+            const updated_data = JSON.parse(body);
             const client = await pool.connect();
-            const result = await client.query(`UPDATE chirp SET 
-                    chirp_id = '${updatedChirp.chirp_id}',
-                    timestamp = '${updatedChirp.timestamp}'
-                    user_name = '${cleanText(updatedChirp.user_name)}',
-                    chirp_text = '${cleanText(updatedChirp.chirp_text)}',
-                    shared_song = '${cleanText(updatedChirp.shared_song)}',
-                    like_count = '${updatedChirp.like_count}', 
-                    share_count = '${updatedChirp.share_count}'
-                    WHERE chirp_id = '${updatedChirp.chirp_id}';`);
+            let result;
+            if ("like_count" in updated_data) {
+                result = await client.query(`UPDATE chirps SET 
+                    chirp_text = '${cleanText(updated_data.text)}',
+                    shared_song = '${cleanText(updated_data.song)}',
+                    like_count = '${updated_data.like_count}'
+                    WHERE chirp_id = '${updated_data.chirp_id}';`);
+            }
+            else {
+                result = await client.query(`UPDATE chirps SET 
+                    chirp_text = '${cleanText(updated_data.text)}',
+                    shared_song = '${cleanText(updated_data.song)}'
+                    WHERE chirp_id = '${updated_data.chirp_id}';`);
+            }
             client.release();
             //nothing was updated bc no chirp matched the requirements
             if (result.rowCount === 0) {
                 res.status(304).send();
             }
+            res.status(200).send();
         });
-        res.status(200).send();
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
 });
 
 //DELETE request for user (delete profile)
-app.delete('/deleteProfile/:user_id', async (req, res) => { // For DELETE
-    const { user_id } = req.params;
+app.delete('/deleteProfile', checkLoggedIn, async (req, res) => { // For DELETE
+    const user_id = req.user;
     const status = await deleteProfile(user_id);
-    res.status(status).send("Got a DELETE request for profile");
+    res.status(status).send();
 });
 
 //DELETE request for chirp (delete post)
-app.delete('/deleteChirp/:chirp_id', (req, res) => { // For DELETE
+app.delete('/deleteChirp/:chirp_id', checkLoggedIn, async (req, res) => { // For DELETE
     const { chirp_id } = req.params;
-    const status = deleteChirp(chirp_id);
+    const status = await deleteChirp(chirp_id);
     res.status(status).send("Got a DELETE request for chirp");
 });
-
+//Deletes all friends of a given user (when deleting profile)
+app.delete('/deleteFriend', checkLoggedIn, async (req, res) => {
+    const client = await pool.connect();
+    const result = await client.query(`DELETE FROM friends WHERE user_id = '${req.user}' OR friend_id = '${req.user}';`);
+    client.release();
+    res.status(200).send();
+})
 //DELETE request for friends (delete friend)
-app.delete('/deleteFriend/:user_id/:friend_id', (req, res) => {
-    const {user_id, friend_id} = req.params;
-    const status = deleteFriend(user_id, friend_id);
+app.delete('/deleteFriend/:friend_id', checkLoggedIn, async (req, res) => {
+    const user_id = req.user;
+    const friend_id = req.params.friend_id;
+    const status = await deleteFriend(user_id, friend_id);
     res.status(status).send("Got a DELETE request for friend");
+});
+//Unlikes a post given a chirp_id
+app.delete('/deleteLike/:chirp_id', checkLoggedIn, async (req, res) => {
+    const { chirp_id } = req.params;
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`DELETE FROM likedChirps WHERE user_id = '${req.user}' AND chirp_id = '${chirp_id}';`);
+        client.release();
+        return res.status(200).send();
+    } catch (err) {
+        return res.status(404).send();
+    }
 });
 
 app.listen(port, () => {

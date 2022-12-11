@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to MusicMatcher!</title>
 
-    <script type="module" src="/register.js" defer></script>
+    <script type="module" src="/edit.js" defer></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
         integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
@@ -18,25 +18,18 @@
 <body>
     <div class="form">
         <div class="form_header">
-            <h2>Welcome to MusicMatcher!<br>Please Create an Account</h2>
+            <h2>Edit Profile</h2>
         </div>
         <!-- start of form1 -->
         <form>
+            <!-- <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter Email">
+            </div> -->
+
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" placeholder="Enter Username">
-            </div>
-            <div class="form-group">
-                <label for="user_id">UserID</label>
-                <input type="text" id="user_id" placeholder="Enter UserID">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter Password">
-            </div>
-            <div class="form-group">
-                <label for="password2">Verify Password</label>
-                <input type="password" id="password2" placeholder="Enter Password">
             </div>
             <!-- how does spotify authentication work? -->
             <div class="form-group">
@@ -64,8 +57,8 @@
                 <input type="text" id="genre" placeholder="Favorite Genre">
             </div>
         </form>
-        <button id="register_btn" class="btn">Create Account!</button>
-        <a href="/login" class="abtn">Login</a>
+        <button id="edit_btn" class="btn">Finish Edits</button>
+        <a href="/main" class="abtn">Back</a>
     </div>
 </body>
 

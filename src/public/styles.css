@@ -5,6 +5,8 @@
 }
 
 body {
+  font-family:monospace;
+  /* font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
   --musicmatcher-color: #e5a2e7;
   --musicmatcher-background: #f3f2f5;
 }
@@ -12,7 +14,6 @@ body {
 .sidebarOption {
   display: flex;
   align-items: center;
-  cursor: pointer;
   margin: auto;
   width: 40%;
 }
@@ -29,35 +30,12 @@ body {
   margin-right: 20px;
 }
 
-.sidebarOption:hover {
-  background-color: var(--musicmatcher-background);
-  border-radius: 30px;
-  color: var(--musicmatcher-color);
-  transition: color 100ms ease-out;
-}
-
-.sidebarOption.active {
-  color: var(--musicmatcher-color);
-}
-
 .accountProfileIcon {
   /* Specific to the account profile icon that's bigger than the rest */
   display: flex;
   align-items: center;
-  cursor: pointer;
   margin: auto;
   width: 40%;
-}
-
-.accountProfileIcon:hover {
-  background-color: var(--musicmatcher-background);
-  border-radius: 30px;
-  color: var(--musicmatcher-color);
-  transition: color 100ms ease-out;
-}
-
-.accountProfileIcon.active {
-  color: var(--musicmatcher-color);
 }
 
 .accountProfileIcon span {
@@ -78,7 +56,6 @@ body {
 body {
   display: flex;
   height: 100vh;
-  max-width: 1300px;
   margin-left: auto;
   margin-right: auto;
   padding: 10px;
@@ -143,17 +120,24 @@ body {
   padding: 10px;
 }
 
-/* TO ENLARGE ACCOUNT PROFILE */
+.like_button {
+  cursor: pointer;
+}
+.like_button:active{
+  transform: scale(0.9, 0.9);
+}
 
-/* .fa-twitter {
-    color: var(--musicmatcher-color);
-    font-size: 30px;
-} */
+.likes{
+  margin-left: -225px;
+  margin-top:  5px;
+}
+
+/* TO ENLARGE ACCOUNT PROFILE */
 
 .feed {
   flex: 0.5;
   border-right: 1px solid var(--musicmatcher-background);
-  min-width: fit-content;
+  max-width: fit-content;
   overflow-y: scroll;
 }
 
@@ -210,8 +194,19 @@ body {
   outline: none;
 }
 
+textarea {
+  border-color: #f3f2f5;
+  border-radius: 30px;
+  padding: 30px;
+  overflow: auto;
+  outline: #e5a2e7;
+  resize: none;
+  font-size: medium;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
 .sharebox_play_button {
-  margin-left: 500px;
+  margin-left: auto;
 }
 
 .sharebox_play_button span {
@@ -228,6 +223,7 @@ body {
   height: 40px;
   margin-top: 20px;
   margin-left: auto;
+  cursor: pointer;
 }
 
 .btn:hover {
@@ -258,7 +254,23 @@ body {
   object-fit: contain;
   border-radius: 20px;
 }
-
+.sidebar iframe {
+  border: 0px;
+  width: auto;
+  min-width: 375px;
+  min-height: 200px;
+}
+.feed iframe {
+  border: 0px;
+  width: auto;
+  min-width: 375px;
+  min-height: 200px;
+}
+.widgets iframe {
+  border: 0px;
+  height: 100px;
+  width: 175px;
+}
 .post_footer {
   display: flex;
   justify-content: space-between;
@@ -278,11 +290,14 @@ body {
 }
 
 .post_headerText h3 {
+  overflow-wrap: break-word;
   font-size: 15px;
   margin-bottom: 5px;
 }
 
 .post_headerDescription {
+  overflow-wrap: break-word;
+  max-width: 500px;
   margin-bottom: 10px;
   font-size: 15px;
 }
@@ -299,7 +314,6 @@ body {
 .post_avatar {
   padding: 20px;
 }
-
 /* add friends button */
 
 .add_friends {
@@ -309,17 +323,6 @@ body {
   padding-bottom: 10px;
   flex: 1;
   padding: 10px;
-}
-
-.addButton {
-  /* Used for shared music formatting */
-  width: 500px;
-  object-fit: contain;
-  border-radius: 20px;
-  padding: 10px;
-  color: white;
-  border-color: var(--musicmatcher-background);
-  background-color: var(--musicmatcher-color);
 }
 
 .rec_footer {
@@ -387,6 +390,7 @@ body {
 /* widgets */
 .widgets {
   flex: 0.3;
+  max-width: 275px;
 }
 
 .widgets_input {
@@ -406,6 +410,7 @@ body {
 }
 
 .widgets_searchIcon {
+  margin-left: auto;
   color: gray;
 }
 
@@ -420,6 +425,38 @@ body {
 .widgets_widgetContainer h2 {
   font-size: 18px;
   font-weight: 800;
+}
+
+.result {
+  display: flex;
+  align-items: flex-start;
+  padding-bottom: 10px;
+  font-size: 10px;
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
+
+.result_avatar {
+  border-radius: 50%;
+  height: 40px;
+  padding: 10px;
+  margin-top: 10px;
+}
+.addButton {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+}
+.result_profile h3 {
+  margin-top: 10px;
+}
+
+.result_favorite_song {
+  width: 100px;
+  height: 100px;
 }
 
 .friend_headerSpecial {
@@ -459,8 +496,8 @@ body {
 }
 
 .friend_favorite_song {
-  margin-top: 5px;
-  font-size: 12px;
+  width: 100px;
+  height: 100px;
 }
 /* account registration styling */
 .form_header {
@@ -476,7 +513,11 @@ body {
     font-size: large;
 }
 .form {
+  margin-left: 30%;
+  text-align: center;
+  border-radius: 10px;
   flex: 0.5;
+  background-color: var(--musicmatcher-background);
   border-right: 1px solid var(--musicmatcher-background);
   min-width: fit-content;
   overflow-y: scroll;
@@ -485,17 +526,16 @@ body {
   display: none;
 }
 .form-group {
+  text-align: center;
   padding: 10px;
 }
 .form-group label {
-  display: flex;
+  /* display: flex; */
   font-size: 20px;
   font-weight: 800;
   margin-left: 25px;
-  /* background-color: var(--musicmatcher-background); */
 }
 .form-group input {
-  align-items: center;
   padding: 5px;
   border-radius: 20px;
   border-color: white;
@@ -547,6 +587,7 @@ a.button {
   height: auto;
   margin-top: 20px;
   margin-left: auto;
+  margin-right: 10%;
 }
 
 .abtn:hover {
@@ -554,4 +595,43 @@ a.button {
     border-radius: 30px;
     color: var(--musicmatcher-color);
     transition: color 100ms ease-out;
+}
+.editBtn, #embed_button, #embed_button_edit {
+  background-color: var(--musicmatcher-color);
+  border: none;
+  color: white;
+  border-radius: 30px;
+  padding: 5px;
+  width: auto;
+  
+  height: auto;
+  cursor: pointer;
+
+}
+
+.editBtn:hover, #embed_button:hover, #embed_button_edit:hover {
+  background-color: var(--musicmatcher-background);
+  border-radius: 30px;
+  color: var(--musicmatcher-color);
+  transition: color 100ms ease-out;
+
+}
+#shared_spotify_url, #edit_url {
+  padding: 5px;
+  border-radius: 20px;
+  border-color: white;
+  background-color: var(--musicmatcher-background);
+  outline: none;
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.deleteBtn {
+  float: right;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
 }
