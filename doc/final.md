@@ -60,14 +60,14 @@ likedchirps table:
 
 | Column          | Data Type | Description                                            |
 |-----------------|-----------|--------------------------------------------------------|
-| user_id         | String    | The id of the user that is making a friend             |
+| user_id         | String    | The id of the user that has liked the post             |
 | chirp_id        | Integer   | The id of the chirp the user posted                    |
 
 user_secrets table:
 
 | Column          | Data Type | Description                                            |
 |-----------------|-----------|--------------------------------------------------------|
-| user_id         | String    | The id of the user that is making a friend             |
+| user_id         | String    | The id that the salt and hash correspond to            |
 | salt            | String    | The salt of the hashed/encrypted password              |
 | hash            | String    | The hash of the hashed/encrypted password              |
 

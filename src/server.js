@@ -100,7 +100,7 @@ function cleanText(str) {
  * @param {string} user_id user_id key of the table
  * @returns {bool} returns bool
  */
-async function findUser(user_id) { 
+async function findUser(user_id) {
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = '${user_id}';`);
@@ -125,9 +125,9 @@ async function validatePassword(user_id, password) {
             return false;
         }
         const client = await pool.connect();
-        const res = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = ${user_id};`);
-        
-        const [salt, hash] = res.rows[0];
+        const res = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = '${user_id}';`);
+
+        const { salt, hash } = res.rows[0];
         client.release();
 
         return mc.check(password, salt, hash); // Checks provided password against salt + hash, returns true iff matching else false
