@@ -597,22 +597,24 @@ app.put('/putProfile', async (req, res) => {
 });
 
 //PUT request for chirp (editing a post)
-app.put('/putChirp/:text/:song/:chirp_id', async (req, res) => {
+app.put('/putChirp', async (req, res) => {
     try {
-        const text = req.params.text;
-        const song = req.params.song;
-        const id = req.params.chirp_id
-        const client = await pool.connect();
-        const result = await client.query(`UPDATE chirps SET 
-                chirp_text = '${cleanText(text)}',
-                shared_song = '${cleanText(song)}',
-                WHERE chirp_id = '${id}';`);
-        client.release();
-        //nothing was updated bc no chirp matched the requirements
-        if (result.rowCount === 0) {
-            res.status(304).send();
-        }
-        res.status(200).send();
+        let body = '';
+        req.on('data', data => body += data);
+        req.on('end', async () =>{  
+            const updated_data = JSON.parse(body);
+            const client = await pool.connect();
+            const result = await client.query(`UPDATE chirps SET 
+                    chirp_text = '${cleanText(updated_data.text)}',
+                    shared_song = '${cleanText(updated_data.song)}',
+                    WHERE chirp_id = '${updated_data.chirp_id}';`);
+            client.release();
+            //nothing was updated bc no chirp matched the requirements
+            if (result.rowCount === 0) {
+                res.status(304).send();
+            }
+            res.status(200).send();
+        });
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
     }
