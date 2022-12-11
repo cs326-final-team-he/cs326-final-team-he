@@ -493,7 +493,8 @@ document.getElementById('searchButton').addEventListener('click', search);
 document.getElementById('delete_profile_btn').addEventListener('click', async () => {
     await fetch('https://music-matcher-326.herokuapp.com/deleteProfile', {method: 'DELETE'});
     await fetch('https://music-matcher-326.herokuapp.com/deleteFriend', {method: 'DELETE'})
-})
+    window.location.href = '/login';
+});
 //On load
 
 // Try setting profile

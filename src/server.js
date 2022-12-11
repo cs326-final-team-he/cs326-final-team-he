@@ -626,7 +626,7 @@ app.put('/putChirp', async (req, res) => {
 app.delete('/deleteProfile', checkLoggedIn, async (req, res) => { // For DELETE
     const user_id = req.user;
     const status = await deleteProfile(user_id);
-    res.redirect('/logout');
+    res.status(status).send();
 });
 
 //DELETE request for chirp (delete post)
