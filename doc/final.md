@@ -28,9 +28,60 @@ The login page. Also contains a button that goes to the registration page.
 ### Account Registration Page
 ![example image](img/register_view_final.png)
 The account registration page. Fairly self explanatory, expect the playlist. favorite song, and favorite artists fields should be filled in with a spotify playlist, song, and artist link respectively.
-These links can be retrieved by right clicking on the respective item you want, going to share, and copying the item URL. We did not have time to integrate the spotify api to make this more streamlined. 
-## APIs
+These links can be retrieved by right clicking on the respective item you want, going to share, and copying the item URL. We did not have time to integrate the spotify api to make this more streamlined.
 
+example:
+Playlist: https://open.spotify.com/playlist/37i9dQZF1F0sijgNaJdgit?si=87d5a0279e894300
+Track: https://open.spotify.com/track/7AE1oyRpPGoSwDs8b9XBO0?si=25b89662424f4c1b
+Artist: https://open.spotify.com/artist/1AhjOkOLkbHUfcHDSErXQs?si=BCcuttuSRhGD9q2ildHLEg
+## APIs
+We have 3 main objects that we need CRUD operations for. These are the profile, chirp, and friend objects, which are defined in the next section. We will need to be able to gets for many of these as well. The endpoints we are using for these operations are:
+* **/loadFeed**
+    GET many: Gets all chirps posted ordered by timestamp. This is called whenever the page is refreshed, or when we want to update our current feed status. 
+* **/profiles**
+    GET many: This route gets all of the profiles from the profiles database. 
+* **/profiles/:user_id**
+    GET one: This route gets the profile associated with a specific user id. This is used when we load the profile for a specific user after login.
+* **/search**
+    GET many: This route gets all profiles that contain the search query in their username or user id. This is used when users type a username or user id to search for in the search bar on the top right section of our application. 
+* **/sessionProfile**
+    GET one: This route gets the session profile for a user. This is used when the user logs in to their account, to get the profile associated with their user id.
+* **/likedChirps**
+    GET many: This route gets the all of the liked chirps from the likedChirps table in our database. This is used when we reflect the like count of each chirp post on load
+* **/likedChirps/:chirp_id**
+    GET many: This route gets all of the chirps that a specific authenticated user has liked, given the chirp id. This is used when we reflect the like status of each chirp on load. 
+* **/chirps/:user_id**
+    GET many: This route gets all chirps associated with a specific authenticated user. We did not get to this, but it would be used to load chirps for a specific user.
+* **/chirps/:chirp_id**
+    GET one: This route is used to get a specific chirp, given the id of the chirp. 
+* **/friends/:friend_id**
+    GET one: This route is used to check if the current user is friends with the user defined by friend_id. 
+* **/userFriends**
+    GET many: This route will get all friend connections for a given signed in user, and corresponding favorite songs. This is used to load all friends for a specific when they log in. 
+* **/friends**
+    GET many: This route is used to return all user, friends pairs from the friends table. 
+* **/register**
+    CREATE one: This route creates a chirp post. This is used when users create chirp posts to share with the world. 
+* **/createChirp**
+    CREATE one: This route registers an account, creates a profile in the profiles table, and creates the salt and hash in the user_secrets table. This is used on click for the register page. 
+* **/createLike**
+    CREATE one: This route creates a like for a given chirp and user. This is used when a user likes someone's post.
+* **/createFriend/:friend_id**
+    CREATE one: This route creates a friend link given another user's user id. This is used when a user tries to add a friend.
+* **/putProfile**
+    UPDATE one: This route updates a given profile using the data from the profile fields' body in the edit-profile page. This is used when a user updates their profile. 
+* **/putChirp**
+    UPDATE one: This route edits a chirp post. This is used when users would like to edit a post they have made. 
+* **/deleteProfile**
+    DELETE one: This route deletes a certain user's profile, as well as the associated user_secret entry. This is used when a user may want to delete their entire profile from their account
+* **/deleteChirp/:chirp_id**
+    DELETE one: This route is used when a user wants to delete a chirp they have made. 
+* **/deleteFriend**
+    DELETE many: This route deletes all friends for a given user. This is used when a user deletes their profile. 
+* **/deleteFriend/:friend_id**
+    DELETE one: This route deletes a specific friend for a given user. This is used when a user wants to remove a friend from their account.
+* **/deleteLike/:chirp_id**
+    DELETE one: This route unlikes a post given a chirp id. This is used when a user decides to unlike a post they have previously liked. 
 ## Database
 
 profiles table:
@@ -147,4 +198,14 @@ Logged-in/authenticated users have full access to all of the features for our ap
 
 ## Division of Labor
 
+Nick Chafy: 
+    From milestone 1: Worked on mainview variations and profile setup in wireframe. Added non-post components to the mainview feed in HTML/CSS Implementation. Implemented the initial account creation html/css.
+
+    From milestone 2: Implemented PUT and DELETE server endpoint handling and API, worked on integrating project with heroku with express.js and dependency management. Implemented add friend functionality with HTML updates and dummy information.
+
+    From milestone 3: Redesigned the chirp object and database to conform with requirements. Implemented the chirps and profiles tables. Resolved issues with our endpoints throwing errors, especially POST and PUT for chirp, and PUT for profiles. Integrated the createChirp endpoint with the front end for actual posting (post_chirp). Added linting to the database so that special characters in all String fields would be checked for potential unexpected (or malicious) uses of database. Implemented putProfile. Some HTML/CSS prettifying. Implemented profile creation front end and connected it with back end and database. 
+
+    Since milestone 3: Implemented search, add friend, unfriend, edit post, delete post, edit profile, delete profile, and registration back-end AND front end. Created specific endpoints for server for these, as well as refactored database for them. Made front-end view for all of these fairly pretty, and helped debug other portions of the code. Implemented edit.html, login.html, and register.html as well as any associated .js files.
+
+    Added comments to the code, and tried to make main.js more readable with comments in post_chirp and some refactoring to break it up. Wrote API section of final.md
 ## Conclusion

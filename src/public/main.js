@@ -128,7 +128,7 @@ function edit_chirp(post_headerDesc, song_div, chirp_id, edit_btn) {
                 song_div.innerHTML = '';
                 embed_link(song, song_div)
                 edit_btn.innerText = 'Edit';
-                edit_btn.onclick = edit_chirp(post_headerDesc, song_div, chirp_id);
+                edit_btn.onclick = edit_chirp(post_headerDesc, song_div, chirp_id, edit_btn);
             } else {
                 alert("Problems uploading edited chirp to database. Please try again later.")
             }
@@ -241,7 +241,7 @@ async function post_chirp(chirp_json) {
     favorite.classList.add('like_button');
     favorite.innerText = 'favorite_border';
 
-    const likes = document.createElement('span');
+    const likes = await setupLikes(chirp_json, favorite);
 
     const publish = document.createElement('span');
     publish.classList.add('material-icons');
