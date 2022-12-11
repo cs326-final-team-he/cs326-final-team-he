@@ -46,7 +46,7 @@ async function load_friends() {
                     </div>
                 </div>`;
             friendsDiv.appendChild(div);
-            embed_link(friend.favorite_song, document.getElementById(`result_song${friend.friend_id}`));
+            embed_link(friend.favorite_song, document.getElementById(`friend_song${friend.friend_id}`));
             const closure = function () {
                 const friend_id = friend.friend_id;
                 return async () => {
@@ -77,10 +77,10 @@ async function load_feed() {
  * A function that creates the environment for the actual on click edit chirp function to exist in.
  * We hard code innerHTML because of time constraints and because it is essentially the same as the share box.
  * WARNING: PLEASE DO NOT EDIT MORE THAN ONE POST AT A TIME. BAD THINGS MAY HAPPEN IF YOU DO
- * @param {*} post_headerDesc the div element containing the body of the post
- * @param {*} song_div  the div element containing the embeded song of the post
+ * @param {HTMLDivElement} post_headerDesc the div element containing the body of the post
+ * @param {HTMLDivElement} song_div  the div element containing the embeded song of the post
  * @param {*} chirp_id the id of the chirp
- * @param {*} edit_btn the edit button that is used on click
+ * @param {HTMLElement} edit_btn the edit button that is used on click
  * @returns a closure that completes the edit. Used as an onclick function
  */
 function edit_chirp(post_headerDesc, song_div, chirp_id, edit_btn) {

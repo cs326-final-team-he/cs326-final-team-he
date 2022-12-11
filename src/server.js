@@ -216,8 +216,8 @@ async function deleteChirp(id) {
 
 /**
  * Deletes a friend pair
- * @param {*} user_id: the source user in the pair
- * @param {*} friend_id: the friend the friend links to
+ * @param {string} user_id: the source user in the pair
+ * @param {string} friend_id: the friend the friend links to
  * @returns status for whether the deletion worked or not
  */
 async function deleteFriend(user_id, friend_id) {
