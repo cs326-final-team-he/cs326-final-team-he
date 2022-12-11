@@ -50,7 +50,7 @@ async function load_friends() {
             const closure = function () {
                 const friend_id = friend.friend_id;
                 return async () => {
-                    const response = await fetch(`https://music-matcher-326.herokuapp.com/deleteFriend/id?friend_id=${friend_id}`, { method: 'DELETE' });
+                    const response = await fetch(`https://music-matcher-326.herokuapp.com/deleteFriend/${friend_id}`, { method: 'DELETE' });
                 }
             }
             div.addEventListener('click', closure());

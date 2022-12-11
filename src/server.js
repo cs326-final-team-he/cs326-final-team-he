@@ -632,10 +632,10 @@ app.delete('/deleteFriend', checkLoggedIn, async (req, res) => {
     res.status(200).send();
 })
 //DELETE request for friends (delete friend)
-app.delete('/deleteFriend/id', checkLoggedIn, (req, res) => {
+app.delete('/deleteFriend/:friend_id', checkLoggedIn, async (req, res) => {
     const user_id = req.user;
-    const friend_id = req.query.friend_id;
-    const status = deleteFriend(user_id, friend_id);
+    const friend_id = req.params.friend_id;
+    const status = await deleteFriend(user_id, friend_id);
     res.status(status).send("Got a DELETE request for friend");
 });
 //Unlikes a post given a chirp_id
