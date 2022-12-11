@@ -31,6 +31,14 @@ The account registration page. Fairly self explanatory, expect the playlist. fav
 These links can be retrieved by right clicking on the respective item you want, going to share, and copying the item URL. We did not have time to integrate the spotify api to make this more streamlined. 
 ## APIs
 
+### Create
+    ...
+### Read
+    ...
+### Update 
+    ...
+### Delete
+    ...
 ## Database
 
 profiles table:
@@ -92,16 +100,12 @@ user_secrets table:
     This route handles new user registration, and also serves the registration page as well. This is used when registering new users.
 * **/loadFeed**
     This route loads a user's feed, getting all chirps posted ordered by timestamp. This is called whenever the page is refreshed, or when we want to update our current feed status. 
-* **/profiles**
-    This route gets all of the profiles from the profiles database. 
 * **/profiles/:user_id**
     This route gets the profile associated with a specific user id. This is used when we load the profile for a specific user after login.
 * **/search**
     This route gets all profiles that contain the search query in their username or user id. This is used when users type a username or user id to search for in the search bar on the top right section of our application. 
 * **/sessionProfile**
     This route gets the session profile for a user. This is used when the user logs in to their account, to get the profile associated with their user id.
-* **/likedChirps**
-    This route gets the all of the liked chirps from the likedChirps table in our database. This is used when we reflect the like count of each chirp post on load
 * **/likedChirps/:chirp_id**
     This route gets all of the chirps that a specific authenticated user has liked, given the chirp id. This is used when we reflect the like status of each chirp on load. 
 * **/chirps**
@@ -114,8 +118,6 @@ user_secrets table:
     This route is used to check if the current user is friends with the user defined by friend_id. 
 * **/userFriends**
     This route will get all friend connections for a given signed in user, and corresponding favorite songs. This is used to load all friends for a specific when they log in. 
-* **/friends**
-    This route is used to return all user, friends pairs from the friends table. 
 * **/createChirp**
     This route creates a chirp post. This is used when users create chirp posts to share with the world. 
 * **/createLike**
