@@ -134,11 +134,6 @@ body {
 
 /* TO ENLARGE ACCOUNT PROFILE */
 
-/* .fa-twitter {
-    color: var(--musicmatcher-color);
-    font-size: 30px;
-} */
-
 .feed {
   flex: 0.5;
   border-right: 1px solid var(--musicmatcher-background);
@@ -601,7 +596,7 @@ a.button {
     color: var(--musicmatcher-color);
     transition: color 100ms ease-out;
 }
-.editBtn, #embed_button {
+.editBtn, #embed_button, #embed_button_edit {
   background-color: var(--musicmatcher-color);
   border: none;
   color: white;
@@ -614,7 +609,7 @@ a.button {
 
 }
 
-.editBtn:hover, #embed_button:hover {
+.editBtn:hover, #embed_button:hover, #embed_button_edit:hover {
   background-color: var(--musicmatcher-background);
   border-radius: 30px;
   color: var(--musicmatcher-color);

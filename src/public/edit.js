@@ -1,6 +1,6 @@
 
 /**
- * Adds a profile to the database given the populated fields in the sidebar
+ * Edits the current session profile in the database given the inputted values. Values preset to previous values.
  */
 async function edit() {
     //build profile
@@ -27,6 +27,10 @@ async function edit() {
         alert('Error talking with server, please try again later.');
     }
 }
+
+/**
+ * Retrieves current user information from database given authentication information
+ */
 async function load_profile() {
     const response = await fetch('https://music-matcher-326.herokuapp.com/sessionProfile');
     if (response.ok && response.status !== 404) {
