@@ -152,7 +152,7 @@ function edit_chirp(post_headerDesc, song_div, chirp_id, edit_btn) {
         edit_btn.onclick = async () => {
             const text = document.getElementById('editBox_text').value;
             const song = document.getElementById('edit_url').value;
-            data = {
+            const data = {
                 'chirp_id': chirp_id,
                 'text': text,
                 'song': song
