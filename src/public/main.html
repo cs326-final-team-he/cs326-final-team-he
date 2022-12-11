@@ -82,9 +82,9 @@
             <h2>Favorite Genre</h2>
             <p id="genre"></p>
         </div>
-
+        <a href="/deleteProfile" class="abtn">Delete Profile</a>
+        <a href="/editProfile" class="abtn">Edit Profile</a>
         <a href="/logout" class="abtn">Logout</a>
-        <button type="button" class="btn">Edit Profile</button>
     </div>
     <!--sidebar ends-->
 
@@ -114,6 +114,28 @@
                 </div>
                 <button id="sharebox_shareButton" class="btn">share!</button>
             </form>
+        </div>
+        <div class="post">
+            <div class="post_avatar"><span id="userProfileShare" class="material-icons">account_circle</span></div>
+            <div class="post_body">
+                <div class="post_header">
+                    <div class="post_headerText">
+                        <h3>
+                            <h3 id="u1_user_name">${chirp_json.user_name}</h3>
+                            <button class="editBtn" id="${chirp_json.chirp_id}Edit">Edit</button>
+                            <button class="material-icons deleteBtn" id="${chirp_json.chirp_id}Delete">delete</button>                        </h3>
+                    </div>
+                    <div class="post_headerDescription">
+                        <p id="u1_chirp"> blah</p>
+                    </div>
+                </div>
+                <div class="post_add_music"><iframe
+                        src="https://open.spotify.com/embed?uri=spotify:track:02YuLkTLNkOzKfl5Pmvs2S" width="300"
+                        height="200" allow="encrypted-media"></iframe></div><span class="post_footer"><span
+                        class="material-icons">repeat</span><span
+                        class="material-icons like_button">favorite_border</span><span class="likes">0</span><span
+                        class="material-icons">publish</span></span>
+            </div>
         </div>
     </div>
     <!--feed ends-->

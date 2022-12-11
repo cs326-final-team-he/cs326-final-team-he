@@ -1,3 +1,5 @@
+const { resolveInclude } = require("ejs");
+
 // Try setting profile
 const profile = await get_profile();
 // console.log(profile);
@@ -170,6 +172,18 @@ function edit_chirp(post_headerDesc, song_div, chirp_id, edit_btn) {
         }
     }
 }
+
+function delete_chirp(post, chirp_id, feed) {
+    return async () => {
+        const response = await fetch(`https://music-matcher-326.herokuapp.com/deleteChirp/${chirp_id}`, { method: 'DELETE'});
+        if (response.ok && response.status !== 404) {
+            feed.removeElement(post);    
+        }
+        else {
+            alert('Error deleting chirp, please try again');
+        }
+    }
+}
 /**
  * Programatically creates a new chirp based off the given chirp_json
  * @TODO : need to integrate with spotify api for playing music
@@ -208,7 +222,8 @@ async function post_chirp(chirp_json) {
         if (chirp_json.isUser) {
             user.innerHTML = `
             <h3 id="u1_user_name">${chirp_json.user_name}</h3>
-            <button class="editBtn" id="${chirp_json.chirp_id}Edit">Edit</button>`;    
+            <button class="editBtn" id="${chirp_json.chirp_id}Edit">Edit</button>
+            <button class="material-icons deleteBtn" id="${chirp_json.chirp_id}Delete">delete</button>`;    
         } else {
             user.id = 'u1_user_name';
             user.innerText = chirp_json.user_name;    
@@ -305,7 +320,9 @@ async function post_chirp(chirp_json) {
         }
         if (chirp_json.isUser) {
             const edit_btn = document.getElementById(`${chirp_json.chirp_id}Edit`);
-            edit_btn.onclick = edit_chirp(post_headerDesc, song, chirp_json.chirp_id, edit_btn);    
+            edit_btn.onclick = edit_chirp(post_headerDesc, song, chirp_json.chirp_id, edit_btn);   
+            const delete_btn = document.getElementById(`${chirp_json.chirp_id}Delete`);
+            delete_btn.onclick = delete_chirp(newPost, chirp_json.chirp_id, feed);
         }
     } else {
         const err = await response.text();

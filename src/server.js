@@ -571,6 +571,9 @@ app.post('/createFriend/:friend_id', checkLoggedIn, async (req, res) => {
 
 
 //PUT request for user (editing a profile) SHOULD NOT BE USED FOR CREATING A USER
+app.get('/editProfile', checkLoggedIn, (req, res) => {
+    return res.sendFile('public/edit.html', { 'root' : __dirname })
+})
 app.put('/putProfile', async (req, res) => {
     try {
         let body = '';
@@ -581,7 +584,6 @@ app.put('/putProfile', async (req, res) => {
             // Removing 'friends' field for now
             const result = await client.query(`UPDATE profiles SET
                     user_name = '${cleanText(updatedProfile.user_name)}',
-                    user_id = '${cleanText(updatedProfile.user_id)}',
                     spotify_account = '${cleanText(updatedProfile.spotify_account)}',
                     playlist = '${cleanText(updatedProfile.playlist)}',
                     favorite_song = '${cleanText(updatedProfile.favorite_song)}', 
@@ -621,10 +623,10 @@ app.put('/putChirp', async (req, res) => {
 });
 
 //DELETE request for user (delete profile)
-app.delete('/deleteProfile/:user_id', async (req, res) => { // For DELETE
-    const { user_id } = req.params;
+app.delete('/deleteProfile', checkLoggedIn, async (req, res) => { // For DELETE
+    const user_id = req.user;
     const status = await deleteProfile(user_id);
-    res.status(status).send("Got a DELETE request for profile");
+    res.redirect('/logout');
 });
 
 //DELETE request for chirp (delete post)
