@@ -622,17 +622,11 @@ app.put('/putChirp', async (req, res) => {
     }
 });
 
-app.get('/deleteUser', checkLoggedIn, (req, res) => {
-    res.redirect(`/deleteProfile/${req.user}`);
-})
 //DELETE request for user (delete profile)
-app.delete('/deleteProfile/:user_id', checkLoggedIn, async (req, res) => { // For DELETE
-    if (req.params.user_id === req.user) {
-        const status = await deleteProfile(req.user);
-        res.redirect('/logout');
-    } else {
-        res.redirect('main');
-    }
+app.delete('/deleteProfile', checkLoggedIn, async (req, res) => { // For DELETE
+    const user_id = req.user;
+    const status = await deleteProfile(user_id);
+    res.redirect('/logout');
 });
 
 //DELETE request for chirp (delete post)

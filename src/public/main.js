@@ -489,6 +489,10 @@ document.getElementById('embed_button').addEventListener("click", () => {
     embed_link(shared_spotify_url, shareBoxDiv);
 });
 document.getElementById('searchButton').addEventListener('click', search);
+
+document.getElementById('delete_profile_btn').addEventListener('click', async () => {
+    await fetch('https://music-matcher-326.herokuapp.com/deleteProfile');
+})
 //On load
 
 // Try setting profile
