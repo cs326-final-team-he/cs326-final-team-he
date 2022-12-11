@@ -606,7 +606,7 @@ app.put('/putChirp', async (req, res) => {
             const client = await pool.connect();
             const result = await client.query(`UPDATE chirps SET 
                     chirp_text = '${cleanText(updated_data.text)}',
-                    shared_song = '${cleanText(updated_data.song)}',
+                    shared_song = '${cleanText(updated_data.song)}'
                     WHERE chirp_id = '${updated_data.chirp_id}';`);
             client.release();
             //nothing was updated bc no chirp matched the requirements
