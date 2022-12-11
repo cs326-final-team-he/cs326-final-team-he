@@ -97,13 +97,13 @@ function edit_chirp(post_headerDesc, song_div, chirp_id, edit_btn) {
         song_div.innerHTML = `
         <input type="text" id="edit_url" placeholder="Enter a song or playlist url!">
         <button type="button" id="embed_button_edit">Embed song/playlist!</button>
-        <div id="embed-iframe"></div>`
+        <div id="embed-iframe_edit"></div>`
 
         // Automatically converts to embedded spotify playable when spotify url put in
         document.getElementById('embed_button_edit').addEventListener("click", () => {
             // Parse input first
             const shared_spotify_url = document.getElementById('edit_url').value;
-            const shareBoxDiv = document.getElementById("embed-iframe");
+            const shareBoxDiv = document.getElementById("embed-iframe_edit");
             embed_link(shared_spotify_url, shareBoxDiv);
         });
 
