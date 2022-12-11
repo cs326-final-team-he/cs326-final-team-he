@@ -606,10 +606,20 @@ app.put('/putChirp', async (req, res) => {
         req.on('end', async () =>{  
             const updated_data = JSON.parse(body);
             const client = await pool.connect();
-            const result = await client.query(`UPDATE chirps SET 
+            let result;
+            if ("like_count" in updated_data) {
+                result = await client.query(`UPDATE chirps SET 
+                    chirp_text = '${cleanText(updated_data.text)}',
+                    shared_song = '${cleanText(updated_data.song)}',
+                    like_count = '${updated_data.like_count}'
+                    WHERE chirp_id = '${updated_data.chirp_id}';`);
+            }
+            else {
+                result = await client.query(`UPDATE chirps SET 
                     chirp_text = '${cleanText(updated_data.text)}',
                     shared_song = '${cleanText(updated_data.song)}'
                     WHERE chirp_id = '${updated_data.chirp_id}';`);
+            } 
             client.release();
             //nothing was updated bc no chirp matched the requirements
             if (result.rowCount === 0) {
