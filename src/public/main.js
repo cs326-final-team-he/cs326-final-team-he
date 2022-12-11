@@ -451,7 +451,7 @@ function embed_link(spotify_url, divElem) {
     }
     else {
         // throw error, url doesn't match format
-        alert("Spotify song/playlist url is invalid. Please enter a valid url!");
+        // alert("Spotify song/playlist url is invalid. Please enter a valid url!");
 
         //TODO: Somehow handle case for when the specific song with id cannot be found
     }
