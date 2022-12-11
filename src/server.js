@@ -599,26 +599,20 @@ app.put('/putProfile', async (req, res) => {
 //PUT request for chirp (editing a post)
 app.put('/putChirp/:text/:song/:chirp_id', async (req, res) => {
     try {
-        let body = '';
-        req.on('data', data => body += data);
-        req.on('end', async () =>{
-            const updatedChirp = JSON.parse(body);
-            const client = await pool.connect();
-            const result = await client.query(`UPDATE chirps SET 
-                    chirp_id = '${updatedChirp.chirp_id}',
-                    timestamp = '${updatedChirp.timestamp}',
-                    chirp_text = '${cleanText(updatedChirp.chirp_text)}',
-                    shared_song = '${cleanText(updatedChirp.shared_song)}',
-                    like_count = '${updatedChirp.like_count}', 
-                    share_count = '${updatedChirp.share_count}',
-                    user_id = '${updatedChirp.user_id}'
-                    WHERE chirp_id = '${updatedChirp.chirp_id}';`);
-            client.release();
-            //nothing was updated bc no chirp matched the requirements
-            if (result.rowCount === 0) {
-                res.status(304).send();
-            }
-        });
+        const text = req.params.text;
+        const song = req.params.song;
+        const id = req.params.chirp_id
+        const client = await pool.connect();
+        const result = await client.query(`UPDATE chirps SET 
+                chirp_id = '${id}',
+                chirp_text = '${cleanText(text)}',
+                shared_song = '${cleanText(song)}',
+                WHERE chirp_id = '${id}';`);
+        client.release();
+        //nothing was updated bc no chirp matched the requirements
+        if (result.rowCount === 0) {
+            res.status(304).send();
+        }
         res.status(200).send();
     } catch (err) {
         res.status(404).send(`Error: ${err}`);
