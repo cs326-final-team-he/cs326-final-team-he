@@ -135,7 +135,7 @@ async function update_chirp_db(chirp_json) {
     return response;
 }
 
-function edit_chirp(post_headerDesc, song_div, chirp_id) {
+function edit_chirp(post_headerDesc, song_div, chirp_id, edit_btn) {
     return () => {
         //allow edits
         post_headerDesc.innerHTML = `
@@ -153,11 +153,15 @@ function edit_chirp(post_headerDesc, song_div, chirp_id) {
             const text = document.getElementById('editBox_text').value;
             const song = document.getElementById('edit_url').value;
             const response = await fetch(`https://music-matcher-326.herokuapp.com/putChirp/${text}/${song}/${chirp_id}`, {method: 'PUT'});
-            post_headerDesc.innerHTML = `<p id="u1_chirp"> ${text}</p>`
-            song_div.innerHTML = '';
-            embed_link(song, song_div)
-            edit_btn.innerText = 'Edit';
-            edit_btn.onclick = edit_chirp(post_headerDesc, song_div, chirp_id);
+            if (response.ok && response.status !== 404) {
+                post_headerDesc.innerHTML = `<p id="u1_chirp"> ${text}</p>`
+                song_div.innerHTML = '';
+                embed_link(song, song_div)
+                edit_btn.innerText = 'Edit';
+                edit_btn.onclick = edit_chirp(post_headerDesc, song_div, chirp_id);
+            } else {
+                alert("Problems uploading edited chirp to database. Please try again later.")
+            }
         }
     }
 }
@@ -294,7 +298,7 @@ async function post_chirp(chirp_json) {
         else {
             feed.insertBefore(newPost, feed.children[2]);
         }
-        const edit_btn = document.getElementById(`${chirp_json.chirp_id}Edit`).addEventListener('click', edit_chirp(post_headerDesc, song, chirp_json.chirp_id));
+        const edit_btn = document.getElementById(`${chirp_json.chirp_id}Edit`).addEventListener('click', edit_chirp(post_headerDesc, song, chirp_json.chirp_id, edit_btn));
     } else {
         const err = await response.text();
         console.log(err)
