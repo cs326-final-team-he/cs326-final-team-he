@@ -298,7 +298,8 @@ async function post_chirp(chirp_json) {
         else {
             feed.insertBefore(newPost, feed.children[2]);
         }
-        const edit_btn = document.getElementById(`${chirp_json.chirp_id}Edit`).addEventListener('click', edit_chirp(post_headerDesc, song, chirp_json.chirp_id, edit_btn));
+        const edit_btn = document.getElementById(`${chirp_json.chirp_id}Edit`);
+        edit_btn.onclick = edit_chirp(post_headerDesc, song, chirp_json.chirp_id, edit_btn);
     } else {
         const err = await response.text();
         console.log(err)
