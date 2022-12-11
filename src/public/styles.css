@@ -442,7 +442,7 @@ textarea {
   padding: 10px;
   margin-top: 10px;
 }
-.addButton {
+.addButton, .deleteBtn {
   background-color: transparent;
   background-repeat: no-repeat;
   border: none;

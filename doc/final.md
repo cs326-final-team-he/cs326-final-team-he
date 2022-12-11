@@ -14,12 +14,21 @@ Stanley Araki - StanleyAraki
 ## User Interface
 ### Main View
 ![example image](img/home_view_final.png)
+This is the main view where the user will spend most of their time. It features a search bar to search for users, a feed of chirps (posts), a sidebar containing user information, and the ability to post their own chirp to the feed. 
+
+For chirps that the user has posted, there is an edit and delete option associated with them. For all posts, the user can user the like button to like the post (*WARNING, using the like button feature too quickly may cause the website to crash. We were unable to figure out why. Please use the like feature slowly and sparingly*),
+The user can also edit and delete their profile, as well as logout. When editing the profile, all fields must be filled in, and the fields are prefilled with the users' previous values.
+In the search bar, users can search for other users, and friend them in the results tab. On friend, the friend bar will show the newly added friend. In the friends tab, you can unadd a friend, which will be seen on the subsequent reload.
 ### Edit Profile
 ![example_image](img/edit_profile_final.png)
+This is the view that is seen when the user clicks the edit profile button. Upon edits, the profile in the database is updated, and when returning to the main feed, you will see the reflected changes. There is also a back button if you don't want to do any edits.
 ### Login Page
 ![example image](img/login_view_final.png)
+The login page. Also contains a button that goes to the registration page.
 ### Account Registration Page
 ![example image](img/register_view_final.png)
+The account registration page. Fairly self explanatory, expect the playlist. favorite song, and favorite artists fields should be filled in with a spotify playlist, song, and artist link respectively.
+These links can be retrieved by right clicking on the respective item you want, going to share, and copying the item URL. We did not have time to integrate the spotify api to make this more streamlined. 
 ## APIs
 
 ## Database

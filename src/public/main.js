@@ -49,8 +49,12 @@ async function load_friends() {
             embed_link(friend.favorite_song, document.getElementById(`friend_song${friend.friend_id}`));
             const closure = function () {
                 const friend_id = friend.friend_id;
+                const elem = div;
                 return async () => {
                     const response = await fetch(`https://music-matcher-326.herokuapp.com/deleteFriend/${friend_id}`, { method: 'DELETE' });
+                    if (response.ok && response.status !== 404) {
+                        elem.remove();
+                    }
                 }
             }
             div.addEventListener('click', closure());
