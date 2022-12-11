@@ -171,11 +171,11 @@ function edit_chirp(post_headerDesc, song_div, chirp_id, edit_btn) {
     }
 }
 
-function delete_chirp(post, chirp_id, feed) {
+function delete_chirp(post, chirp_id) {
     return async () => {
         const response = await fetch(`https://music-matcher-326.herokuapp.com/deleteChirp/${chirp_id}`, { method: 'DELETE'});
         if (response.ok && response.status !== 404) {
-            feed.removeElement(post);    
+            post.remove();    
         }
         else {
             alert('Error deleting chirp, please try again');
