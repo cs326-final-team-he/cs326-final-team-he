@@ -328,18 +328,6 @@ app.get('/loadFeed', checkLoggedIn, async (req, res) => {
     }
 })
 
-// Gets all profiles in DB
-app.get('/profiles', async (req, res) => {
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from profiles;`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
-});
-
 // Gets profile with specific user_id
 app.get('/profiles/:user_id', async (req, res) => {
     try {
@@ -370,18 +358,6 @@ app.get('/search', async (req, res) => {
 //Gets session profile
 app.get('/sessionProfile', checkLoggedIn, (req, res) => {
     return res.redirect(`/profiles/${req.user}`);
-});
-
-//Gets likedChirps
-app.get('/likedChirps', async (req, res) => {
-    try {
-        const client = await pool.connect();
-        const result = await client.query('SELECT * from likedChirps;');
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`);
-    }
 });
 
 // Sees if the authenticated user has liked a chirp given the chirp_id
@@ -467,18 +443,6 @@ app.get('/userFriends', checkLoggedIn, async (req, res) => {
         res.status(200).json(result.rows);
     } catch (err) {
         res.status(404).json({ 'Error': err });
-    }
-});
-
-//Returns all user, friend pairs
-app.get('/friends', async (req, res) => {
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * from friends;`);
-        client.release();
-        res.status(200).send(result.rows);
-    } catch (err) {
-        res.status(404).send(`Error: ${err}`)
     }
 });
 

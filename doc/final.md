@@ -36,6 +36,16 @@ Track: https://open.spotify.com/track/7AE1oyRpPGoSwDs8b9XBO0?si=25b89662424f4c1b
 Artist: https://open.spotify.com/artist/1AhjOkOLkbHUfcHDSErXQs?si=BCcuttuSRhGD9q2ildHLEg
 ## APIs
 We have 3 main objects that we need CRUD operations for. These are the profile, chirp, and friend objects, which are defined in the next section. We will need to be able to gets for many of these as well. The endpoints we are using for these operations are:
+### Create
+* **/register**
+    CREATE one: This route creates a chirp post. This is used when users create chirp posts to share with the world. 
+* **/createChirp**
+    CREATE one: This route registers an account, creates a profile in the profiles table, and creates the salt and hash in the user_secrets table. This is used on click for the register page. 
+* **/createLike**
+    CREATE one: This route creates a like for a given chirp and user. This is used when a user likes someone's post.
+* **/createFriend/:friend_id**
+    CREATE one: This route creates a friend link given another user's user id. This is used when a user tries to add a friend.
+### Read
 * **/loadFeed**
     GET many: Gets all chirps posted ordered by timestamp. This is called whenever the page is refreshed, or when we want to update our current feed status. 
 * **/profiles**
@@ -60,18 +70,12 @@ We have 3 main objects that we need CRUD operations for. These are the profile, 
     GET many: This route will get all friend connections for a given signed in user, and corresponding favorite songs. This is used to load all friends for a specific when they log in. 
 * **/friends**
     GET many: This route is used to return all user, friends pairs from the friends table. 
-* **/register**
-    CREATE one: This route creates a chirp post. This is used when users create chirp posts to share with the world. 
-* **/createChirp**
-    CREATE one: This route registers an account, creates a profile in the profiles table, and creates the salt and hash in the user_secrets table. This is used on click for the register page. 
-* **/createLike**
-    CREATE one: This route creates a like for a given chirp and user. This is used when a user likes someone's post.
-* **/createFriend/:friend_id**
-    CREATE one: This route creates a friend link given another user's user id. This is used when a user tries to add a friend.
+### Update 
 * **/putProfile**
     UPDATE one: This route updates a given profile using the data from the profile fields' body in the edit-profile page. This is used when a user updates their profile. 
 * **/putChirp**
     UPDATE one: This route edits a chirp post. This is used when users would like to edit a post they have made. 
+### Delete
 * **/deleteProfile**
     DELETE one: This route deletes a certain user's profile, as well as the associated user_secret entry. This is used when a user may want to delete their entire profile from their account
 * **/deleteChirp/:chirp_id**
@@ -143,16 +147,12 @@ user_secrets table:
     This route handles new user registration, and also serves the registration page as well. This is used when registering new users.
 * **/loadFeed**
     This route loads a user's feed, getting all chirps posted ordered by timestamp. This is called whenever the page is refreshed, or when we want to update our current feed status. 
-* **/profiles**
-    This route gets all of the profiles from the profiles database. 
 * **/profiles/:user_id**
     This route gets the profile associated with a specific user id. This is used when we load the profile for a specific user after login.
 * **/search**
     This route gets all profiles that contain the search query in their username or user id. This is used when users type a username or user id to search for in the search bar on the top right section of our application. 
 * **/sessionProfile**
     This route gets the session profile for a user. This is used when the user logs in to their account, to get the profile associated with their user id.
-* **/likedChirps**
-    This route gets the all of the liked chirps from the likedChirps table in our database. This is used when we reflect the like count of each chirp post on load
 * **/likedChirps/:chirp_id**
     This route gets all of the chirps that a specific authenticated user has liked, given the chirp id. This is used when we reflect the like status of each chirp on load. 
 * **/chirps**
@@ -165,8 +165,6 @@ user_secrets table:
     This route is used to check if the current user is friends with the user defined by friend_id. 
 * **/userFriends**
     This route will get all friend connections for a given signed in user, and corresponding favorite songs. This is used to load all friends for a specific when they log in. 
-* **/friends**
-    This route is used to return all user, friends pairs from the friends table. 
 * **/createChirp**
     This route creates a chirp post. This is used when users create chirp posts to share with the world. 
 * **/createLike**
