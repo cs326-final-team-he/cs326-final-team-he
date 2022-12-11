@@ -209,7 +209,7 @@ async function deleteProfile(id) {
  async function deleteChirp(id) {
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM chirps WHERE chirp_id = ${id};`);
+        const result = await client.query(`DELETE FROM chirps WHERE chirp_id = '${id}';`);
         client.release();
         return 200;
     } catch (err) {
@@ -574,7 +574,7 @@ app.post('/createFriend/:friend_id', checkLoggedIn, async (req, res) => {
 app.get('/editProfile', checkLoggedIn, (req, res) => {
     return res.sendFile('public/edit.html', { 'root' : __dirname })
 })
-app.put('/putProfile', async (req, res) => {
+app.put('/putProfile', checkLoggedIn, async (req, res) => {
     try {
         let body = '';
         req.on('data', data => body += data);
@@ -589,7 +589,7 @@ app.put('/putProfile', async (req, res) => {
                     favorite_song = '${cleanText(updatedProfile.favorite_song)}', 
                     favorite_genre = '${cleanText(updatedProfile.favorite_genre)}',
                     favorite_artist = '${cleanText(updatedProfile.favorite_artist)}' 
-                    WHERE user_id = '${updatedProfile.user_id}';`);
+                    WHERE user_id = '${req.user}';`);
             client.release();
         });
         res.status(200).send();
@@ -630,9 +630,9 @@ app.delete('/deleteProfile', checkLoggedIn, async (req, res) => { // For DELETE
 });
 
 //DELETE request for chirp (delete post)
-app.delete('/deleteChirp/:chirp_id', (req, res) => { // For DELETE
+app.delete('/deleteChirp/:chirp_id', async (req, res) => { // For DELETE
     const { chirp_id } = req.params;
-    const status = deleteChirp(chirp_id);
+    const status = await deleteChirp(chirp_id);
     res.status(status).send("Got a DELETE request for chirp");
 });
 
