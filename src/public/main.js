@@ -208,7 +208,7 @@ async function post_chirp(chirp_json) {
         if (chirp_json.isUser) {
             user.innerHTML = `
             <h3 id="u1_user_name">${chirp_json.user_name}</h3>
-            <button class="editBtn" div id="${chirp_json.chirp_id}Edit">Edit</button>`;    
+            <button class="editBtn" id="${chirp_json.chirp_id}Edit">Edit</button>`;    
         } else {
             user.id = 'u1_user_name';
             user.innerText = chirp_json.user_name;    

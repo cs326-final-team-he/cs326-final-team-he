@@ -622,3 +622,32 @@ a.button {
     color: var(--musicmatcher-color);
     transition: color 100ms ease-out;
 }
+.editBtn, #embed_button {
+  background-color: var(--musicmatcher-color);
+  border: none;
+  color: white;
+  border-radius: 30px;
+  padding: 5px;
+  width: auto;
+  
+  height: auto;
+  cursor: pointer;
+
+}
+
+.editBtn:hover, #embed_button:hover {
+  background-color: var(--musicmatcher-background);
+  border-radius: 30px;
+  color: var(--musicmatcher-color);
+  transition: color 100ms ease-out;
+
+}
+#shared_spotify_url {
+  padding: 5px;
+  border-radius: 20px;
+  border-color: white;
+  background-color: var(--musicmatcher-background);
+  outline: none;
+  margin-top: 10px;
+  margin-left: 20px;
+}
