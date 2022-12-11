@@ -206,4 +206,13 @@ Nick Chafy:
     Since milestone 3: Implemented search, add friend, unfriend, edit post, delete post, edit profile, delete profile, and registration back-end AND front end. Created specific endpoints for server for these, as well as refactored database for them. Made front-end view for all of these fairly pretty, and helped debug other portions of the code. Implemented edit.html, login.html, and register.html as well as any associated .js files.
 
     Added comments to the code, and tried to make main.js more readable with comments in post_chirp and some refactoring to break it up. Wrote API section of final.md
+
+Joseph Machiaverna: 
+From Milestone 2: Coded the CREATE endpoint for the API. Also wrote the create, update, and delete descriptions for the description of the API.
+
+From Milestone 3: Converted a lot of our endpoints to use the postgreSQL database. Added some more endpoints which included /Chirps/:user_name in order to obtain all of the posts written by a single user and /Profiles/:user_id in order to obtain a single profile. Implemented the new friends table and added Create, Read, and Delete endpoints for it. Also added a endpoint that enables us to obtain a list of friends for a user. Updated update_friends_db in main.js to work with our new model. Fixed various bugs hindering our project across our code.
+
+Since Milestone 3: Added a liking feature to the program. Created a new table called likedChirps and endpoints that can, post, retrieve, and delete entries from the database. Added event listener to like button so when it is clicked, it will turn red and increment the like_count for that specific chirp. Made it so each person can only like a post once. Also made sure that the posts that the signed in user liked stay liked on refresh. Connected friend features to the UI. Wrote code that makes sure that a user can only add another specific user as a friend once. Also wrote code for that when a friend is added, the friend will be displayed on the users UI. Various bug fixes and typo fixes.
+
+
 ## Conclusion
