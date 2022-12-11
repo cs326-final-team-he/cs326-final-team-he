@@ -602,7 +602,7 @@ app.put('/putChirp', async (req, res) => {
         let body = '';
         req.on('data', data => body += data);
         req.on('end', async () =>{  
-            const updated_data = JSON.parse(body);
+            const updated_data = body.data;
             const client = await pool.connect();
             const result = await client.query(`UPDATE chirps SET 
                     chirp_text = '${cleanText(updated_data.text)}',

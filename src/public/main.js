@@ -157,7 +157,7 @@ function edit_chirp(post_headerDesc, song_div, chirp_id, edit_btn) {
                 'text': text,
                 'song': song
             };
-            const response = await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: data});
+            const response = await fetch(`https://music-matcher-326.herokuapp.com/putChirp`, {method: 'PUT', body: JSON.stringify(data)});
             if (response.ok && response.status !== 404) {
                 post_headerDesc.innerHTML = `<p id="u1_chirp"> ${text}</p>`
                 song_div.innerHTML = '';
