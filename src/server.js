@@ -636,6 +636,12 @@ app.delete('/deleteChirp/:chirp_id', async (req, res) => { // For DELETE
     res.status(status).send("Got a DELETE request for chirp");
 });
 
+app.delete('/deleteFriend', checkLoggedIn, async (req, res) => {
+    const client = await pool.connect();
+    const result = await client.query(`DELETE FROM friends WHERE user_id = '${req.user}' OR friend_id = '${req.user}';`);
+    client.release();
+    res.status(200).send();
+})
 //DELETE request for friends (delete friend)
 app.delete('/deleteFriend/:friend_id', checkLoggedIn, (req, res) => {
     const user_id = req.user;
