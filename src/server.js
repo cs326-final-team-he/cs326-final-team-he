@@ -100,7 +100,7 @@ function cleanText(str) {
  * @param {string} user_id user_id key of the table
  * @returns {bool} returns bool
  */
-async function findUser(user_id) { // TODO: RETURN BOOL
+async function findUser(user_id) { 
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT salt, hash FROM user_secrets WHERE user_id = '${user_id}';`);
