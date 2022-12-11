@@ -460,8 +460,9 @@ app.get('/userFriends', checkLoggedIn, async (req, res) => {
     try {
         const client = await pool.connect();
         const result = await client.query(
-            `SELECT DISTINCT friends.friend_id, profiles.favorite_song FROM friends, profiles 
-            WHERE friends.user_id='${req.user}' AND friends.user_id=profiles.user_id;`);
+            `SELECT friends.friend_id, profiles.favorite_song FROM friends
+             JOIN profiles ON profiles.user_id=friends.friend_id 
+             WHERE friends.user_id='${req.user}';`);
         client.release();
         res.status(200).json(result.rows);
     } catch (err) {
@@ -631,9 +632,9 @@ app.delete('/deleteFriend', checkLoggedIn, async (req, res) => {
     res.status(200).send();
 })
 //DELETE request for friends (delete friend)
-app.delete('/deleteFriend/:friend_id', checkLoggedIn, (req, res) => {
+app.delete('/deleteFriend/id', checkLoggedIn, (req, res) => {
     const user_id = req.user;
-    const friend_id = req.params;
+    const friend_id = req.query.friend_id;
     const status = deleteFriend(user_id, friend_id);
     res.status(status).send("Got a DELETE request for friend");
 });
