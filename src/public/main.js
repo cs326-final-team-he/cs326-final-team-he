@@ -42,7 +42,7 @@ async function load_friends() {
                     <h3 id="user_name">
                         ${friend.friend_id}
                     </h3>
-                    <div class="friend_favorite_song" id="friend_song${friend.favorite_song}">
+                    <div class="friend_favorite_song" id="friend_song${friend.friend_id}">
                     </div>
                 </div>`;
             friendsDiv.appendChild(div);
