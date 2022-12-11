@@ -194,7 +194,7 @@ async function post_chirp(chirp_json) {
     const user = document.createElement('h3');
     user.id = 'u1_user_name';
     user.innerText = chirp_json.user_name;
-
+    post_headerText.appendChild(user);
     //If this chirp was posted by the session user, add the edit and delete buttons
     if (chirp_json.isUser) {
         const editBtn = document.createElement('button');
@@ -210,7 +210,6 @@ async function post_chirp(chirp_json) {
         post_headerText.appendChild(editBtn);
         post_headerText.appendChild(deleteBtn);
     }
-    post_headerText.appendChild(user);
 
     //Contains the post text
     const post_headerDesc = document.createElement('div');
