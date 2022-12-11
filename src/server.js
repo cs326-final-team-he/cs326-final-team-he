@@ -604,7 +604,6 @@ app.put('/putChirp/:text/:song/:chirp_id', async (req, res) => {
         const id = req.params.chirp_id
         const client = await pool.connect();
         const result = await client.query(`UPDATE chirps SET 
-                chirp_id = '${id}',
                 chirp_text = '${cleanText(text)}',
                 shared_song = '${cleanText(song)}',
                 WHERE chirp_id = '${id}';`);
