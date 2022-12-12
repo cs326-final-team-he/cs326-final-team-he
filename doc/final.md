@@ -197,13 +197,13 @@ Logged-in/authenticated users have full access to all of the features for our ap
 ## Division of Labor
 
 Nick Chafy: 
-    From milestone 1: Worked on mainview variations and profile setup in wireframe. Added non-post components to the mainview feed in HTML/CSS Implementation. Implemented the initial account creation html/css.
+   From milestone 1: Worked on mainview variations and profile setup in wireframe. Added non-post components to the mainview feed in HTML/CSS Implementation. Implemented the initial account creation html/css.
 
-    From milestone 2: Implemented PUT and DELETE server endpoint handling and API, worked on integrating project with heroku with express.js and dependency management. Implemented add friend functionality with HTML updates and dummy information.
+   From milestone 2: Implemented PUT and DELETE server endpoint handling and API, worked on integrating project with heroku with express.js and dependency management. Implemented add friend functionality with HTML updates and dummy information.
 
-    From milestone 3: Redesigned the chirp object and database to conform with requirements. Implemented the chirps and profiles tables. Resolved issues with our endpoints throwing errors, especially POST and PUT for chirp, and PUT for profiles. Integrated the createChirp endpoint with the front end for actual posting (post_chirp). Added linting to the database so that special characters in all String fields would be checked for potential unexpected (or malicious) uses of database. Implemented putProfile. Some HTML/CSS prettifying. Implemented profile creation front end and connected it with back end and database. 
+   From milestone 3: Redesigned the chirp object and database to conform with requirements. Implemented the chirps and profiles tables. Resolved issues with our endpoints throwing errors, especially POST and PUT for chirp, and PUT for profiles. Integrated the createChirp endpoint with the front end for actual posting (post_chirp). Added linting to the database so that special characters in all String fields would be checked for potential unexpected (or malicious) uses of database. Implemented putProfile. Some HTML/CSS prettifying. Implemented profile creation front end and connected it with back end and database. 
 
-    Since milestone 3: Implemented search, add friend, unfriend, edit post, delete post, edit profile, delete profile, and registration back-end AND front end. Created specific endpoints for server for these, as well as refactored database for them. Made front-end view for all of these fairly pretty, and helped debug other portions of the code. Implemented edit.html, login.html, and register.html as well as any associated .js files.
+   Since milestone 3: Implemented search, add friend, unfriend, edit post, delete post, edit profile, delete profile, and registration back-end AND front end. Created specific endpoints for server for these, as well as refactored database for them. Made front-end view for all of these fairly pretty, and helped debug other portions of the code. Implemented edit.html, login.html, and register.html as well as any associated .js files.
 
     Added comments to the code, and tried to make main.js more readable with comments in post_chirp and some refactoring to break it up. Wrote API section of final.md
 
@@ -215,14 +215,14 @@ From Milestone 3: Converted a lot of our endpoints to use the postgreSQL databas
 Since Milestone 3: Added a liking feature to the program. Created a new table called likedChirps and endpoints that can, post, retrieve, and delete entries from the database. Added event listener to like button so when it is clicked, it will turn red and increment the like_count for that specific chirp. Made it so each person can only like a post once. Also made sure that the posts that the signed in user liked stay liked on refresh. Connected friend features to the UI. Wrote code that makes sure that a user can only add another specific user as a friend once. Also wrote code for that when a friend is added, the friend will be displayed on the users UI. Various bug fixes and typo fixes.
 
 Stanley Araki: 
-    From Milestone 1: Worked on creating mainview in the wireframe, as well as implementing the mainview in HTML/CSS implementation.
+   From Milestone 1: Worked on creating mainview in the wireframe, as well as implementing the mainview in HTML/CSS implementation.
 Organized Github structure and added data interactions, wireframe screenshots to this document(doc/milestone1.md).  
 
-    From Milestone 2: Worked on initial milestone2.md setup, READ API, serving files with Express.js and HTML updates on the client side with data returned from server side endpoints for READ API.
+   From Milestone 2: Worked on initial milestone2.md setup, READ API, serving files with Express.js and HTML updates on the client side with data returned from server side endpoints for READ API.
 
-    From Milestone 3: Made design choices and divided labor to each group member. Implemented backend features and key bug fixes related to posting 'chirps'(basically tweets). As a result, posts from the past from users in previous sessions are shown on a user's feed whenever the page is loaded. Restructured endpoints code, especially the endpoint called on load to create key tables needed. Also used Spotify embeddings to allow users to post links that would automatically converted to songs, albums, and playlists. This also is implemented for user profiles as well, so links get converted to their embedded forms on their profiles. 
+   From Milestone 3: Made design choices and divided labor to each group member. Implemented backend features and key bug fixes related to posting 'chirps'(basically tweets). As a result, posts from the past from users in previous sessions are shown on a user's feed whenever the page is loaded. Restructured endpoints code, especially the endpoint called on load to create key tables needed. Also used Spotify embeddings to allow users to post links that would automatically converted to songs, albums, and playlists. This also is implemented for user profiles as well, so links get converted to their embedded forms on their profiles. 
 
-    Since Milestone 3: Mostly focused on fixing small bugs here and there as well as small prettifications on existing code. Also spent time in class with group members discussing login authentication logic and implemented the findUser(), addUser(), and validatePassword() functions used for login. Also wrote out the authentication/authorization, URL Routes/Mapping, Database, and Conclusion section of the final.md file. 
+   Since Milestone 3: Mostly focused on fixing small bugs here and there as well as small prettifications on existing code. Also spent time in class with group members discussing login authentication logic and implemented the findUser(), addUser(), and validatePassword() functions used for login. Also wrote out the authentication/authorization, URL Routes/Mapping, Database, and Conclusion section of the final.md file. 
 
 ## Conclusion
 
